@@ -1,4 +1,4 @@
-package com.example.config.security;
+package com.example.projektsklep.config.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;

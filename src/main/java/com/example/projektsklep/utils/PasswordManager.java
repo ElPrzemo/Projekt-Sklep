@@ -1,4 +1,4 @@
-package com.example.utils;
+package com.example.projektsklep.utils;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
