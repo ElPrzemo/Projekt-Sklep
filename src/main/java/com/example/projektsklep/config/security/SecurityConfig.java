@@ -11,15 +11,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
-@EnableWebSecurity
+
 public class SecurityConfig {
 
-    private final CustomLoginSuccessHandler customLoginSuccessHandler;
-
-    @Autowired
-    public SecurityConfig(CustomLoginSuccessHandler customLoginSuccessHandler) {
-        this.customLoginSuccessHandler = customLoginSuccessHandler;
-    }
+//    private final CustomLoginSuccessHandler customLoginSuccessHandler;
+//
+//    @Autowired
+//    public SecurityConfig(CustomLoginSuccessHandler customLoginSuccessHandler) {
+//        this.customLoginSuccessHandler = customLoginSuccessHandler;
+//    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -29,13 +29,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterSecurity(HttpSecurity http) throws Exception {
         http
+                .csrf(c->c.disable())
+                .cors(c->c.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .successHandler(customLoginSuccessHandler) // Użycie CustomLoginSuccessHandler
+                                .defaultSuccessUrl("/")
+//                        .successHandler() // Użycie CustomLoginSuccessHandler
                         .permitAll()
                 )
                 .logout(logout -> logout
