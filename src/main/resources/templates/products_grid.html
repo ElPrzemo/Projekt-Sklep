@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Grid</title>
+    <!-- Dodaj odpowiednie style CSS -->
+</head>
+<body>
+<h1>Product Grid</h1>
+<div>
+    <a href="?viewType=list">Switch to List View</a>
+</div>
+<div class="product-grid">
+    <div th:each="product : ${products}" class="product">
+        <h2 th:text="${product.title}"></h2>
+        <!-- Dodaj inne informacje o produkcie -->
+    </div>
+</div>
+</body>
+</html>

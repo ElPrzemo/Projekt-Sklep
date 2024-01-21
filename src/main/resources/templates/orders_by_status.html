@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Zamówienia według statusu</title>
+    <!-- Dodaj linki do CSS jeśli są potrzebne -->
+</head>
+<body>
+<h1>Zamówienia według statusu</h1>
+
+<form action="#" th:action="@{/orders/byStatus}" method="get">
+    <select name="status">
+        <option value="NEW_ORDER">Nowe zamówienie</option>
+        <option value="PROCESSED">Przetworzone</option>
+        <option value="SENT">Wysłane</option>
+        <option value="DELIVERED">Dostarczone</option>
+        <option value="CANCELED">Anulowane</option>
+    </select>
+    <button type="submit">Filtruj</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID zamówienia</th>
+        <th>Data utworzenia</th>
+        <th>Status</th>
+        <th>Łączna cena</th>
+        <!-- Można dodać więcej kolumn zależnie od potrzeb -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}">ID zamówienia</td>
+        <td th:text="${order.dateCreated}">Data utworzenia</td>
+        <td th:text="${order.orderStatus}">Status</td>
+        <td th:text="${order.totalPrice}">Łączna cena</td>
+        <!-- Można dodać więcej kolumn zależnie od potrzeb -->
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

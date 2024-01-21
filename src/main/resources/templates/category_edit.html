@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edytuj Kategorię</title>
+</head>
+<body>
+<form th:action="@{/categories/edit/{id}(id=${category.id})}" th:object="${category}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Nazwa kategorii"/>
+    <!-- inne pola formularza -->
+    <button type="submit">Zapisz Zmiany</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista Zamówień</title>
+</head>
+<body>
+<h1>Lista Zamówień</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Data Zamówienia</th>
+        <th>Status</th>
+        <!-- inne kolumny -->
+    </tr>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.dateCreated}"></td>
+        <td th:text="${order.status}"></td>
+        <!-- inne pola -->
+    </tr>
+</table>
+</body

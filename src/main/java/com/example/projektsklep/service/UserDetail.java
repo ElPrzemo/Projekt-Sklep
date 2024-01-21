@@ -4,7 +4,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.example.projektsklep.model.entity.User;
+
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,10 +16,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
+
 @Service
 public class UserDetail implements UserDetailsService {
 
-    UserRepository userRepo;
+    private final UserRepository userRepo;
 
     public UserDetail(UserRepository userRepo) {
         this.userRepo = userRepo;
@@ -30,9 +32,9 @@ public class UserDetail implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not exists by Username: " + username));
 
         Set<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getRoleType().name())) // Zmienione tutaj
                 .collect(Collectors.toSet());
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPasswordHash(), authorities);
     }
 }

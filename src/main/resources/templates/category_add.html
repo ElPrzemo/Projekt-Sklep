@@ -1,0 +1,8 @@
+<form action="#" th:action="@{/categories/add}" th:object="${category}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Nazwa kategorii" />
+    <select th:field="*{parentCategory}">
+        <option value="">Brak kategorii nadrzędnej</option>
+        <option th:each="cat : ${allCategories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+    </select>
+    <button type="submit">Dodaj Kategorię</button>
+</form>
