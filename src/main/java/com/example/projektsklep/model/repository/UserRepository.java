@@ -3,17 +3,13 @@ package com.example.projektsklep.model.repository;
 import com.example.projektsklep.model.entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
 import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsernameOrEmail(String username, String email);
-
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByUsernameIgnoreCaseContaining(String username);
-
+    List<User> findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContaining(String firstName, String lastName);
 
     User save(User user);
 
@@ -24,7 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
 
     void deleteById(Long id);
-
 }
-
 

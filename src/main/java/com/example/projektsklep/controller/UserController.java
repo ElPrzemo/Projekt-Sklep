@@ -67,11 +67,12 @@ public class UserController {
         return userDTO.isPresent() ? "user_details" : "redirect:/users"; // Zmieniona nazwa na "user_details"
     }
 
-    @GetMapping("/search/username")
-    public String findUserByUsername(@RequestParam String username, Model model) {
-        Optional<UserDTO> userDTO = userService.findUserByUsername(username);
-        userDTO.ifPresent(dto -> model.addAttribute("user", dto));
-        return userDTO.isPresent() ? "user_details" : "redirect:/users"; // Zmieniona nazwa na "user_details"
+
+    @GetMapping("/search/name")
+    public String findUsersByName(@RequestParam String name, Model model) {
+        List<UserDTO> users = userService.findUsersByName(name);
+        model.addAttribute("users", users);
+        return "users_list"; // Załóżmy, że "users_list" to widok listy użytkowników
     }
 
 }
