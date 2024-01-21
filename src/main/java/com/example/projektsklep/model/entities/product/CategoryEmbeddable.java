@@ -21,4 +21,10 @@ public class CategoryEmbeddable {
     public Long getId() {
         return id;
     }
+
+
+    public static Object toTreeDTO(Category category) {
+        return null;
+    }
+
 }
