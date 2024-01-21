@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista użytkowników</title>
+    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+</head>
+<body>
+<h1>Lista użytkowników</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Imię</th>
+        <th>Nazwisko</th>
+        <th>Email</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.firstName}"></td>
+        <td th:text="${user.lastName}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+            <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Pokaż zamówienia</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

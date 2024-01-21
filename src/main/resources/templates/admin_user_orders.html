@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zamówienia użytkownika</title>
+    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+</head>
+<body>
+    <h1>Zamówienia użytkownika</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID zamówienia</th>
+                <th>Status</th>
+                <th>Data utworzenia</th>
+                <th>Data wysyłki</th>
+                <th>Całkowita cena</th>
+                <!-- Dodaj inne potrzebne kolumny -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}"></td>
+                <td th:text
