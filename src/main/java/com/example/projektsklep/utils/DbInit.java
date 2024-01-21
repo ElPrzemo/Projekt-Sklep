@@ -1,11 +1,10 @@
 package com.example.projektsklep.utils;
 
-import com.example.projektsklep.model.entity.Role;
+import com.example.projektsklep.model.entities.role.Role;
 import com.example.projektsklep.model.entity.User;
 import com.example.projektsklep.model.repository.RoleRepository;
 import com.example.projektsklep.model.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
