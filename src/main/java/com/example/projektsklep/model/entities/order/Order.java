@@ -1,7 +1,9 @@
 package com.example.projektsklep.model.entities.order;
 
+
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
+import com.example.projektsklep.model.notification.Observer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -53,6 +56,9 @@ public class Order implements Observable {
         this.totalPrice = totalPrice;
     }
 
+    @Transient // Nie przechowujemy listy obserwatorów w bazie danych
+    private List<Observer> registeredObservers = new ArrayList<>();
+
     @Override
     public void registerObserver(Observer observer) {
         registeredObservers.add(observer);
@@ -65,7 +71,7 @@ public class Order implements Observable {
 
     @Override
     public void notifyObservers() {
-        for(Observer observer : registeredObservers) {
+        for (Observer observer : registeredObservers) {
             observer.update(this);
         }
     }

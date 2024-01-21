@@ -1,6 +1,7 @@
 package com.example.projektsklep.model.entities.order;
 
-import com.example.projectshopping.model.entities.product.Product;
+
+import com.example.projektsklep.model.entities.product.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

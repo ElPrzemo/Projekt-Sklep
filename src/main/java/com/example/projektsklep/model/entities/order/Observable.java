@@ -1,6 +1,8 @@
 package com.example.projektsklep.model.entities.order;
 
-import com.example.projectshopping.notification.Observer;
+
+
+import com.example.projektsklep.model.notification.Observer;
 
 import java.util.HashSet;
 import java.util.Set;
