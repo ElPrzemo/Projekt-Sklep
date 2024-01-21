@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kategorie</title>
+    <!-- Dodaj tu potrzebne skrypty i style -->
+</head>
+<body>
+<div>
+    <ul>
+        <li th:each="category : ${categories}">
+            <span th:text="${category.name}">Nazwa Kategorii</span>
+            <div th:if="${not #lists.isEmpty(category.subcategories)}">
+                <ul>
+                    <li th:each="subCategory : ${category.subcategories}" th:text="${subCategory.name}">Podkategoria</li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

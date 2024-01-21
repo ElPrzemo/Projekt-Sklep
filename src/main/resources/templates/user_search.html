@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wyszukiwanie użytkowników</title>
+</head>
+<body>
+<form th:action="@{/users/search}" method="get">
+    <!-- Pole do wyszukiwania po emailu -->
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" />
+
+    <!-- Pole do wyszukiwania po nazwie użytkownika -->
+    <label for="username">Nazwa użytkownika:</label>
+    <input type="text" id="username" name="username" />
+
+    <!-- Przycisk wyszukaj -->
+    <input type="submit" value="Szukaj" />
+</form>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Zamówienia użytkownika</title>
+    <!-- Dołącz pliki CSS, np. Bootstrap -->
+</head>
+<body>
+
+<div class="container">
+    <h1>Zamówienia użytkownika</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID Zamówienia</th>
+            <th>Status</th>
+            <th>Data Utworzenia</th>
+            <th>Data Wysłania</th>
+            <th>Cena Całkowita</th>
+            <!-- Możesz dodać inne nagłówki tabeli w zależności od struktury OrderDTO -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}">ID Zamówienia</td>
+            <td th:text="${order.orderStatus}">Status</td>
+            <td th:text="${order.dateCreated}">Data Utworzenia</td>
+            <td th:text="${order.sentAt}">Data Wysłania</td>
+            <td th:text="${order.totalPrice}">Cena Całkowita</td>
+            <!-- Możesz dodać inne kolumny w zależności od struktury OrderDTO -->
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

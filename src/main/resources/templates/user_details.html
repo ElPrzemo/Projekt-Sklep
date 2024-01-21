@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Szczegóły użytkownika</title>
+</head>
+<body>
+<h1>Szczegóły użytkownika</h1>
+<div>
+    <label>Email:</label>
+    <span th:text="${user.email}">email@example.com</span>
+</div>
+<div>
+    <label>Imię:</label>
+    <span th:text="${user.firstName}">Jan</span>
+</div>
+<div>
+    <label>Nazwisko:</label>
+    <span th:text="${user.lastName}">Kowalski</span>
+</div>
+<!-- Inne szczegóły użytkownika -->
+</body>
+</html>

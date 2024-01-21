@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Finalizacja zamówienia</title>
+    <script>
+        function toggleAddressForm() {
+            var checkBox = document.getElementById("differentAddress");
+            var addressForm = document.getElementById("newAddressForm");
+            addressForm.style.display = checkBox.checked ? "block" : "none";
+        }
+    </script>
+</head>
+<body>
+<h1>Finalizacja zamówienia</h1>
+<form th:action="@{/basket/checkout}" th:object="${order}" method="post">
+    <!-- Przełącznik do wyboru adresu -->
+    <div>
+        <input type="checkbox" id="differentAddress" name="differentAddress" onchange="toggleAddressForm()">
+        <label for="differentAddress">Adres dostawy inny niż adres użytkownika</label>
+    </div>
+
+    <!-- Formularz nowego adresu, domyślnie ukryty -->
+    <div id="newAddressForm" style="display:none;">
+        <div>
+            <label for="street">Ulica i numer:</label>
+            <input type="text" id="street" th:field="*{shippingAddress.street}" placeholder="Ulica i numer"/>
+        </div>
+        <div>
+            <label for="city">Miasto:</label>
+            <input type="text" id="city" th:field="*{shippingAddress.city}" placeholder="Miasto"/>
+        </div>
+        <div>
+            <label for="postalCode">Kod pocztowy:</label>
+            <input type="text" id="postalCode" th:field="*{shippingAddress.postalCode}" placeholder="Kod pocztowy"/>
+        </div>
+        <div>
+            <label for="country">Kraj:</label>
+            <input type="text" id="country" th:field="*{shippingAddress.country}" placeholder="Kraj"/>
+        </div>
+    </div>
+
+    <div>
+        <input type="submit" value="Złóż zamówienie">
+    </div>
+</form>
+</body>
+</html>

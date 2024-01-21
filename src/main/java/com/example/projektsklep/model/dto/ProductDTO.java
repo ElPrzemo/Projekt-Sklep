@@ -1,6 +1,7 @@
 package com.example.projektsklep.model.dto;
 
-import com.example.projectshopping.model.enums.ProductType;
+
+import com.example.projektsklep.model.enums.ProductType;
 import lombok.Builder;
 
 import java.math.BigDecimal;

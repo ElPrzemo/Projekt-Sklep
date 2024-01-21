@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Order</title>
+    <!-- Dodaj linki do CSS, jeśli potrzebne -->
+</head>
+<body>
+<h1>Edit Order</h1>
+<form th:action="@{/orders/edit/{orderId}(orderId=${order.id})}" th:object="${order}" method="post">
+    <div>
+        <label for="status">Order Status:</label>
+        <select id="status" th:field="*{orderStatus}">
+            <option th:each="status : ${statuses}"
+                    th:value="${status}"
+                    th:text="${status}">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="street">Street:</label>
+        <input type="text" id="street" th:field="*{shippingAddress.street}" />
+    </div>
+    <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" th:field="*{shippingAddress.city}" />
+    </div>
+    <div>
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" id="postalCode" th:field="*{shippingAddress.postalCode}" />
+    </div>
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" th:field="*{shippingAddress.country}" />
+    </div>
+
+    <button type="submit">Update Order</button>
+</form>
+</body>
+</html>
