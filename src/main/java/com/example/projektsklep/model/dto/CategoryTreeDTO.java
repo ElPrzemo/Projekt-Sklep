@@ -20,6 +20,12 @@ public class CategoryTreeDTO {
     public CategoryTreeDTO() {
     }
 
+    public CategoryTreeDTO(Long id, String name, List<CategoryTreeDTO> children) {
+        this.id = id;
+        this.name = name;
+        this.children = children;
+    }
+
     public CategoryTreeDTO(Category category) {
         this.id = category.getId();
         this.name = category.getName();
@@ -33,3 +39,4 @@ public class CategoryTreeDTO {
     }
 
 }
+
