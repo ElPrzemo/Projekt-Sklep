@@ -6,6 +6,7 @@ import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
@@ -13,7 +14,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import java.util.Date;
 import java.util.Set;
-
+@Builder
 @Entity
 @Data
 @AllArgsConstructor
@@ -81,5 +82,4 @@ public class User {
         this.address = address;
     }
 }
-
 

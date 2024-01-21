@@ -1,7 +1,9 @@
 package com.example.projektsklep.utils;
 
+
 import com.example.projektsklep.model.entities.role.Role;
-import com.example.projektsklep.model.entity.User;
+import com.example.projektsklep.model.entities.user.User;
+import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.model.repository.RoleRepository;
 import com.example.projektsklep.model.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -28,8 +30,8 @@ public class DbInit {
     @PostConstruct
     private void postConstruct() {
         // Create roles
-        Role adminRole = Role.builder().name("ROLE_ADMIN").build();
-        Role userRole = Role.builder().name("ROLE_USER").build();
+        Role adminRole = Role.fromAdminOrUser(AdminOrUser.ADMIN);
+        Role userRole = Role.fromAdminOrUser(AdminOrUser.USER);
 
         // Save roles
         Role savedAdminRole = roleRepository.save(adminRole);
@@ -37,17 +39,19 @@ public class DbInit {
 
         // Create user Henryk with ROLE_USER
         User henryk = User.builder()
-                .username("Henryk")
+                .firstName("Henryk")
+                .lastName("Wąsik")
                 .email("henryk@example.com")
-                .password(passwordEncoder.encode("henrykspassword"))
+                .passwordHash(passwordEncoder.encode("henryk"))
                 .roles(Set.of(savedUserRole))
                 .build();
 
         // Create user Karol with ROLE_ADMIN
         User karol = User.builder()
-                .username("Karol")
+                .firstName("Mariusz")
+                .lastName("Kamiński")
                 .email("karol@example.com")
-                .password(passwordEncoder.encode("karolspassword"))
+                .passwordHash(passwordEncoder.encode("maciej"))
                 .roles(Set.of(savedAdminRole))
                 .build();
 

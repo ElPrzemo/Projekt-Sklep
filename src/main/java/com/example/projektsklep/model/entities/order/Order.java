@@ -1,6 +1,7 @@
 package com.example.projektsklep.model.entities.order;
 
 import com.example.projektsklep.model.entities.user.User;
+import com.example.projektsklep.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

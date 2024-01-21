@@ -2,6 +2,7 @@ package com.example.projektsklep.model.entities.product;
 
 
 
+import com.example.projektsklep.model.enums.ProductType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
