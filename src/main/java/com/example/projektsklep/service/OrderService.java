@@ -41,7 +41,7 @@ public class OrderService {
   }
 
   public List<OrderDTO> findAllOrdersByUserId(long userId) {
-    return orderRepository.findAllOrdersByUserId(userId).stream()
+    return orderRepository.findByAccountHolder_Id(userId).stream()
             .map(this::convertToOrderDTO)
             .collect(Collectors.toList());
   }

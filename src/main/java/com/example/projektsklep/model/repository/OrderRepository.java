@@ -13,7 +13,7 @@ public interface OrderRepository  extends JpaRepository<Order, Long> {
 
 
     // Filter orders by customer ID
-    List<Order> findAllOrdersByUserId(long userId);
+    List<Order> findByAccountHolder_Id(Long accountHolderId);
 
     // Filter orders by status
     List<Order> findAllByOrderStatus(OrderStatus orderStatus);
