@@ -1,6 +1,7 @@
 package com.example.projektsklep.controller;
 
 
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -36,18 +37,18 @@ public class UserController {
         return userDTO.isPresent() ? "user_edit" : "redirect:/users"; // Zmieniona nazwa na "user_edit"
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
-        userService.updateUser(id, userDTO);
-        return "redirect:/users";
-    }
+
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
-        model.addAttribute("userDTO", new UserDTO(null, "", "", ""));
-        return "user_register"; // Zmieniona nazwa na "user_register"
+        model.addAttribute("userDTO", UserDTO.builder()
+                .email("")
+                .firstName("")
+                .lastName("")
+                .address(new AddressDTO(null, "", "", "", "")) // Pusty adres
+                .build());
+        return "user_register";
     }
-
     @PostMapping("/new")
     public String createUser(@ModelAttribute UserDTO userDTO) {
         userService.saveUser(userDTO);

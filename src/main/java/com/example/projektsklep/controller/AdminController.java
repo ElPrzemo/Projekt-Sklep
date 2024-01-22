@@ -1,5 +1,6 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.service.OrderService;
@@ -41,5 +42,22 @@ public class AdminController {
         List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
         model.addAttribute("orders", orders);
         return "admin_user_orders"; // widok zawierający listę zamówień danego użytkownika
+    }
+
+    @PostMapping("/edit_user/{userId}")
+    public String updateUserAndAddress(@PathVariable Long userId, @ModelAttribute UserDTO userDTO,
+                                       @ModelAttribute AddressDTO addressDTO) {
+        UserDTO updatedUserDTO = new UserDTO(
+                userId,
+                userDTO.email(),
+                userDTO.firstName(),
+                userDTO.lastName(),
+                userDTO.phoneNumber(), // Dodano numer telefonu
+                userDTO.password(),    // Dodano hasło
+                addressDTO
+        );
+
+        userService.updateUserProfileOrAdmin(userId, updatedUserDTO, true);
+        return "redirect:/admin/users";
     }
 }

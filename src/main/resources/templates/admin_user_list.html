@@ -22,6 +22,7 @@
         <td th:text="${user.email}"></td>
         <td>
             <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Pokaż zamówienia</a>
+            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}" class="edit-btn">Edytuj</a>
         </td>
     </tr>
     </tbody>

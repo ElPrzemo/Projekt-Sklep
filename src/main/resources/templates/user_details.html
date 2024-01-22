@@ -16,7 +16,13 @@
 <div>
     <label>Nazwisko:</label>
     <span th:text="${user.lastName}">Kowalski</span>
+</div><div>
+    <label>Edycja danych:</label>
+    <a th:href="@{/user/edit}">Edytuj profil</a>
 </div>
+
+
+
 <!-- Inne szczegóły użytkownika -->
 </body>
 </html>
