@@ -2,17 +2,25 @@ package com.example.projektsklep.service;
 
 
 import com.example.projektsklep.model.dto.CategoryDTO;
+import com.example.projektsklep.model.dto.CategoryTreeDTO;
 import com.example.projektsklep.model.entities.product.Category;
+import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.model.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
+
+
+
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -54,5 +62,35 @@ public class CategoryService {
     private void updateCategoryData(Category category, CategoryDTO categoryDTO) {
         category.setName(categoryDTO.name());
         // Ustaw parentCategory, jeśli jest wymagane
+    }
+
+
+
+
+
+
+    public List<CategoryTree> getCategoriesTree() {
+        List<Category> categories = categoryRepository.findAll();
+        Map<Long, CategoryTree> categoryTreesMap = new HashMap<>();
+
+        for (Category category : categories) {
+            CategoryTreeDTO categoryTreeDTO = new CategoryTreeDTO(category);
+            CategoryTree categoryTree = new CategoryTree();
+            categoryTree.setId(category.getId());
+            categoryTree.setName(category.getName());
+            categoryTree.setParent(category.getParent() != null ? new CategoryTree(category.getParent().getId(), category.getParent().getName(), null) : null);
+            categoryTree.setChildren(new ArrayList<>());
+
+            categoryTreesMap.put(category.getId(), categoryTree);
+        }
+
+        for (Category category : categories) {
+            if (category.getParent() != null) {
+                CategoryTree parentCategoryTree = categoryTreesMap.get(category.getParent().getId());
+                parentCategoryTree.getChildren().add(categoryTreesMap.get(category.getId()));
+            }
+        }
+
+        return new ArrayList<>(categoryTreesMap.values());
     }
 }

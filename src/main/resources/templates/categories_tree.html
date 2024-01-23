@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Drzewo kategorii</title>
+</head>
+<body>
+<ul>
+    {% for category in categories %}
+    <li>
+        <a href="/categories/{{ category.id }}">{{ category.name }}</a>
+        {% if category.children %}
+        <ul>
+            {% for child in category. Children %}
+            <li>{{ child.name }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>

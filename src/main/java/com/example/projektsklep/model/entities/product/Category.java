@@ -3,7 +3,7 @@ package com.example.projektsklep.model.entities.product;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,8 +18,12 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parentCategory;
 
-    public Category[] getChildren() {
+    public List<Category> getChildren() {
 
-        return new Category[0];
+        return null;
+    }
+
+    public CategoryTree getParent() {
+        return null;
     }
 }

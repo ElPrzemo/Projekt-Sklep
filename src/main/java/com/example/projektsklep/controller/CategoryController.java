@@ -4,13 +4,21 @@ package com.example.projektsklep.controller;
 
 import com.example.projektsklep.model.dto.CategoryDTO;
 import com.example.projektsklep.model.entities.product.Category;
+import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
+import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+
+
+
 
 @Controller
 @RequestMapping("/categories")
@@ -57,7 +65,13 @@ public class CategoryController {
         categoryService.updateCategoryDTO(id, categoryDTO);
         return "redirect:/categories";
     }
-
-
-
+    @GetMapping("/categories/tree")
+    public String showCategoriesTree(Model model) {
+        List<CategoryTree> categories = categoryService.getCategoriesTree();
+        model.addAttribute("categories", categories);
+        return "categories_tree";
+    }
 }
+
+
+

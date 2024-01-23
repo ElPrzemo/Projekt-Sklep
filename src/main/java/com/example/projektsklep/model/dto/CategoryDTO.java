@@ -16,4 +16,5 @@ public record CategoryDTO(
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
     }
+
 }
