@@ -1,0 +1,5 @@
+<!-- admin_author_form.html -->
+<form action="#" th:action="@{/admin/author}" th:object="${author}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Author Name"/>
+    <button type="submit">Save Author</button>
+</form>

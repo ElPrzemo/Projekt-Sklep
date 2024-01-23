@@ -9,9 +9,12 @@ public record AuthorDTO(
         Long id,
         String name
 ) {
+    public AuthorDTO() {
+        this(null, "");
+    }
 
-    public AuthorDTO {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(name);
+    public AuthorDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }

@@ -1,0 +1,10 @@
+<!-- admin_author_list.html -->
+<h2>Authors List</h2>
+<table>
+    <tr>
+        <th>Name</th>
+    </tr>
+    <tr th:each="author : ${authors}">
+        <td th:text="${author.name}"></td>
+    </tr>
+</table>

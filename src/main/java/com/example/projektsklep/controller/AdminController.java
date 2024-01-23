@@ -1,8 +1,10 @@
 package com.example.projektsklep.controller;
 
 import com.example.projektsklep.model.dto.AddressDTO;
+import com.example.projektsklep.model.dto.AuthorDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.dto.UserDTO;
+import com.example.projektsklep.service.AuthorService;
 import com.example.projektsklep.service.OrderService;
 import com.example.projektsklep.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,12 @@ public class AdminController {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final AuthorService authorService;
 
-    @Autowired
-    public AdminController(UserService userService, OrderService orderService) {
+    public AdminController(UserService userService, OrderService orderService, AuthorService authorService) {
         this.userService = userService;
         this.orderService = orderService;
+        this.authorService = authorService;
     }
 
     @GetMapping("/user_search")
@@ -49,5 +52,24 @@ public class AdminController {
                                        @ModelAttribute AddressDTO addressDTO) {
         userService.updateUserProfileOrAdmin(userId, userDTO, true); // isAdmin ustawione na true
         return "redirect:/admin/users";
+    }
+
+    @GetMapping("/author")
+    public String showAuthorForm(Model model) {
+        model.addAttribute("author", new AuthorDTO());
+        return "admin_author_form"; // Widok formularza dla Author
+    }
+
+    @PostMapping("/author")
+    public String saveAuthor(@ModelAttribute AuthorDTO authorDTO) {
+        authorService.saveAuthor(authorDTO);
+        return "redirect:/admin/author"; // Przekierowanie po zapisaniu
+    }
+
+    @GetMapping("/authors")
+    public String listAuthors(Model model) {
+        List<AuthorDTO> authors = authorService.findAllAuthors();
+        model.addAttribute("authors", authors);
+        return "admin_author_list"; // Widok listy autorów
     }
 }
