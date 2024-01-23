@@ -47,17 +47,7 @@ public class AdminController {
     @PostMapping("/edit_user/{userId}")
     public String updateUserAndAddress(@PathVariable Long userId, @ModelAttribute UserDTO userDTO,
                                        @ModelAttribute AddressDTO addressDTO) {
-        UserDTO updatedUserDTO = new UserDTO(
-                userId,
-                userDTO.email(),
-                userDTO.firstName(),
-                userDTO.lastName(),
-                userDTO.phoneNumber(), // Dodano numer telefonu
-                userDTO.password(),    // Dodano hasło
-                addressDTO
-        );
-
-        userService.updateUserProfileOrAdmin(userId, updatedUserDTO, true);
+        userService.updateUserProfileOrAdmin(userId, userDTO, true); // isAdmin ustawione na true
         return "redirect:/admin/users";
     }
 }

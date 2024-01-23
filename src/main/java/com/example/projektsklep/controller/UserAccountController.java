@@ -39,7 +39,7 @@ public class UserAccountController {
             model.addAttribute("orders", orders);
         });
 
-        return "user_orders"; // Strona z zamówieniami użytkownika
+        return "user_orders"; // Strona z zamóupdateProfileAndAddresswieniami użytkownika
     }
 
 
@@ -52,18 +52,7 @@ public class UserAccountController {
                 .map(UserDTO::id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Tutaj tworzymy nowy UserDTO z danymi, które użytkownik ma prawo zmienić
-        UserDTO updatedUserDTO = new UserDTO(
-                userId,
-                userDTO.email(),         // Email może być zmieniony
-                userDTO.firstName(),     // Imię pozostaje bez zmian
-                userDTO.lastName(),      // Nazwisko pozostaje bez zmian
-                userDTO.phoneNumber(), // Numer telefonu zmieniony
-                null,                    // Hasło nie jest przekazywane w tej metodzie
-                addressDTO               // Zaktualizowany adres
-        );
-
-        userService.updateUserProfileOrAdmin(userId, updatedUserDTO, false); // false, ponieważ to nie jest admin
+        userService.updateUserProfileOrAdmin(userId, userDTO, false); // isAdmin ustawione na false
         return "redirect:/account/profile";
     }
 }
