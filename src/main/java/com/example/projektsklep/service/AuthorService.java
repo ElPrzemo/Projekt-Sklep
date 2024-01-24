@@ -4,6 +4,8 @@ import com.example.projektsklep.model.dto.AuthorDTO;
 import com.example.projektsklep.model.entities.product.Author;
 import com.example.projektsklep.model.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,9 +33,13 @@ public class AuthorService {
         return new AuthorDTO(author.getId(), author.getName());
     }
 
-    public List<AuthorDTO> findAllAuthors() {
-        return authorRepository.findAll().stream()
-                .map(author -> new AuthorDTO(author.getId(), author.getName()))
-                .collect(Collectors.toList());
+    public Page<AuthorDTO> findAllAuthors(Pageable pageable) {
+        return authorRepository.findAll(pageable)
+                .map(this::convertToAuthorDTO);
+    }
+
+    private AuthorDTO convertToAuthorDTO(Author author) {
+        // Przykładowa implementacja, dostosuj do swoich potrzeb
+        return new AuthorDTO(author.getId(), author.getName());
     }
 }

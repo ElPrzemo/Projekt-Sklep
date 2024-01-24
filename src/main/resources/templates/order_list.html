@@ -5,6 +5,15 @@
 </head>
 <body>
 <h1>Lista Zamówień</h1>
+
+<!-- Formularz do wyboru rozmiaru strony -->
+<form action="#" method="get">
+    <select name="size" onchange="this.form.submit()">
+        <option th:selected="${orderPage.size == 25}" value="25">25</option>
+        <option th:selected="${orderPage.size == 50}" value="50">50</option>
+    </select>
+</form>
+
 <table>
     <tr>
         <th>ID</th>
@@ -12,11 +21,28 @@
         <th>Status</th>
         <!-- inne kolumny -->
     </tr>
-    <tr th:each="order : ${orders}">
+    <tr th:each="order : ${orderPage.content}">
         <td th:text="${order.id}"></td>
         <td th:text="${order.dateCreated}"></td>
         <td th:text="${order.status}"></td>
         <!-- inne pola -->
     </tr>
 </table>
-</body
+
+<!-- Elementy nawigacji paginacyjnej -->
+<div>
+    <ul>
+        <li th:if="${orderPage.hasPrevious()}">
+            <a th:href="@{/orders(page=${orderPage.number - 1}, size=${orderPage.size})}">Poprzednia</a>
+        </li>
+        <li th:each="pageNum : ${#numbers.sequence(0, orderPage.totalPages - 1)}">
+            <a th:href="@{/orders(page=${pageNum}, size=${orderPage.size})}" th:text="${pageNum + 1}"></a>
+        </li>
+        <li th:if="${orderPage.hasNext()}">
+            <a th:href="@{/orders(page=${orderPage.number + 1}, size=${orderPage.size})}">Następna</a>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

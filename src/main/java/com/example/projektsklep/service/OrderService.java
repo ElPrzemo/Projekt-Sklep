@@ -7,6 +7,8 @@ import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,10 +25,9 @@ public class OrderService {
 
   // Istniejące metody...
 
-  public List<OrderDTO> findAllOrderDTOs() {
-    return orderRepository.findAll().stream()
-            .map(this::convertToOrderDTO)
-            .collect(Collectors.toList());
+  public Page<OrderDTO> findAllOrders(Pageable pageable) {
+    return orderRepository.findAll(pageable)
+            .map(this::convertToOrderDTO);
   }
 
   public OrderDTO findOrderDTOById(Long id) {

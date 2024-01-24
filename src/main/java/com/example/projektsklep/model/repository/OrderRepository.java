@@ -4,6 +4,8 @@ package com.example.projektsklep.model.repository;
 import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -33,7 +35,7 @@ public interface OrderRepository  extends JpaRepository<Order, Long> {
     // Filters orders by total amount greater than a specified value
 
 
-    List<Order> findAll();
+    Page<Order> findAll(Pageable pageable);
 
     // Filters orders by total amount greater than a specified value and sorts them by date created in descending order
 

@@ -1,10 +1,44 @@
 <!-- admin_author_list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Authors List</title>
+</head>
+<body>
 <h2>Authors List</h2>
+
+<!-- Formularz do wyboru rozmiaru strony -->
+<form action="#" method="get">
+    <select name="size" onchange="this.form.submit()">
+        <option th:selected="${authorPage.size == 25}" value="25">25</option>
+        <option th:selected="${authorPage.size == 50}" value="50">50</option>
+    </select>
+</form>
+
 <table>
-    <tr>
-        <th>Name</th>
-    </tr>
-    <tr th:each="author : ${authors}">
+    <!-- Nagłówki tabeli... -->
+    <tr th:each="author : ${authorPage.content}">
+        <!-- Dane autora... -->
         <td th:text="${author.name}"></td>
     </tr>
 </table>
+
+<!-- Paginacja -->
+<div>
+    <ul>
+        <!-- Poprzednia strona -->
+        <li th:if="${authorPage.hasPrevious()}">
+            <a th:href="@{/authors(page=${authorPage.number - 1}, size=${authorPage.size})}">Poprzednia</a>
+        </li>
+        <!-- Numery stron -->
+        <li th:each="pageNum : ${#numbers.sequence(0, authorPage.totalPages - 1)}">
+            <a th:href="@{/authors(page=${pageNum}, size=${authorPage.size})}" th:text="${pageNum + 1}"></a>
+        </li>
+        <!-- Następna strona -->
+        <li th:if="${authorPage.hasNext()}">
+            <a th:href="@{/authors(page=${authorPage.number + 1}, size=${authorPage.size})}">Następna</a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

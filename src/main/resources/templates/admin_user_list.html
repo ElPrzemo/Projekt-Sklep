@@ -2,10 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Lista użytkowników</title>
-    <!-- Dodaj potrzebne odniesienia do plików CSS -->
 </head>
 <body>
 <h1>Lista użytkowników</h1>
+
+<!-- Formularz do wyboru rozmiaru strony -->
+<form action="#" method="get">
+    <select name="size" onchange="this.form.submit()">
+        <option th:selected="${userPage.size == 25}" value="25">25</option>
+        <option th:selected="${userPage.size == 50}" value="50">50</option>
+    </select>
+</form>
+
 <table>
     <thead>
     <tr>
@@ -16,16 +24,31 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="user : ${users}">
+    <tr th:each="user : ${userPage.content}">
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
         <td th:text="${user.email}"></td>
         <td>
             <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Pokaż zamówienia</a>
-            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}" class="edit-btn">Edytuj</a>
+            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}">Edytuj</a>
         </td>
     </tr>
     </tbody>
 </table>
+
+<!-- Elementy nawigacji paginacyjnej -->
+<div>
+    <ul>
+        <li th:if="${userPage.hasPrevious()}">
+            <a th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size})}">Poprzednia</a>
+        </li>
+        <li th:each="pageNum : ${#numbers.sequence(0, userPage.totalPages - 1)}">
+            <a th:href="@{/users(page=${pageNum}, size=${userPage.size})}" th:text="${pageNum + 1}"></a>
+        </li>
+        <li th:if="${userPage.hasNext()}">
+            <a th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size})}">Następna</a>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

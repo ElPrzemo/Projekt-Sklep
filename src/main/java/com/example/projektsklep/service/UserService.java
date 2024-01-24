@@ -6,6 +6,8 @@ import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +26,9 @@ public class UserService {
 
     // Istniejące metody...
 
-    public List<UserDTO> findAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::convertToUserDTO)
-                .collect(Collectors.toList());
+    public Page<UserDTO> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(this::convertToUserDTO);
     }
 
     public Optional<UserDTO> findUserById(Long id) {

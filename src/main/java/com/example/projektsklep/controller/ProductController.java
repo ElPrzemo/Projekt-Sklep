@@ -4,6 +4,9 @@ import com.example.projektsklep.model.dto.ProductDTO;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +24,22 @@ public class ProductController {
         this.basketService = basketService;
     }
 
+    // W ProductController
     @GetMapping
-    public String listProducts(@RequestParam(name = "viewType", defaultValue = "grid") String viewType, Model model) {
-        model.addAttribute("products", productService.findAllProductDTOs());
+    public String listProducts(@RequestParam(name = "viewType", defaultValue = "grid") String viewType,
+                               @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                               @RequestParam(name = "gridSize", defaultValue = "20") int gridSize,
+                               @RequestParam(name = "page", defaultValue = "0") int page,
+                               Model model) {
+        Pageable pageable;
+        if (viewType.equals("list")) {
+            pageable = PageRequest.of(page, pageSize);
+        } else { // Dla widoku grid
+            pageable = PageRequest.of(page, gridSize);
+        }
+        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
+        model.addAttribute("productsPage", productPage);
+        model.addAttribute("currentViewType", viewType);
         return viewType.equals("list") ? "products_list" : "products_grid";
     }
 

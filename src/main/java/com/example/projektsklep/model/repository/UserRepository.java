@@ -1,6 +1,8 @@
 package com.example.projektsklep.model.repository;
 
 import com.example.projektsklep.model.entities.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,8 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     void delete(User user);
 
-    List<User> findAll();
 
+    Page<User> findAll(Pageable pageable);
     Optional<User> findById(Long id);
 
     void deleteById(Long id);
