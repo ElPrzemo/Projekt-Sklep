@@ -1,11 +1,16 @@
-<!-- weather.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Pogoda</title>
 </head>
 <body>
-<h1>Pogoda dla: <span th:text="${city}"></span></h1>
-<p th:text="${weatherData}"></p>
+<h1>Pogoda</h1>
+<div th:if="${weatherData}" th:utext="${weatherData}"></div>
+
+<h2>Sprawdź pogodę dla innego miasta</h2>
+<form action="/weather" method="get">
+    <input type="text" name="city" placeholder="Wpisz nazwę miasta" />
+    <button type="submit">Sprawdź pogodę</button>
+</form>
 </body>
 </html>

@@ -100,8 +100,18 @@
     <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.4</version>
+        <version>1.4.7</version>
     </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20230618</version>
+        </dependency>
+        <dependency>
+            <groupId>yummy.json</groupId>
+            <artifactId>json</artifactId>
+            <version>0.2</version>
+        </dependency>
 
     </dependencies>
 
@@ -121,5 +131,12 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars</name>
+            <url>https://repo.clojars.org/</url>
+        </repository>
+    </repositories>
 
 </project>
