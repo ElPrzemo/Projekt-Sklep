@@ -9,11 +9,44 @@
 <div>
     <a href="?viewType=grid">Switch to Grid View</a>
 </div>
+
+<!-- Formularz do wyboru liczby produktów na stronie -->
+<form action="#" method="get">
+    <select name="size" onchange="this.form.submit()">
+        <option value="25" th:selected="${size == 25}">25</option>
+        <option value="50" th:selected="${size == 50}">50</option>
+        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
+    </select>
+</form>
+
 <ul class="product-list">
-    <li th:each="product : ${products}">
+    <li th:each="product : ${productsPage.content}">
         <h2 th:text="${product.title}"></h2>
         <!-- Dodaj inne informacje o produkcie -->
     </li>
 </ul>
+
+<!-- Tutaj możesz dodać elementy nawigacji stronicowej -->
+
+<!-- Formularz do wyboru liczby produktów na stronie dla widoku listy -->
+<form th:if="${currentViewType == 'list'}" action="#" method="get">
+    <select name="pageSize" onchange="this.form.submit()">
+        <option value="10" th:selected="${pageSize == 10}">10</option>
+        <option value="25" th:selected="${pageSize == 25}">25</option>
+        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
+    </select>
+    <input type="hidden" name="viewType" value="list">
+</form>
+
+<!-- Formularz do wyboru liczby produktów na stronie dla widoku siatki -->
+<form th:if="${currentViewType == 'grid'}" action="#" method="get">
+    <select name="gridSize" onchange="this.form.submit()">
+        <option value="20" th:selected="${gridSize == 20}">20</option>
+        <option value="50" th:selected="${gridSize == 50}">50</option>
+        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
+    </select>
+    <input type="hidden" name="viewType" value="grid">
+</form>
+
 </body>
 </html>

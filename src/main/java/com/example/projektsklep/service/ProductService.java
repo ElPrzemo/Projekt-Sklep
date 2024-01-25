@@ -6,6 +6,8 @@ import com.example.projektsklep.model.entities.product.AuthorEmbeddable;
 import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +22,10 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductDTO> findAllProductDTOs() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::convertToProductDTO)
-                .collect(Collectors.toList());
+    // W ProductService
+    public Page<ProductDTO> findAllProductDTOs(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(this::convertToProductDTO);
     }
 
     public ProductDTO findProductDTOById(Long id) {

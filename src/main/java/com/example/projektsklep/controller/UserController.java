@@ -1,8 +1,12 @@
 package com.example.projektsklep.controller;
 
 
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +22,19 @@ public class UserController {
 
     private UserService userService;
 
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public String listUsers(Model model) {
-        List<UserDTO> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        return "users_list"; // Zmieniona nazwa na "user_list"
+    public String listUsers(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserDTO> userPage = userService.findAllUsers(pageable);
+        model.addAttribute("userPage", userPage);
+        return "user_list";
     }
 
     @GetMapping("/edit/{id}")
@@ -36,18 +44,18 @@ public class UserController {
         return userDTO.isPresent() ? "user_edit" : "redirect:/users"; // Zmieniona nazwa na "user_edit"
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
-        userService.updateUser(id, userDTO);
-        return "redirect:/users";
-    }
+
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
-        model.addAttribute("userDTO", new UserDTO(null, "", "", ""));
-        return "user_register"; // Zmieniona nazwa na "user_register"
+        model.addAttribute("userDTO", UserDTO.builder()
+                .email("")
+                .firstName("")
+                .lastName("")
+                .address(new AddressDTO(null, "", "", "", "")) // Pusty adres
+                .build());
+        return "user_register";
     }
-
     @PostMapping("/new")
     public String createUser(@ModelAttribute UserDTO userDTO) {
         userService.saveUser(userDTO);

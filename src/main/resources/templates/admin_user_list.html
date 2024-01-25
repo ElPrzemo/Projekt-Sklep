@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Lista Użytkowników</title>
+    <title>Lista użytkowników</title>
 </head>
 <body>
-<h1>Lista Użytkowników</h1>
-<div>
-    <a href="/users/add">Dodaj użytkownika</a>
-</div>
+<h1>Lista użytkowników</h1>
 
 <!-- Formularz do wyboru rozmiaru strony -->
 <form action="#" method="get">
@@ -18,33 +15,36 @@
 </form>
 
 <table>
-    <!-- Nagłówki tabeli... -->
+    <thead>
+    <tr>
+        <th>Imię</th>
+        <th>Nazwisko</th>
+        <th>Email</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
     <tr th:each="user : ${userPage.content}">
-        <!-- Dane użytkownika... -->
-        <td th:text="${user.id}"></td>
-        <td th:text="${user.email}"></td>
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
-        <!-- inne pola -->
+        <td th:text="${user.email}"></td>
         <td>
-            <a th:href="@{/users/edit/{id}(id=${user.id})}">Edytuj</a>
-            <a th:href="@{/users/delete/{id}(id=${user.id})}">Usuń</a>
+            <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Pokaż zamówienia</a>
+            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}">Edytuj</a>
         </td>
     </tr>
+    </tbody>
 </table>
 
-<!-- Paginacja -->
+<!-- Elementy nawigacji paginacyjnej -->
 <div>
     <ul>
-        <!-- Poprzednia strona -->
         <li th:if="${userPage.hasPrevious()}">
             <a th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size})}">Poprzednia</a>
         </li>
-        <!-- Numery stron -->
         <li th:each="pageNum : ${#numbers.sequence(0, userPage.totalPages - 1)}">
             <a th:href="@{/users(page=${pageNum}, size=${userPage.size})}" th:text="${pageNum + 1}"></a>
         </li>
-        <!-- Następna strona -->
         <li th:if="${userPage.hasNext()}">
             <a th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size})}">Następna</a>
         </li>

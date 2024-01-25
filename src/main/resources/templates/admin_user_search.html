@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wyszukiwanie użytkowników</title>
+    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+</head>
+<body>
+<h1>Wyszukiwanie użytkowników</h1>
+<form th:action="@{/admin/user_search}" method="post">
+    <label for="lastName">Nazwisko użytkownika:</label>
+    <input type="text" id="lastName" name="lastName" required>
+    <button type="submit">Szukaj</button>
+</form>
+</body>
+</html>

@@ -1,16 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edytuj Użytkownika</title>
+    <title>Edycja Profilu Użytkownika</title>
 </head>
 <body>
-<h1>Edytuj Użytkownika</h1>
-<form th:action="@{/users/edit/{id}(id=${user.id})}" th:object="${user}" method="post">
-    <!-- Pola formularza do edycji użytkownika -->
-    <input type="text" th:field="*{firstName}" placeholder="Imię"/>
-    <input type="text" th:field="*{lastName}" placeholder="Nazwisko"/>
-    <!-- inne pola -->
-    <input type="submit" value="Zapisz"/>
+<h1>Edycja Profilu</h1>
+
+<!-- Formularz edycji danych użytkownika -->
+<form th:action="@{/user/edit_profile}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" th:field="*{email}" required />
+
+    <label for="phoneNumber">Numer telefonu:</label>
+    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
+
+    <label for="password">Nowe hasło:</label>
+    <input type="password" id="password" th:field="*{password}" />
+
+    <button type="submit">Zapisz zmiany użytkownika</button>
 </form>
+
+<!-- Oddzielny formularz edycji adresu -->
+<form th:action="@{/user/edit_address}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <label for="street">Ulica:</label>
+    <input type="text" id="street" th:field="*{address.street}" />
+
+    <label for="city">Miasto:</label>
+    <input type="text" id="city" th:field="*{address.city}" />
+
+    <label for="postalCode">Kod pocztowy:</label>
+    <input type="text" id="postalCode" th:field="*{address.postalCode}" />
+
+    <label for="country">Kraj:</label>
+    <input type="text" id="country" th:field="*{address.country}" />
+
+    <button type="submit">Zapisz adres</button>
+</form>
+
 </body>
 </html>

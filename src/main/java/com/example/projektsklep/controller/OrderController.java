@@ -4,6 +4,9 @@ package com.example.projektsklep.controller;
 
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +24,15 @@ public class OrderController {
     }
 
     @GetMapping
-    public String listOrders(Model model) {
-        List<OrderDTO> orderDTOs = orderService.findAllOrderDTOs();
-        model.addAttribute("orders", orderDTOs);
+    public String listOrders(Model model,
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrderDTO> orderPage = orderService.findAllOrders(pageable);
+        model.addAttribute("orderPage", orderPage);
         return "order_list";
     }
+
 
     @GetMapping("/{orderId}")
     public String orderDetails(@PathVariable Long orderId, Model model) {

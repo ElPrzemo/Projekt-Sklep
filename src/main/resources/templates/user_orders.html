@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Moje zamówienia</title>
+    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+</head>
+<body>
+<h1>Moje zamówienia</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID zamówienia</th>
+        <th>Status</th>
+        <th>Data utworzenia</th>
+        <th>Data wysyłki</th>
+        <th>Całkowita cena</th>
+        <!-- Możesz dodać więcej kolumn zależnie od potrzeb -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.orderStatus}"></td>
+        <td th:text="${order.dateCreated}"></td>
+        <td th:text="${order.sentAt}"></td>
+        <td th:text="${order.totalPrice}"></td>
+        <!-- Dodaj więcej pól w zależności od struktury OrderDTO -->
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
