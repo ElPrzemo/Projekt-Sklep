@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edycja produktu</title>
+</head>
+<body>
+<h1>Edycja produktu</h1>
+
+<form action="/products/edit" method="post">
+    <input type="hidden" name="id" value="{{ product.id }}">
+
+    <div>
+        <label for="title">Tytuł:</label>
+        <input type="text" name="title" id="title" value="{{ product.title }}">
+    </div>
+
+    <div>
+        <label for="description">Opis:</label>
+        <textarea name="description" id="description">{{ product.description }}</textarea>
+    </div>
+
+    <div>
+        <label for="price">Cena:</label>
+        <input type="number" name="price" id="price" value="{{ product.price }}">
+    </div>
+
+    <button type="submit">Zapisz</button>
+</form>
+</body>
+</html>
