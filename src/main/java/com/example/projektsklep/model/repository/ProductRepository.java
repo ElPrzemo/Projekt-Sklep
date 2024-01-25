@@ -22,4 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void delete(Product product);
 
     void deleteById(long id); // Dodana metoda
+
+    Optional<Object> findAllByPublished(boolean b);
 }

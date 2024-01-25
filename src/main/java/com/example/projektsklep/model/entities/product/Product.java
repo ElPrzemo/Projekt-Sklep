@@ -38,6 +38,8 @@ public class Product {
 
  private ProductType productType;
 
+ private boolean published;
+
  private int quantity;
 
  public Product() {
