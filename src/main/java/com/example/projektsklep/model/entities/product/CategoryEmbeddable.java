@@ -14,6 +14,14 @@ public class CategoryEmbeddable {
     @Id
     private Long id;
 
+    public CategoryEmbeddable(Long categoryId) {
+
+    }
+
+    public CategoryEmbeddable() {
+
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

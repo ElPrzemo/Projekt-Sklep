@@ -14,6 +14,10 @@ public class AuthorEmbeddable {
     @Id
     private Long id;
 
+    public AuthorEmbeddable() {
+
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

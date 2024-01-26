@@ -3,7 +3,6 @@ package com.example.projektsklep.model.repository;
 
 
 import com.example.projektsklep.model.entities.product.Product;
-import com.example.projektsklep.model.entities.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void deleteById(long id); // Dodana metoda
 
     Optional<Object> findAllByPublished(boolean b);
+
+    List<Product> findAllByTitleContainingIgnoreCase(String searchTerm);
 }
+
