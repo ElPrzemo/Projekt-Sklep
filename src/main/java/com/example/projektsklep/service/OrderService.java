@@ -54,6 +54,10 @@ public class OrderService {
     return convertToOrderDTO(orderRepository.save(existingOrder));
   }
 
+  public List<Order> findAllOrdersByStatus(OrderStatus orderStatus) {
+    return orderRepository.findAllByOrderStatus(orderStatus);
+  }
+
   private OrderDTO convertToOrderDTO(Order order) {
     List<LineOfOrderDTO> lineOfOrdersDTO = order.getLineOfOrders().stream()
             .map(line -> new LineOfOrderDTO(

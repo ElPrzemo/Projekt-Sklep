@@ -24,7 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     void deleteById(long id); // Dodana metoda
 
-    Optional<Object> findAllByPublished(boolean b);
+
 
     List<Product> findAllByTitleContainingIgnoreCase(String searchTerm);
 }

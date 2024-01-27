@@ -4,6 +4,8 @@ import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.AuthorDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.dto.UserDTO;
+import com.example.projektsklep.model.entities.order.Order;
+import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.AuthorService;
 import com.example.projektsklep.service.OrderService;
 import com.example.projektsklep.service.UserService;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -77,5 +81,13 @@ public class AdminController {
         Page<AuthorDTO> authorPage = authorService.findAllAuthors(pageable);
         model.addAttribute("authorPage", authorPage);
         return "author_list";
+    }
+
+
+    @GetMapping("/ordersByStatus")
+    public String getOrdersByStatus(@RequestParam OrderStatus orderStatus, Model model) {
+        List<Order> orders = orderService.findAllOrdersByStatus(orderStatus);
+        model.addAttribute("orders", orders);
+        return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
     }
 }
