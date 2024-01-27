@@ -80,7 +80,7 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page, size);
         Page<AuthorDTO> authorPage = authorService.findAllAuthors(pageable);
         model.addAttribute("authorPage", authorPage);
-        return "author_list";
+        return "admin_author_list";
     }
 
 

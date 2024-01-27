@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Rejestracja</title>
+    <title>Rejestracja Użytkownika</title>
+    <!-- Dodaj linki do CSS, jeśli potrzebne -->
 </head>
 <body>
-<h1>Rejestracja</h1>
+<h2>Rejestracja Użytkownika</h2>
 
-<form action="/register" method="post">
-    <input type="email" name="email" placeholder="Adres e-mail">
-    <input type="password" name="password" placeholder="Hasło">
-    <input type="password" name="confirmPassword" placeholder="Potwierdź hasło">
-    <input type="text" name="firstName" placeholder="Imię">
-    <input type="text" name="lastName" placeholder="Nazwisko">
-    <input type="submit" value="Zarejestruj się">
+<form action="#" th:action="@{/users/new}" method="post">
+    <!-- Pola dotyczące użytkownika -->
+    <input type="text" name="firstName" placeholder="Imię"/>
+    <input type="text" name="lastName" placeholder="Nazwisko"/>
+    <input type="text" name="email" placeholder="Email"/>
+    <input type="password" name="password" placeholder="Hasło"/>
+
+    <!-- Pola dotyczące adresu -->
+    <input type="text" name="street" placeholder="Ulica"/>
+    <input type="text" name="city" placeholder="Miasto"/>
+    <input type="text" name="postalCode" placeholder="Kod pocztowy"/>
+    <input type="text" name="country" placeholder="Kraj"/>
+
+    <input type="submit" value="Zarejestruj"/>
 </form>
+
+<a href="/products">Powrót do listy produktów</a>
+
 </body>
 </html>

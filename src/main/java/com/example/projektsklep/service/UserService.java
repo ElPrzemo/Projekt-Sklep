@@ -4,6 +4,7 @@ import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.user.User;
+import com.example.projektsklep.model.repository.AddressRepository;
 import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,11 +18,13 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final AddressService addressService;
+    private final AddressRepository addressRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository, AddressService addressService) {
+
+    public UserService(UserRepository userRepository, AddressService addressService, AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.addressService = addressService;
+        this.addressRepository = addressRepository; // Dodanie AddressRepository
     }
 
     // Istniejące metody...
@@ -38,6 +41,9 @@ public class UserService {
 
     public UserDTO saveUser(UserDTO userDTO) {
         User user = convertToUser(userDTO);
+        Address address = addressService.convertToEntity(userDTO.address());
+        address = addressRepository.save(address);
+        user.setAddress(address);
         user = userRepository.save(user);
         return convertToUserDTO(user);
     }
@@ -113,5 +119,15 @@ public class UserService {
             Address address = addressService.convertToEntity(userDTO.address());
             user.setAddress(address);
         }
+    }
+
+    public UserDTO createUserDTO(UserDTO userDTO, AddressDTO addressDTO) {
+        // Tutaj można dodać logikę weryfikacji lub transformacji danych, jeśli to konieczne
+        return UserDTO.builder()
+                .email(userDTO.email())
+                .firstName(userDTO.firstName())
+                .lastName(userDTO.lastName())
+                .address(addressDTO)
+                .build();
     }
 }

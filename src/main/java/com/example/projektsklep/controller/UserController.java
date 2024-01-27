@@ -56,10 +56,17 @@ public class UserController {
                 .build());
         return "user_register";
     }
-    @PostMapping("/new")
-    public String createUser(@ModelAttribute UserDTO userDTO) {
-        userService.saveUser(userDTO);
-        return "redirect:/user_list";
+    @PostMapping("/register")
+    public String createUser(@ModelAttribute UserDTO userDTO, @ModelAttribute AddressDTO addressDTO) {
+        UserDTO newUserDTO = userService.createUserDTO(userDTO, addressDTO);
+        userService.saveUser(newUserDTO);
+        return "redirect:/registration-success";
+    }
+
+    @GetMapping("/registration-success")
+    public String registrationSuccess(Model model) {
+        model.addAttribute("message", "Użytkownik zarejestrowany, sprawdź potwierdzenie na mailu");
+        return "registration_success";
     }
 
     @GetMapping("/delete/{id}")
