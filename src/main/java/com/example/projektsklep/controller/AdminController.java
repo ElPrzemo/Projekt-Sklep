@@ -92,4 +92,21 @@ public class AdminController {
         model.addAttribute("orders", orders);
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
     }
+
+
+    @PostMapping("/changeOrderStatus/{orderId}")
+    public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
+        try {
+            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
+            if (orderDTO != null) {
+                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders());
+                orderService.updateOrderDTO(orderId, orderDTO);
+                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Błąd przy zmianie statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

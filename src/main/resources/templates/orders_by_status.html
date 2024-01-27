@@ -2,19 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <script src="/script.js"></script>
     <title>Zamówienia według statusu</title>
     <!-- Dodaj linki do CSS jeśli są potrzebne -->
+    <script>
+        function changeOrderStatus(orderId) {
+            var newStatus = document.getElementById('statusSelect' + orderId).value;
+            if(newStatus) {
+                fetch('/admin/changeOrderStatus/' + orderId + '?newStatus=' + newStatus, {
+                    method: 'POST',
+                    // Dodaj potrzebne nagłówki, jeśli są wymagane
+                }).then(response => {
+                    if(response.ok) {
+                        alert('Status zamówienia został zaktualizowany.');
+                        location.reload(); // Odśwież stronę, aby zobaczyć zmiany
+                    } else {
+                        alert('Wystąpił problem podczas aktualizacji statusu zamówienia.');
+                    }
+                });
+            }
+        }
+    </script>
 </head>
 <body>
 <h1>Zamówienia według statusu</h1>
 
 <form action="#" th:action="@{/orders/byStatus}" method="get">
     <select name="status">
+        <option value="CANCELED">Anulowane</option>
         <option value="NEW_ORDER">Nowe zamówienie</option>
-        <option value="PROCESSED">Przetworzone</option>
+        <option value="PROCESSED">W trakcie realizacji</option>
         <option value="SENT">Wysłane</option>
         <option value="DELIVERED">Dostarczone</option>
-        <option value="CANCELED">Anulowane</option>
     </select>
     <button type="submit">Filtruj</button>
 </form>
@@ -26,7 +45,7 @@
         <th>Data utworzenia</th>
         <th>Status</th>
         <th>Łączna cena</th>
-        <!-- Można dodać więcej kolumn zależnie od potrzeb -->
+        <th>Akcja</th> <!-- Dodaj kolumnę dla akcji -->
     </tr>
     </thead>
     <tbody>
@@ -35,7 +54,15 @@
         <td th:text="${order.dateCreated}">Data utworzenia</td>
         <td th:text="${order.orderStatus}">Status</td>
         <td th:text="${order.totalPrice}">Łączna cena</td>
-        <!-- Można dodać więcej kolumn zależnie od potrzeb -->
+        <td>
+            <select id="statusSelect[[${order.id}]]">
+                <option value="">Zmień status...</option>
+                <option th:each="status : ${T(com.example.projektsklep.model.enums.OrderStatus).values()}"
+                        th:value="${status}"
+                        th:text="${status}">Status</option>
+            </select>
+            <button type="button" onclick="changeOrderStatus([[${order.id}]])">Zmień</button>
+        </td>
     </tr>
     </tbody>
 </table>
