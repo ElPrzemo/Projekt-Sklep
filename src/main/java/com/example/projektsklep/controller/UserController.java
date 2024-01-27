@@ -1,8 +1,8 @@
 package com.example.projektsklep.controller;
 
-
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
+import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,18 +18,14 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-
-
-    private UserService userService;
-
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public String listUsers(Model model,
-                            @RequestParam(defaultValue = "0") int page,
+    public String listUsers(Model model, @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserDTO> userPage = userService.findAllUsers(pageable);
@@ -41,31 +37,43 @@ public class UserController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Optional<UserDTO> userDTO = userService.findUserById(id);
         userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
-        return userDTO.isPresent() ? "user_edit" : "redirect:/users"; // Zmieniona nazwa na "user_edit"
+        return userDTO.isPresent() ? "user_edit" : "redirect:/users";
     }
 
-
+    @PostMapping("/edit/{id}")
+    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
+        userService.updateUserProfileOrAdmin(id, userDTO, false); // false oznacza, że nie jest to admin
+        return "redirect:/users";
+    }
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
-        model.addAttribute("userDTO", UserDTO.builder()
-                .email("")
-                .firstName("")
-                .lastName("")
-                .address(new AddressDTO(null, "", "", "", "")) // Pusty adres
-                .build());
+        // Tworzenie obiektu AddressDTO z dostępnym konstruktorem
+        AddressDTO addressDTO = new AddressDTO(1L, "Ulica", "Miasto", "Kod pocztowy", "Kraj");
+
+        // Tworzenie obiektu UserDTO z dostępnym konstruktorem
+        UserDTO userDTO = new UserDTO(1L, "Imię", "Nazwisko", "Email", 123, "Hasło", addressDTO);
+
+        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("addressDTO", addressDTO);
+        model.addAttribute("roles", AdminOrUser.values());
         return "user_register";
     }
-    @PostMapping("/register")
-    public String createUser(@ModelAttribute UserDTO userDTO, @ModelAttribute AddressDTO addressDTO) {
-        UserDTO newUserDTO = userService.createUserDTO(userDTO, addressDTO);
-        userService.saveUser(newUserDTO);
-        return "redirect:/registration-success";
+    @PostMapping("/new")
+    public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
+        // Pobieramy AddressDTO i rolę z modelu
+        AddressDTO addressDTO = (AddressDTO) model.getAttribute("addressDTO");
+        AdminOrUser role = (AdminOrUser) model.getAttribute("role");
+
+        // Używamy przekazanych obiektów userDTO, addressDTO i roli
+        userService.saveUser(userDTO, addressDTO, role);
+
+        return "redirect:/users/registration-success";
     }
 
     @GetMapping("/registration-success")
     public String registrationSuccess(Model model) {
-        model.addAttribute("message", "Użytkownik zarejestrowany, sprawdź potwierdzenie na mailu");
+        model.addAttribute("message", "Użytkownik zarejestrowany pomyślnie");
         return "registration_success";
     }
 
@@ -79,15 +87,15 @@ public class UserController {
     public String findUserByEmail(@RequestParam String email, Model model) {
         Optional<UserDTO> userDTO = userService.findUserByEmail(email);
         userDTO.ifPresent(dto -> model.addAttribute("user", dto));
-        return userDTO.isPresent() ? "user_details" : "redirect:/users"; // Zmieniona nazwa na "user_details"
+        return userDTO.isPresent() ? "user_details" : "redirect:/users";
     }
-
 
     @GetMapping("/search/name")
     public String findUsersByName(@RequestParam String name, Model model) {
         List<UserDTO> users = userService.findUsersByName(name);
         model.addAttribute("users", users);
-        return "users_list"; // Załóżmy, że "users_list" to widok listy użytkowników
+        return "users_list";
     }
 
+    // Tutaj można dodać inne metody potrzebne dla kontrolera
 }

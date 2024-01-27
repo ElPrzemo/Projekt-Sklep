@@ -1,9 +1,6 @@
 package com.example.projektsklep.controller;
 
-import com.example.projektsklep.model.dto.AddressDTO;
-import com.example.projektsklep.model.dto.AuthorDTO;
-import com.example.projektsklep.model.dto.OrderDTO;
-import com.example.projektsklep.model.dto.UserDTO;
+import com.example.projektsklep.model.dto.*;
 import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.AuthorService;
@@ -81,6 +78,11 @@ public class AdminController {
         Page<AuthorDTO> authorPage = authorService.findAllAuthors(pageable);
         model.addAttribute("authorPage", authorPage);
         return "admin_author_list";
+    }
+    @GetMapping("/addProduct")
+    public String showAddProductForm(Model model) {
+        model.addAttribute("productDTO", new ProductDTO(null, null, null, "", "", "", null, null)); // Użyj wartości domyślnych lub null
+        return "product_add";
     }
 
 

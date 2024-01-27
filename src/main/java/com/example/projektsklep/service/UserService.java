@@ -3,15 +3,20 @@ package com.example.projektsklep.service;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.entities.adress.Address;
+import com.example.projektsklep.model.entities.role.Role;
 import com.example.projektsklep.model.entities.user.User;
+import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.model.repository.AddressRepository;
 import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,12 +44,20 @@ public class UserService {
                 .map(this::convertToUserDTO);
     }
 
-    public UserDTO saveUser(UserDTO userDTO) {
+    public UserDTO saveUser(UserDTO userDTO, AddressDTO addressDTO, AdminOrUser role) {
         User user = convertToUser(userDTO);
-        Address address = addressService.convertToEntity(userDTO.address());
+        Address address = addressService.convertToEntity(addressDTO);
         address = addressRepository.save(address);
         user.setAddress(address);
+
+        // Przypisanie roli użytkownikowi
+        Set<Role> roles = new HashSet<>();
+        Role userRole = Role.fromAdminOrUser(role);
+        roles.add(userRole);
+        user.setRoles(roles);
+
         user = userRepository.save(user);
+
         return convertToUserDTO(user);
     }
 
