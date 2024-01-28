@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -84,23 +85,17 @@ public class ProductService {
 
         return product;
     }
-    public Page<ProductDTO> searchProducts(String searchTerm) {
-        // Utwórz obiekt Pageable z wartościami domyślnymi (0 strona, 10 elementów na stronę)
-        Pageable pageable = PageRequest.of(0, 10);
+    public Page<ProductDTO> searchProducts(String searchTerm, Long categoryId, Double minPrice, Double maxPrice, Long authorId, Pageable pageable) {
+        BigDecimal minPriceDecimal = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
+        BigDecimal maxPriceDecimal = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
 
-        // Znajdź wszystkie produkty, których tytuł zawiera wyszukiwany termin
-        List<Product> products = productRepository.findAllByTitleContainingIgnoreCase(searchTerm);
+        // Metoda zwraca teraz Page<Product>
+        Page<Product> productPage = productRepository.findAllWithCriteria(
+                searchTerm, minPriceDecimal, maxPriceDecimal, categoryId, authorId, pageable
+        );
 
-        // Konwertuj produkty na obiekty ProductDTO
-        List<ProductDTO> productDTOs = products.stream()
-                .map(this::convertToProductDTO)
-                .collect(Collectors.toList());
-
-        // Utwórz obiekt Page<ProductDTO> z przekonwertowanymi produktami
-        Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOs, pageable, products.size());
-
-        // Zwróc obiekt Page<ProductDTO>
-        return productDTOPage;
+        // Konwertowanie wyników do Page<ProductDTO>
+        return productPage.map(this::convertToProductDTO);
     }
 
 

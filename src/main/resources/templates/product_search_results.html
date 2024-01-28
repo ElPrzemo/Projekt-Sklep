@@ -1,39 +1,23 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Wyniki wyszukiwania</title>
 </head>
 <body>
 <h1>Wyniki wyszukiwania</h1>
-
-<table class="table">
-    <thead>
+<table>
     <tr>
         <th>Nazwa produktu</th>
         <th>Cena</th>
-        <th>Dostępność</th>
+        <!-- Dodaj inne kolumny, które są potrzebne -->
     </tr>
-    </thead>
-    <tbody>
-    @foreach(ProductDTO product in productsPage. Content)
-    <tr>
-        <td>{{ product.name }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.availability }}</td>
+    <tr th:each="product : ${productsPage.content}">
+        <td th:text="${product.title}"></td>
+        <td th:text="${product.price}"></td>
+        <!-- Wypełnij inne pola -->
     </tr>
-    @endforeach
-    </tbody>
 </table>
 
-<div class="paginator">
-    @if(productsPage.hasPrevious())
-    <a href="/products/search?page={{$productsPage.previousPage}}&searchTerm={{$searchTerm}}" class="btn btn-primary">Poprzednia</a>
-    @endif
-
-    @if(productsPage.hasNext())
-    <a href="/products/search?page={{$productsPage.nextPage}}&searchTerm={{$searchTerm}}" class="btn btn-primary">Następna</a>
-    @endif
-</div>
+<!-- Dodaj paginację -->
 </body>
 </html>

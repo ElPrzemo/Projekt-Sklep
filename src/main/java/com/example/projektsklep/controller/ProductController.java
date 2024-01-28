@@ -76,47 +76,29 @@ public class ProductController {
         return "redirect:/products";
     }
     @GetMapping("/search")
-    public String searchProducts(@RequestParam(name = "searchTerm", required = false) String searchTerm,
-                                 @RequestParam(name = "viewType", defaultValue = "grid") String viewType,
-                                 @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                                 @RequestParam(name = "gridSize", defaultValue = "20") int gridSize,
-                                 @RequestParam(name = "page", defaultValue = "0")int page,
-                                 Model model) {
+    public String searchProducts(
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "minPrice", required = false) Double minPrice,
+            @RequestParam(name = "maxPrice", required = false) Double maxPrice,
+            @RequestParam(name = "authorId", required = false) Long authorId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            Model model) {
 
-        Page<ProductDTO> results;
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            // Wyszukaj produkty pasujące do wyszukiwanego terminu
-            results = productService.searchProducts(searchTerm);
-        } else {
-            // Pobierz wszystkie produkty, jeśli nie podano terminu wyszukiwania
-            results = productService.findAllProductDTOs(PageRequest.of(page, pageSize));
-        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<ProductDTO> productDTOPage = productService.searchProducts(searchTerm, categoryId, minPrice, maxPrice, authorId, pageable);
 
-        Pageable pageable;
-        if (viewType.equals("list")) {
-            pageable = PageRequest.of(page, pageSize);
-        } else { // Dla widoku grid
-            pageable = PageRequest.of(page, gridSize);
-        }
-        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
-        List<ProductDTO> productsPage = productPage.toList();
-        model.addAttribute("productsPage", productsPage);
-        model.addAttribute("currentViewType", viewType);
+        model.addAttribute("productsPage", productDTOPage);
         model.addAttribute("searchTerm", searchTerm);
-        model.addAttribute("page", page);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("gridSize", gridSize);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("authorId", authorId);
+        // Dodaj inne atrybuty potrzebne dla formularza
 
-        return "products_list";
+        return "product_search_form"; // Nazwa widoku Thymeleaf
     }
-
-
-
-
-
-
-
-
 
 }
 
