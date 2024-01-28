@@ -5,6 +5,7 @@ import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.AuthorService;
 import com.example.projektsklep.service.OrderService;
+import com.example.projektsklep.service.ProductService;
 import com.example.projektsklep.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,10 +27,14 @@ public class AdminController {
     private final OrderService orderService;
     private final AuthorService authorService;
 
-    public AdminController(UserService userService, OrderService orderService, AuthorService authorService) {
+    private final ProductService productService;
+
+
+    public AdminController(UserService userService, OrderService orderService, AuthorService authorService, ProductService productService) {
         this.userService = userService;
         this.orderService = orderService;
         this.authorService = authorService;
+        this.productService = productService;
     }
 
     @GetMapping("/user_search")
@@ -79,12 +84,18 @@ public class AdminController {
         model.addAttribute("authorPage", authorPage);
         return "admin_author_list";
     }
-    @GetMapping("/addProduct")
+    @GetMapping("/add")
     public String showAddProductForm(Model model) {
-        model.addAttribute("productDTO", new ProductDTO(null, null, null, "", "", "", null, null)); // Użyj wartości domyślnych lub null
-        return "product_add";
+        ProductDTO productDTO = productService.createDefaultProductDTO();
+        model.addAttribute("product", productDTO);
+        return "add_product";
     }
 
+    @PostMapping("/add")
+    public String addProduct(@ModelAttribute ProductDTO productDTO) {
+        productService.saveProductDTO(productDTO);
+        return "redirect:/products";
+    }
 
     @GetMapping("/ordersByStatus")
     public String getOrdersByStatus(@RequestParam OrderStatus orderStatus, Model model) {

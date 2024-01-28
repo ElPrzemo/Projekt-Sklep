@@ -98,6 +98,16 @@ public class ProductService {
         return productPage.map(this::convertToProductDTO);
     }
 
+    public ProductDTO createDefaultProductDTO() {
+        return ProductDTO.builder()
+                .id(null)
+                .title("")
+                .description("")
+                .miniature("")
+                .price(BigDecimal.ZERO)
+                .productType(ProductType.DEFAULT_TYPE) // Zakładam, że ProductType.DEFAULT_TYPE to jakaś domyślna wartość.
+                .build();
+    }
 
 
 }

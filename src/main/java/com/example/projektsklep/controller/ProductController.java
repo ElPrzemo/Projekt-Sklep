@@ -50,11 +50,7 @@ public class ProductController {
 
 
 
-    @PostMapping("/add")
-    public String addProduct(@ModelAttribute ProductDTO productDTO) {
-        productService.saveProductDTO(productDTO);
-        return "redirect:/products";
-    }
+
 
 
     @GetMapping("/basket/add/{productId}")

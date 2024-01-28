@@ -77,11 +77,7 @@ public class UserController {
         return "registration_success";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUserById(id);
-        return "redirect:/users";
-    }
+
 
     @GetMapping("/search/email")
     public String findUserByEmail(@RequestParam String email, Model model) {
