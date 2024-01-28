@@ -14,10 +14,16 @@ public record UserDTO(
         String password, // added
         AddressDTO address
 ) {
+
     public UserDTO {
         Objects.requireNonNull(id);
         Objects.requireNonNull(email);
         Objects.requireNonNull(firstName);
         Objects.requireNonNull(lastName);
+
     }
+
+
+
+
 }

@@ -4,16 +4,35 @@
     <title>Product Grid</title>
     <!-- Dodaj odpowiednie style CSS -->
 </head>
+<header>
+    <h1>Sklep z karmą dla psów</h1>
+</header>
 <body>
 <h1>Product Grid</h1>
 <div>
     <a href="?viewType=list">Switch to List View</a>
 </div>
 <div class="product-grid">
-    <div th:each="product : ${products}" class="product">
-        <h2 th:text="${product.title}"></h2>
-        <!-- Dodaj inne informacje o produkcie -->
+    <main>
+        <section class="products">
+            <h2>Produkty</h2>
+            <ul>
+                <li th:each="product : ${products}">
+                    <a th:href="@{/product/{id}(id=${product.id})}">
+                        <img th:src="${product.imageUrl}" alt="${product.name}">
+                        <h3 th:text="${product.name}"></h3>
+                        <p th:text="${product.description}"></p>
+                        <p th:text="${product.price} zł"></p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </main>
+
     </div>
+<footer>
+    <p>Copyright &copy; 2023</p>
+</footer>
 </div>
 </body>
 </html>

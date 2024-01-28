@@ -1,6 +1,6 @@
 <form action="#" th:action="@{/searchProducts}" method="get" th:object="${searchCriteria}">
     <!-- Pole do wyszukiwania po fragmencie tytułu -->
-    <label for="title">Tytuł:</label>
+    <label for="title">Tytul:</label>
     <input type="text" id="title" name="title" th:field="*{title}" />
 
     <!-- Pole do wyboru kategorii (dropdown) -->
