@@ -1,8 +1,9 @@
 package com.example.projektsklep.model.dto;
 
 
-import com.example.projektsklep.model.entities.product.AuthorEmbeddable;
-import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
+
+import com.example.projektsklep.model.entities.product.Author;
+import com.example.projektsklep.model.entities.product.Category;
 import com.example.projektsklep.model.enums.ProductType;
 import lombok.Builder;
 
@@ -30,11 +31,11 @@ public record ProductDTO(
         Objects.requireNonNull(price);
         Objects.requireNonNull(productType);
     }
-    public AuthorEmbeddable getAuthor() {
-        return authorId != null ? new AuthorEmbeddable() : null;
+    public Author getAuthor() {
+        return authorId != null ? new Author() : null;
     }
 
-    public CategoryEmbeddable getCategory() {
-        return categoryId != null ? new CategoryEmbeddable(categoryId) : null;
+    public Category getCategory() {
+        return categoryId != null ? new Category() : null;
     }
 }

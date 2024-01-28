@@ -1,7 +1,8 @@
 package com.example.projektsklep.controller;
 
 import ch.qos.logback.core.model.Model;
-import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
+
+import com.example.projektsklep.model.entities.product.Category;
 import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.model.repository.CategoryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ public class CategoryTreeController {
     @GetMapping("/categorytree")
     public List<Object> getCategoryTree() {
         return categoryRepository.findAll().stream()
-                .map(CategoryEmbeddable::toTreeDTO)
+                .map(Category::toTreeDTO)
                 .collect(Collectors.toList());
     }
 

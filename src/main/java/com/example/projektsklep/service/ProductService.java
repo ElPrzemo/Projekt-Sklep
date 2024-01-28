@@ -2,21 +2,18 @@ package com.example.projektsklep.service;
 
 
 import com.example.projektsklep.model.dto.ProductDTO;
-import com.example.projektsklep.model.entities.product.AuthorEmbeddable;
-import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
+
+import com.example.projektsklep.model.entities.product.Author;
+import com.example.projektsklep.model.entities.product.Category;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.enums.ProductType;
 import com.example.projektsklep.model.repository.ProductRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ProductService {
@@ -75,11 +72,12 @@ public class ProductService {
         product.setPrice(productDTO.price());
         product.setProductType(productDTO.productType());
 
-        AuthorEmbeddable author = new AuthorEmbeddable();
+        Author author = new Author();
         author.setId(productDTO.authorId());
         product.setAuthor(author);
 
-        CategoryEmbeddable category = new CategoryEmbeddable();
+        // Pass categoryId as a parameter to this method
+        Category category = new Category();
         category.setId(productDTO.categoryId());
         product.setCategory(category);
 

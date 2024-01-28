@@ -1,18 +1,19 @@
 package com.example.projektsklep.model.entities.product;
 
-
-
 import com.example.projektsklep.model.enums.ProductType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-
+import java.time.LocalDate;
 
 @Entity
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "products")
 public class Product {
 
@@ -20,39 +21,24 @@ public class Product {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id;
 
- @ManyToOne
+ @ManyToOne // Establish the many-to-one relationship with Author
  @JoinColumn(name = "author_id")
- private AuthorEmbeddable author;
+ private Author author;
 
- @ManyToOne
+ @ManyToOne // Establish the many-to-one relationship with Category
  @JoinColumn(name = "category_id")
- private CategoryEmbeddable category;
+ private Category category;
 
  private String title;
-
  private String description;
-
  private String miniature;
-
  private BigDecimal price;
-
  private ProductType productType;
-
  private boolean published;
 
- private int quantity;
+ @Column(name = "date_created")
+ @DateTimeFormat(pattern = "yyyy-MM-dd")
+ private LocalDate dateCreated;
 
- public Product() {
- }
-
- public Product(String title, String description, String miniature, AuthorEmbeddable author, CategoryEmbeddable category, BigDecimal price, ProductType productType, int quantity) {
-  this.title = title;
-  this.description = description;
-  this.miniature = miniature;
-  this.author = author;
-  this.category = category;
-  this.price = price;
-  this.productType = productType;
-  this.quantity = quantity;
- }
+ // Constructors, getters, and setters...
 }

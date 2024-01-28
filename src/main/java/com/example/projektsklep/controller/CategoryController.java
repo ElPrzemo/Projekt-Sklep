@@ -4,20 +4,14 @@ package com.example.projektsklep.controller;
 
 import com.example.projektsklep.model.dto.CategoryDTO;
 import com.example.projektsklep.model.entities.product.Category;
-import com.example.projektsklep.model.entities.product.CategoryEmbeddable;
+
 import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
-
 
 
 @Controller
@@ -47,7 +41,7 @@ public class CategoryController {
     public String addCategory(@ModelAttribute CategoryDTO categoryDTO) {
         Category category = new Category();
         category.setName(categoryDTO.name());
-        // Ustaw parentCategory, jeśli jest wymagane
+        // You may need to set the parentCategory if required
         categoryService.addCategory(category);
         return "redirect:/categories";
     }
