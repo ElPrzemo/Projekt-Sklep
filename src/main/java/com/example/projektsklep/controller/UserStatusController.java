@@ -1,4 +1,4 @@
-package com.example.projektsklep.config;
+package com.example.projektsklep.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

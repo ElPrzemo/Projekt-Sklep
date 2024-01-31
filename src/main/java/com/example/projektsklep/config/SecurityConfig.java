@@ -44,13 +44,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
 
-                        .requestMatchers(new AntPathRequestMatcher("/products")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/home")).permitAll()
                         .requestMatchers("/admin").hasAnyRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/user/login")
                         .loginProcessingUrl("/user/login")
-                        .defaultSuccessUrl("/products")
+                        .defaultSuccessUrl("/home")
 //                        .successForwardUrl("/products")
                         .failureForwardUrl("/error")
                         .permitAll())

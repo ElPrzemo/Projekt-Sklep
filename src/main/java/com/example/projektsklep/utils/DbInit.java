@@ -54,18 +54,18 @@ public class DbInit {
 
         // Create users (you can add more users as needed)
         User henryk = User.builder()
-                .firstName("Henryk")
-                .lastName("Wąsik")
-                .email("henryk@example.com")
-                .passwordHash(passwordEncoder.encode("henryk"))
+                .firstName("user")
+                .lastName("user")
+                .email("user@example.com")
+                .passwordHash(passwordEncoder.encode("user"))
                 .roles(Set.of(savedUserRole))
                 .build();
 
         User karol = User.builder()
-                .firstName("Mariusz")
-                .lastName("Kamiński")
-                .email("karol@example.com")
-                .passwordHash(passwordEncoder.encode("maciej"))
+                .firstName("admin")
+                .lastName("admin")
+                .email("admin@example.com")
+                .passwordHash(passwordEncoder.encode("admin"))
                 .roles(Set.of(savedAdminRole))
                 .build();
 
