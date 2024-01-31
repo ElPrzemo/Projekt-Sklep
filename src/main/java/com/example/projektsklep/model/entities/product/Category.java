@@ -3,11 +3,14 @@ package com.example.projektsklep.model.entities.product;
 import com.example.projektsklep.model.dto.CategoryTreeDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Data
 @Entity
+
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +24,14 @@ public class Category {
 
     @OneToMany(mappedBy = "parentCategory")
     private List<Category> children;
+
+    public Category() {
+        // Domyślny konstruktor
+    }
+
+    public Category(String name) {
+        this.name = name;
+    }
 
     public List<Category> getChildren() {
         return children;

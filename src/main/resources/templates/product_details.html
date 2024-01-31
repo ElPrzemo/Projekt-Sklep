@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Szczegóły Produktu</title>
+</head>
+<body>
+<h1 th:text="${product.title}">Nazwa Produktu</h1>
+<p><strong>Opis:</strong> <span th:text="${product.description}">Opis produktu</span></p>
+<p><strong>Cena:</strong> <span th:text="${product.price}">Cena</span></p>
+<p><strong>Typ:</strong> <span th:text="${product.productType}">Typ produktu</span></p>
+<p><strong>Miniatura:</strong> <img th:src="@{${product.miniature}}" alt="Miniatura produktu" /></p>
+<p><strong>Opublikowany:</strong> <span th:text="${product.published} ? 'Tak' : 'Nie'">Status publikacji</span></p>
+<button onclick="location.href='/add-to-cart/'  ${product.id}">Kup</button>
+<a href="/products">Powrót do listy produktów</a>
+</body>
+</html>

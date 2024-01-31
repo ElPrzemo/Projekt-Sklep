@@ -44,6 +44,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
 
+                        .requestMatchers("/api/user/status").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/home")).permitAll()
                         .requestMatchers("/admin").hasAnyRole("ADMIN")
                         .anyRequest().authenticated())

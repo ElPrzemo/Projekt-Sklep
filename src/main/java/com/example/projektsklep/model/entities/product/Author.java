@@ -2,8 +2,11 @@ package com.example.projektsklep.model.entities.product;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
+
 @Entity
 public class Author {
 
@@ -13,5 +16,13 @@ public class Author {
 
     @Column(name = "name")
     private String name;
+
+    public Author() {
+        // Domyślny konstruktor
+    }
+
+    public Author(String name) {
+        this.name = name;
+    }
 
 }

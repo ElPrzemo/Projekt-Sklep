@@ -30,25 +30,34 @@ public class ProductController {
     }
 
     // W ProductController
-    @GetMapping
-    public String listProducts(@RequestParam(name = "viewType", defaultValue = "grid") String viewType,
-                               @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                               @RequestParam(name = "gridSize", defaultValue = "20") int gridSize,
-                               @RequestParam(name = "page", defaultValue = "0") int page,
-                               Model model) {
-        Pageable pageable;
-        if (viewType.equals("list")) {
-            pageable = PageRequest.of(page, pageSize);
-        } else { // Dla widoku grid
-            pageable = PageRequest.of(page, gridSize);
+
+
+
+        @GetMapping
+        public String listProducts(@RequestParam(name = "viewType", defaultValue = "list") String viewType,
+                                   @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                                   @RequestParam(name = "gridSize", defaultValue = "20") int gridSize,
+                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                   Model model) {
+            Pageable pageable = viewType.equals("list") ? PageRequest.of(page, pageSize) : PageRequest.of(page, gridSize);
+            Page<ProductDTO> productsPage = productService.findAllProductDTOs(pageable);
+
+            model.addAttribute("productsPage", productsPage);
+            model.addAttribute("currentViewType", viewType);
+            model.addAttribute("pageSize", pageSize);
+            model.addAttribute("gridSize", gridSize);
+
+            return viewType.equals("list") ? "products_list" : "products_grid";
         }
-        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
-        model.addAttribute("productsPage", productPage);
-        model.addAttribute("currentViewType", viewType);
-        return viewType.equals("list") ? "products_list" : "products_grid";
+
+
+
+    @GetMapping("/products/{productId}")
+    public String productDetails(@PathVariable Long productId, Model model) {
+        ProductDTO productDTO = productService.findProductDTOById(productId);
+        model.addAttribute("product", productDTO);
+        return "product_details";
     }
-
-
 
 
 

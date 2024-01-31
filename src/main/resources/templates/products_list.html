@@ -1,52 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Product List</title>
+    <title>Lista Produktów</title>
     <!-- Dodaj odpowiednie style CSS -->
 </head>
 <body>
-<h1>Product List</h1>
-<div>
-    <a href="?viewType=grid">Switch to Grid View</a>
+<h1>Lista Produktów</h1>
+
+<!-- Przełączanie widoku -->
+<!-- Używam th:href z konstrukcją @{...} dla dynamicznego generowania URL -->
+<a th:href="@{/products(viewType='list', gridSize=${gridSize}, page=${productsPage.number})}">Przełącz na widok listy</a>
 </div>
 
 <!-- Formularz do wyboru liczby produktów na stronie -->
 <form action="#" method="get">
-    <select name="size" onchange="this.form.submit()">
-        <option value="25" th:selected="${size == 25}">25</option>
-        <option value="50" th:selected="${size == 50}">50</option>
-        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
+    <select name="pageSize" onchange="this.form.submit()">
+        <option value="10" th:selected="${pageSize == 10}">10</option>
+        <option value="20" th:selected="${pageSize == 20}">20</option>
+        <!-- Dodatkowe opcje -->
     </select>
+    <input type="hidden" name="viewType" th:value="${currentViewType}">
 </form>
 
+<!-- Lista produktów -->
 <ul class="product-list">
     <li th:each="product : ${productsPage.content}">
         <h2 th:text="${product.title}"></h2>
-        <!-- Dodaj inne informacje o produkcie -->
+        <p><strong>Cena:</strong> <span th:text="${product.price}"></span></p>
+        <p><strong>Typ:</strong> <span th:text="${product.productType}"></span></p>
+        <a th:href="@{/products/{productId}(productId=${product.id})}">Szczegóły</a>
+        <button onclick="location.href='/add-to-cart/'  ${product.id}">Kup</button>
     </li>
 </ul>
 
-<!-- Tutaj możesz dodać elementy nawigacji stronicowej -->
+<!-- Paginacja -->
+<div>
+    <a th:if="${productsPage.hasPrevious()}" th:href="@{/products(page=${productsPage.number - 1}, size=${productsPage.size}, viewType=${currentViewType})}">Poprzednia strona</a>
+    <span th:text="${productsPage.number + 1}"></span> z <span th:text="${productsPage.totalPages}"></span>
+    <a th:if="${productsPage.hasNext()}" th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size}, viewType=${currentViewType})}">Następna strona</a>
+</div>
 
-<!-- Formularz do wyboru liczby produktów na stronie dla widoku listy -->
-<form th:if="${currentViewType == 'list'}" action="#" method="get">
-    <select name="pageSize" onchange="this.form.submit()">
-        <option value="10" th:selected="${pageSize == 10}">10</option>
-        <option value="25" th:selected="${pageSize == 25}">25</option>
-        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
-    </select>
-    <input type="hidden" name="viewType" value="list">
-</form>
-
-<!-- Formularz do wyboru liczby produktów na stronie dla widoku siatki -->
-<form th:if="${currentViewType == 'grid'}" action="#" method="get">
-    <select name="gridSize" onchange="this.form.submit()">
-        <option value="20" th:selected="${gridSize == 20}">20</option>
-        <option value="50" th:selected="${gridSize == 50}">50</option>
-        <!-- Możesz dodać więcej opcji jeśli potrzebujesz -->
-    </select>
-    <input type="hidden" name="viewType" value="grid">
-</form>
+<a href="/">Powrót do strony głównej</a>
 
 </body>
-</html>
