@@ -24,6 +24,11 @@ public record OrderDTO(
         Objects.requireNonNull(userId);
         Objects.requireNonNull(orderStatus);
         Objects.requireNonNull(dateCreated);
-        Objects.requireNonNull(lineOfOrders);
+        //Objects.requireNonNull(lineOfOrders);
+        if (lineOfOrders != null) {
+            for (LineOfOrderDTO lineOfOrder : lineOfOrders) {
+                Objects.requireNonNull(lineOfOrder);
+            }
+        }
     }
 }

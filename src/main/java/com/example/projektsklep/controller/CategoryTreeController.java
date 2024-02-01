@@ -1,9 +1,7 @@
 package com.example.projektsklep.controller;
 
-import ch.qos.logback.core.model.Model;
-
+import com.example.projektsklep.exception.CategoryTreeException;
 import com.example.projektsklep.model.entities.product.Category;
-import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.model.repository.CategoryRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,13 +20,17 @@ public class CategoryTreeController {
 
     @GetMapping("/categorytree")
     public List<Object> getCategoryTree() {
-        return categoryRepository.findAll().stream()
-                .map(Category::toTreeDTO)
-                .collect(Collectors.toList());
+        try {
+            return categoryRepository.findAll().stream()
+                    .map(Category::toTreeDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new CategoryTreeException("Error retrieving category tree", e);
+        }
     }
-
-
-
-
-
 }
+
+
+
+
+

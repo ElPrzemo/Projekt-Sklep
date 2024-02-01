@@ -47,11 +47,14 @@ public class OrderService {
             .collect(Collectors.toList());
   }
 
-  public OrderDTO updateOrderDTO(Long id, OrderDTO orderDTO) {
+  public boolean updateOrderDTO(Long id, OrderDTO orderDTO) {
     Order existingOrder = orderRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Order not found"));
     updateOrderData(existingOrder, orderDTO);
-    return convertToOrderDTO(orderRepository.save(existingOrder));
+
+    boolean updated = orderRepository.save(existingOrder) != null;
+    // Return true if the order was updated successfully, and false otherwise
+    return updated;
   }
 
   public List<Order> findAllOrdersByStatus(OrderStatus orderStatus) {
@@ -98,4 +101,5 @@ public class OrderService {
     // Aktualizacja innych pól, jeśli jest to konieczne
     // Na przykład aktualizacja linii zamówienia, jeśli struktura DTO to wymaga
   }
+
 }

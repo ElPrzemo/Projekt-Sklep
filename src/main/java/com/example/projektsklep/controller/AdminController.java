@@ -1,13 +1,15 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.exception.AdminControllerException;
 import com.example.projektsklep.model.dto.*;
 import com.example.projektsklep.model.entities.order.Order;
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
+import com.example.projektsklep.model.repository.UserRepository;
 import com.example.projektsklep.service.AuthorService;
 import com.example.projektsklep.service.OrderService;
 import com.example.projektsklep.service.ProductService;
 import com.example.projektsklep.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,13 +30,15 @@ public class AdminController {
     private final AuthorService authorService;
 
     private final ProductService productService;
+    private final UserRepository userRepository;
 
 
-    public AdminController(UserService userService, OrderService orderService, AuthorService authorService, ProductService productService) {
+    public AdminController(UserService userService, OrderService orderService, AuthorService authorService, ProductService productService, UserRepository userRepository) {
         this.userService = userService;
         this.orderService = orderService;
         this.authorService = authorService;
         this.productService = productService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/user_search")
@@ -109,15 +113,26 @@ public class AdminController {
     public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
         try {
             OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            if (orderDTO != null) {
-                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders());
-                orderService.updateOrderDTO(orderId, orderDTO);
-                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
-            } else {
+            if (orderDTO == null) {
                 return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
+            } else {
+                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders());
+                if (!orderService.updateOrderDTO(orderId, orderDTO)) {
+                    throw new AdminControllerException("Nie można zaktualizować statusu zamówienia");
+                }
+                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>("Błąd przy zmianie statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
+            if (e instanceof AdminControllerException) {
+                return new ResponseEntity<>(e.getMessage(), ((AdminControllerException) e).getStatus());
+            } else {
+                return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
     }
+
+
+
+
+
 }

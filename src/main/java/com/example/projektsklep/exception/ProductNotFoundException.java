@@ -1,4 +1,4 @@
-package com.example.projektsklep.service;
+package com.example.projektsklep.exception;
 
 public class ProductNotFoundException extends RuntimeException {
 

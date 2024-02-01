@@ -2,6 +2,7 @@ package com.example.projektsklep.controller;
 
 
 
+import com.example.projektsklep.exception.CategoryException;
 import com.example.projektsklep.model.dto.CategoryDTO;
 import com.example.projektsklep.model.entities.product.Category;
 
@@ -39,10 +40,15 @@ public class CategoryController {
 
     @PostMapping("/add")
     public String addCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        Category category = new Category();
-        category.setName(categoryDTO.name());
-        // You may need to set the parentCategory if required
-        categoryService.addCategory(category);
+        Category category;
+        try {
+            category = new Category();
+            category.setName(categoryDTO.name());
+            // You may need to set the parentCategory if required
+            categoryService.addCategory(category);
+        } catch (Exception e) {
+            throw new CategoryException("Error adding category", e);
+        }
         return "redirect:/categories";
     }
 

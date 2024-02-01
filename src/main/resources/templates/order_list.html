@@ -30,18 +30,16 @@
 </table>
 
 <!-- Elementy nawigacji paginacyjnej -->
-<div>
-    <ul>
-        <li th:if="${orderPage.hasPrevious()}">
-            <a th:href="@{/orders(page=${orderPage.number - 1}, size=${orderPage.size})}">Poprzednia</a>
-        </li>
+<div class="pagination-controls">
+    <a th:if="${orderPage.hasPrevious()}" class="page-link" th:href="@{/orders(page=${orderPage.number - 1}, size=${orderPage.size})}">Poprzednia</a>
+
+    <ul class="page-numbers">
         <li th:each="pageNum : ${#numbers.sequence(0, orderPage.totalPages - 1)}">
             <a th:href="@{/orders(page=${pageNum}, size=${orderPage.size})}" th:text="${pageNum + 1}"></a>
         </li>
-        <li th:if="${orderPage.hasNext()}">
-            <a th:href="@{/orders(page=${orderPage.number + 1}, size=${orderPage.size})}">Następna</a>
-        </li>
     </ul>
+
+    <a th:if="${orderPage.hasNext()}" class="page-link" th:href="@{/orders(page=${orderPage.number + 1}, size=${orderPage.size})}">Następna</a>
 </div>
 
 </body>

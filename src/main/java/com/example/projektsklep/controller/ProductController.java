@@ -2,12 +2,10 @@ package com.example.projektsklep.controller;
 
 import com.example.projektsklep.model.dto.ProductDTO;
 import com.example.projektsklep.model.entities.product.Product;
-import com.example.projektsklep.model.repository.ProductRepository;
 import com.example.projektsklep.service.BasketService;
-import com.example.projektsklep.service.ProductNotFoundException;
+import com.example.projektsklep.exception.ProductNotFoundException;
 import com.example.projektsklep.service.ProductService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -15,9 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
+@ControllerAdvice
 @RequestMapping("/products")
 public class ProductController {
 
@@ -96,5 +93,16 @@ public class ProductController {
         return "product_search_form"; // Nazwa widoku Thymeleaf
     }
 
+    @ExceptionHandler(ProductNotFoundException.class)
+    public String handleProductNotFound(Model model) {
+        model.addAttribute("error", "Produkt nie znaleziony");
+        return "product_not_found"; // Nazwa widoku błędu
+    }
+
+
 }
+
+
+
+
 
