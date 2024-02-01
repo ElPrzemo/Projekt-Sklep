@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Szczegóły zamówienia</title>
+    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+</head>
+<body>
+<h1>Szczegóły zamówienia</h1>
+
+<!-- Informacje o zamówieniu -->
+<div>
+    <p>ID zamówienia: <span th:text="${order.id}"></span></p>
+    <p>Status zamówienia: <span th:text="${order.orderStatus}"></span></p>
+    <p>Data utworzenia: <span th:text="${order.dateCreated}"></span></p>
+    <p>Całkowita cena: <span th:text="${order.totalPrice}"></span></p>
+    <!-- Dodaj inne informacje o zamówieniu, jeśli to potrzebne -->
+</div>
+
+<!-- Tabela z produktami w zamówieniu -->
+<table>
+    <thead>
+    <tr>
+        <th>Produkt</th>
+        <th>Ilość</th>
+        <th>Cena za sztukę</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="line : ${order.lineOfOrders}">
+        <td th:text="${line.product.title}"></td>
+        <td th:text="${line.quantity}"></td>
+        <td th:text="${line.unitPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Przycisk powrotu do listy zamówień -->
+<a href="/account/my_orders">Powrót do listy zamówień</a>
+</body>
+</html>

@@ -52,9 +52,13 @@ public class ProductController {
 
 
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/{productId}")
     public String productDetails(@PathVariable Long productId, Model model) {
         ProductDTO productDTO = productService.findProductDTOById(productId);
+        if (productDTO == null) {
+            // Można tu zwrócić stronę błędu lub przekierować na stronę z informacją, że produkt nie istnieje
+            return "error"; // Przykład nazwy widoku dla strony "Produkt nie znaleziony"
+        }
         model.addAttribute("product", productDTO);
         return "product_details";
     }

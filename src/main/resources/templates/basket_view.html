@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Koszyk</title>
+</head>
+<body>
+<h1>Koszyk</h1>
+<ul>
+    <li th:each="item : ${basket.lineOfOrders}">
+        <span th:text="${item.product.title}">Nazwa produktu</span>
+        <form th:action="@{/basket/update/{productId}(productId=${item.product.id})}" method="post">
+            <input type="number" name="quantity" th:value="${item.quantity}" />
+            <input type="submit" value="Aktualizuj" />
+        </form>
+        <form th:action="@{/basket/remove/{productId}(productId=${item.product.id})}" method="post">
+            <input type="submit" value="Usuń" />
+        </form>
+    </li>
+</ul>
+<a href="/basket/checkout">Przejdź do kasy</a>
+</body>
+</html>

@@ -35,4 +35,22 @@ public class BasketController {
         basketService.clear();
         return "redirect:/orders/success";
     }
+
+    @GetMapping
+    public String viewBasket(Model model) {
+        model.addAttribute("products", basketService.getProducts());
+        return "basket_view"; // nazwa pliku HTML Thymeleaf
+    }
+
+    @PostMapping("/update/{productId}")
+    public String updateProductQuantity(@PathVariable Long productId, @RequestParam("quantity") int quantity) {
+        basketService.updateProductQuantity(productId, quantity);
+        return "redirect:/basket";
+    }
+
+    @PostMapping("/remove/{productId}")
+    public String removeProductFromBasket(@PathVariable Long productId) {
+        basketService.removeProduct(productId);
+        return "redirect:/basket";
+    }
 }

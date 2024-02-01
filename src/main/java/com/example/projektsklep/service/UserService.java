@@ -101,7 +101,7 @@ public class UserService {
                 .build();
     }
 
-    private User convertToUser(UserDTO userDTO) {
+    public User convertToUser(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.id());
         user.setEmail(userDTO.email());

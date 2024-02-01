@@ -24,9 +24,10 @@
         <td th:text="${order.dateCreated}"></td>
         <td th:text="${order.sentAt}"></td>
         <td th:text="${order.totalPrice}"></td>
-        <!-- Dodaj więcej pól w zależności od struktury OrderDTO -->
+        <td><a th:href="@{/orders/{orderId}(orderId=${order.id})}">Szczegóły</a></td>
     </tr>
     </tbody>
 </table>
+<a href="/userPanel">Powrót do Panelu Użytkownika</a>
 </body>
 </html>

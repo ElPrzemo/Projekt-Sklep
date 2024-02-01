@@ -3,13 +3,16 @@ package com.example.projektsklep.controller;
 
 
 import com.example.projektsklep.model.dto.OrderDTO;
+import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
+import com.example.projektsklep.utils.Basket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -18,9 +21,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final BasketService basketService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, BasketService basketService) {
         this.orderService = orderService;
+        this.basketService = basketService;
     }
 
     @GetMapping
@@ -58,6 +63,19 @@ public class OrderController {
         List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
         model.addAttribute("orders", orders);
         return "orders_by_user";
+    }
+
+    @PostMapping("/create")
+    public String createOrderFromBasket(RedirectAttributes redirectAttributes) {
+        // Utwórz OrderDTO na podstawie aktualnego stanu koszyka
+        OrderDTO orderDTO = basketService.createOrderDTOFromBasket(basketService.createInitialOrderDTO());
+
+        // Utwórz zamówienie i wyczyść koszyk
+        basketService.placeOrder(orderDTO);
+        basketService.clear();
+
+        redirectAttributes.addFlashAttribute("success", "Zamówienie zostało złożone.");
+        return "redirect:/orders/confirmation";
     }
 
 }
