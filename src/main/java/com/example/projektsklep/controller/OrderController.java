@@ -6,6 +6,7 @@ import com.example.projektsklep.exception.OrderNotFoundException;
 import com.example.projektsklep.exception.OrderRetrievalException;
 import com.example.projektsklep.exception.OrderUpdateException;
 import com.example.projektsklep.model.dto.OrderDTO;
+import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -21,9 +23,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final BasketService basketService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, BasketService basketService) {
         this.orderService = orderService;
+        this.basketService = basketService;
     }
 
     @GetMapping
