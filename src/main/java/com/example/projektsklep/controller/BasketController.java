@@ -1,5 +1,6 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.exception.BasketException;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
@@ -30,10 +31,14 @@ public class BasketController {
 
     @PostMapping("/checkout")
     public String processCheckout(@ModelAttribute OrderDTO currentOrderDTO) {
-        OrderDTO updatedOrderDTO = basketService.createOrderDTOFromBasket(currentOrderDTO);
-        orderService.saveOrderDTO(updatedOrderDTO);
-        basketService.clear();
-        return "redirect:/orders/success";
+        try {
+            OrderDTO updatedOrderDTO = basketService.createOrderDTOFromBasket(currentOrderDTO);
+            orderService.saveOrderDTO(updatedOrderDTO);
+            basketService.clear();
+            return "redirect:/orders/success";
+        } catch (Exception e) {
+            throw new BasketException("Error processing checkout", e);
+        }
     }
 
     @GetMapping

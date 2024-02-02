@@ -1,5 +1,9 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.exception.DataAccessException;
+import com.example.projektsklep.exception.InvalidUserDataException;
+import com.example.projektsklep.exception.UserAlreadyExistsException;
+import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.AdminOrUser;
@@ -13,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@ControllerAdvice
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -35,14 +39,26 @@ public class UserController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<UserDTO> userDTO = userService.findUserById(id);
+        Optional<UserDTO> userDTO = userService.findUserById(id);if (!userDTO.isPresent()) {
+            throw new UserNotFoundException("Użytkownik o podanym ID nie istnieje");
+        }
         userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
         return userDTO.isPresent() ? "user_edit" : "redirect:/users";
     }
 
     @PostMapping("/edit/{id}")
-    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
-        userService.updateUserProfileOrAdmin(id, userDTO, false); // false oznacza, że nie jest to admin
+    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO,Model model) {
+        try {
+            userService.updateUserProfileOrAdmin(id, userDTO, false);
+        } catch (InvalidUserDataException e) {
+            // Dodanie obsługi błędnych danych użytkownika
+            model.addAttribute("error", e.getMessage());
+            return "user_edit";
+        } catch (DataAccessException e) {
+            // Dodanie obsługi błędów dostępu do bazy danych
+            model.addAttribute("error", "Wystąpił błąd podczas aktualizacji profilu");
+            return "user_edit";
+        } // false oznacza, że nie jest to admin
         return "redirect:/users";
     }
 
@@ -64,6 +80,21 @@ public class UserController {
         // Pobieramy AddressDTO i rolę z modelu
         AddressDTO addressDTO = (AddressDTO) model.getAttribute("addressDTO");
         AdminOrUser role = (AdminOrUser) model.getAttribute("role");
+        try {
+            userService.saveUser(userDTO, addressDTO, role);
+        } catch (UserAlreadyExistsException e) {
+            // Dodanie obsługi użytkownika o tym samym emailu
+            model.addAttribute("error", e.getMessage());
+            return "user_register";
+        } catch (InvalidUserDataException e) {
+            // Dodanie obsługi błędnych danych użytkownika
+            model.addAttribute("error", e.getMessage());
+            return "user_register";
+        } catch (DataAccessException e) {
+            // Dodanie obsługi błędów dostępu do bazy danych
+            model.addAttribute("error", "Wystąpił błąd podczas rejestracji");
+            return "user_register";
+        }
 
         // Używamy przekazanych obiektów userDTO, addressDTO i roli
         userService.saveUser(userDTO, addressDTO, role);
