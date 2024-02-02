@@ -13,6 +13,6 @@
 <p><strong>Miniatura:</strong> <img th:src="@{${product.miniature}}" alt="Miniatura produktu" /></p>
 <p><strong>Opublikowany:</strong> <span th:text="${product.published} ? 'Tak' : 'Nie'">Status publikacji</span></p>
 <button onclick="location.href='/add-to-cart/'  ${product.id}">Kup</button>
-<a href="/products">Powrót do listy produktów</a>
+<button onclick="history.back()">Powrót</button>
 </body>
 </html>

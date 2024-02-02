@@ -40,6 +40,6 @@
     <a th:if="${productsPage.hasNext()}" th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size}, viewType=${currentViewType})}">Następna strona</a>
 </div>
 
-<a href="/">Powrót do strony głównej</a>
+<button onclick="history.back()">Powrót</button>
 
 </body>
