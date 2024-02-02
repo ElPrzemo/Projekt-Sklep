@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Panel Admina</title>
+</head>
+<body>
+<h1>Panel Admina</h1>
+
+<!-- Przyciski nawigacyjne dla Admina -->
+<div>
+    <form action="/admin/authors" method="get">
+        <button type="submit">Lista Autorów</button>
+    </form>
+    <form action="/admin/ordersByStatus" method="get">
+        <button type="submit">Zamówienia według statusu</button>
+    </form>
+    <form action="/admin/user_search" method="get">
+        <button type="submit">Wyszukiwarka Użytkowników</button>
+    </form>
+    <form action="/admin/products/add" method="get">
+        <button type="submit">Dodaj Produkt</button>
+    </form>
+    <form action="/categories/add" method="get">
+        <button type="submit">Dodaj Kategorię</button>
+    </form>
+    <form action="/categories" method="get">
+        <button type="submit">Lista Kategorii</button>
+    </form>
+    <form action="/endpoint/home" method="get">
+        <button type="submit">Powrót do Strony Głównej</button>
+    </form>
+</div>
+
+</body>
+</html>

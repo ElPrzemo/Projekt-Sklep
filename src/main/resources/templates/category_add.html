@@ -5,4 +5,11 @@
         <option th:each="cat : ${allCategories}" th:value="${cat.id}" th:text="${cat.name}"></option>
     </select>
     <button type="submit">Dodaj Kategorię</button>
+
+    <div>
+        <form action="/adminPanel" method="get">
+            <button type="submit">Powrót do Panelu Admina</button>
+        </form>
+    </div>
+
 </form>

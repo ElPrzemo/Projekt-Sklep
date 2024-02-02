@@ -2,10 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dodaj Produkt</title>
-    <!-- Dodaj tu potrzebne skrypty i style -->
 </head>
 <body>
-<form th:action="@{/addProduct}" th:object="${product}" method="post">
+<form th:action="@{/admin/addProduct}" th:object="${product}" method="post">
     <div>
         <label for="title">Nazwa:</label>
         <input type="text" id="title" th:field="*{title}">

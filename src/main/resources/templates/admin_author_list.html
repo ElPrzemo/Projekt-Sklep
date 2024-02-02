@@ -6,7 +6,11 @@
 </head>
 <body>
 <h2>Authors List</h2>
-
+<div>
+    <form action="/admin/author" method="get">
+        <button type="submit">Dodaj Nowego Autora</button>
+    </form>
+</div>
 <!-- Formularz do wyboru rozmiaru strony -->
 <form action="#" method="get">
     <select name="size" onchange="this.form.submit()">
@@ -40,5 +44,11 @@
         </li>
     </ul>
 </div>
+<div>
+    <form action="/adminPanel" method="get">
+        <button type="submit">Powrót do Panelu Admina</button>
+    </form>
+</div>
+
 </body>
 </html>

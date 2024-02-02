@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -56,10 +57,24 @@ public class AdminController {
         return "admin_user_orders"; // widok zawierający listę zamówień danego użytkownika
     }
 
+    @GetMapping("/edit_user/{userId}")
+    public String showEditUserForm(@PathVariable Long userId, Model model) {
+        UserDTO userDTO = userService.findUserById(userId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
+
+        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
+                new AddressDTO(null, "", "", "", ""); // Utwórz instancję AddressDTO z pustymi stringami
+
+        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("addressDTO", addressDTO);
+
+        return "admin_user_edit_form"; // Nazwa Twojego pliku HTML formularza edycji użytkownika
+    }
     @PostMapping("/edit_user/{userId}")
-    public String updateUserAndAddress(@PathVariable Long userId, @ModelAttribute UserDTO userDTO,
+    public String updateUserAndAddress(@PathVariable Long userId,
+                                       @ModelAttribute UserDTO userDTO,
                                        @ModelAttribute AddressDTO addressDTO) {
-        userService.updateUserProfileOrAdmin(userId, userDTO, true); // isAdmin ustawione na true
+        userService.updateUserProfileAndAddress(userId, userDTO, addressDTO);
         return "redirect:/admin/users";
     }
 
@@ -84,17 +99,18 @@ public class AdminController {
         model.addAttribute("authorPage", authorPage);
         return "admin_author_list";
     }
-    @GetMapping("/add")
+    @GetMapping("/addProduct")
     public String showAddProductForm(Model model) {
         ProductDTO productDTO = productService.createDefaultProductDTO();
         model.addAttribute("product", productDTO);
-        return "add_product";
+        return "admin_add_product"; // Zaktualizuj nazwę widoku zgodnie z Twoją konwencją
     }
 
-    @PostMapping("/add")
+    // Metoda POST do przetwarzania dodawania produktu
+    @PostMapping("/addProduct")
     public String addProduct(@ModelAttribute ProductDTO productDTO) {
         productService.saveProductDTO(productDTO);
-        return "redirect:/products";
+        return "redirect:/admin/products"; // Przekierowanie do listy produktów po pomyślnym dodaniu
     }
 
     @GetMapping("/ordersByStatus")

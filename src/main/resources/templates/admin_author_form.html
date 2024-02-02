@@ -1,5 +1,22 @@
-<!-- admin_author_form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add/Edit Author</title>
+</head>
+<body>
+<h2>Add/Edit Author</h2>
+
 <form action="#" th:action="@{/admin/author}" th:object="${author}" method="post">
     <input type="text" th:field="*{name}" placeholder="Author Name"/>
     <button type="submit">Save Author</button>
 </form>
+
+<!-- Przycisk powrotu do listy autorów -->
+<div>
+    <form action="/admin/authors" method="get">
+        <button type="submit">Powrót do Listy Autorów</button>
+    </form>
+</div>
+
+</body>
+</html>

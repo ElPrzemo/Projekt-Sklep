@@ -88,6 +88,28 @@ public class UserService {
         return convertToUserDTO(existingUser);
     }
 
+    public void updateUserProfileAndAddress(Long userId, UserDTO userDTO, AddressDTO addressDTO) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Address address = user.getAddress();
+
+        // Aktualizacja danych użytkownika
+        user.setFirstName(userDTO.firstName());
+        user.setLastName(userDTO.lastName());
+        user.setEmail(userDTO.email());
+        // Ustawienie innych pól, pomijając hasło
+
+        // Aktualizacja adresu
+        if (address != null) {
+            address.setStreet(addressDTO.street());
+            address.setCity(addressDTO.city());
+            address.setPostalCode(addressDTO.postalCode());
+            address.setCountry(addressDTO.country());
+            addressRepository.save(address);
+        }
+
+        userRepository.save(user);
+    }
+
     // Metody pomocnicze...
 
     private UserDTO convertToUserDTO(User user) {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Elegancki sklep!</title>
+</head>
+<body>
+<h1>Elegancki sklep!</h1>
+
+<div>
+    <form action="/login" method="get">
+        <button type="submit">Logowanie</button>
+    </form>
+    <form action="/users/new" method="get">
+        <button type="submit">Rejestracja</button>
+    </form>
+</div>
+
+<div id="messageDiv"></div>
+
+<div>isAdmin: <span th:text="${isAdmin}"></span></div>
+<div>isUser: <span th:text="${isUser}"></span></div>
+
+<div>
+    <a href="/adminPanel">Admin panel</a>
+</div>
+
+<div>
+    <a href="/userPanel">Panel użytkownika</a>
+</div>
+
+<div th:if="${isAdmin}" id="adminPanel">
+    <a href="/adminPanel">Admin panel</a>
+</div>
+
+<div th:if="${isUser}" id="userPanel">
+    <a href="/userPanel">Panel użytkownika</a>
+</div>
+
+<div>
+    <button onclick="window.location.href='/products'">Lista produktów</button>
+    <button onclick="window.location.href='/products/search'">Wyszukiwarka produktów</button>
+    <button onclick="window.location.href='/categorytree'">Drzewo kategorii</button>
+    <button onclick="window.location.href='/categories'">Lista kategorii</button>
+    <button onclick="window.location.href='/weather'">Pogoda</button>
+</div>
+</body>
+</html>

@@ -1,18 +1,14 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Kod tutaj zostanie wykonany po załadowaniu całego dokumentu
-    // Możesz tutaj umieścić wszelkie inicjalizacje, które mają się wykonać po załadowaniu strony
+    // Tutaj możesz umieścić wszelkie inicjalizacje
 });
 
 function changeOrderStatus(orderId) {
-    var selectElement = document.getElementById('statusSelect' + orderId);
-    var newStatus = selectElement.value;
-
+    var newStatus = document.getElementById('statusSelect' + orderId).value;
     if(newStatus) {
         fetch('/admin/changeOrderStatus/' + orderId + '?newStatus=' + newStatus, {
             method: 'POST',
             headers: {
-                // Ustaw odpowiednie nagłówki, np. dla CSRF jeśli jest używany
-                // 'X-CSRF-TOKEN': 'Twój_Token_CSRF_Tutaj'
+                // 'X-CSRF-TOKEN': 'Twój_Token_CSRF_Tutaj' // Jeśli używasz CSRF
             }
         }).then(response => {
             if(response.ok) {

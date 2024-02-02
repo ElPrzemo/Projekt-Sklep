@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edycja Profilu Użytkownika</title>
+</head>
+<body>
+<h1>Edycja Profilu</h1>
+
+<!-- Formularz edycji danych użytkownika -->
+<form th:action="@{/admin/edit_user}" method="post">
+    <!-- Tutaj dodajemy pola formularza -->
+    <label for="firstName">Imię:</label>
+    <input type="text" id="firstName" th:field="*{firstName}" />
+
+    <label for="lastName">Nazwisko:</label>
+    <input type="text" id="lastName" th:field="*{lastName}" />
+
+    <!-- Pozostałe pola... -->
+
+    <button type="submit">Zapisz zmiany</button>
+</form>
+
+<button onclick="goBack()">Powrót</button>
+
+</body>
+</html>

@@ -2,13 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Kategorie</title>
-    <!-- Dodaj tu potrzebne skrypty i style -->
+    <script src="/js/navigation.js"></script>
 </head>
 <body>
 <div>
+    <h2>Lista Kategorii</h2>
     <ul>
         <li th:each="category : ${categories}">
             <span th:text="${category.name}">Nazwa Kategorii</span>
+            <!-- Guzik Edycji widoczny tylko dla admina -->
+            <button th:if="${isAdmin}" th:onclick="'window.location.href=\'/categories/edit/' + ${category.id} + '\''">Edytuj</button>
             <div th:if="${not #lists.isEmpty(category.subcategories)}">
                 <ul>
                     <li th:each="subCategory : ${category.subcategories}" th:text="${subCategory.name}">Podkategoria</li>
@@ -17,5 +20,8 @@
         </li>
     </ul>
 </div>
+
+<!-- Guzik powrotu do poprzedniej strony -->
+<button onclick="goBack()">Powrót</button>
 </body>
 </html>

@@ -6,13 +6,7 @@
 <body>
 <h1>Lista użytkowników</h1>
 
-<!-- Formularz do wyboru rozmiaru strony -->
-<form action="#" method="get">
-    <select name="size" onchange="this.form.submit()">
-        <option th:selected="${userPage.size == 25}" value="25">25</option>
-        <option th:selected="${userPage.size == 50}" value="50">50</option>
-    </select>
-</form>
+<!-- Tutaj pozostała część formularza i tabeli... -->
 
 <table>
     <thead>
@@ -20,6 +14,7 @@
         <th>Imię</th>
         <th>Nazwisko</th>
         <th>Email</th>
+        <th>Rola</th>
         <th>Akcje</th>
     </tr>
     </thead>
@@ -28,27 +23,18 @@
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
         <td th:text="${user.email}"></td>
+        <td> <!-- Tutaj założono, że rola jest dostępna i wyświetlana jako ciąg tekstowy -->
+            <span th:text="${user.roles}"></span>
+        </td>
         <td>
-            <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Pokaż zamówienia</a>
-            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}">Edytuj</a>
+            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}">Edytuj</a> |
+            <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Zamówienia</a>
         </td>
     </tr>
     </tbody>
 </table>
 
-<!-- Elementy nawigacji paginacyjnej -->
-<div>
-    <ul>
-        <li th:if="${userPage.hasPrevious()}">
-            <a th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size})}">Poprzednia</a>
-        </li>
-        <li th:each="pageNum : ${#numbers.sequence(0, userPage.totalPages - 1)}">
-            <a th:href="@{/users(page=${pageNum}, size=${userPage.size})}" th:text="${pageNum + 1}"></a>
-        </li>
-        <li th:if="${userPage.hasNext()}">
-            <a th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size})}">Następna</a>
-        </li>
-    </ul>
-</div>
+<button onclick="history.back()">Powrót</button>
+
 </body>
 </html>

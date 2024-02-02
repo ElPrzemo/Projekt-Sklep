@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Panel Użytkownika</title>
+</head>
+<body>
+<h1>Panel Użytkownika</h1>
+
+<!-- Przyciski nawigacyjne -->
+<div>
+    <form action="/basket" method="get">
+        <button type="submit">Koszyk</button>
+    </form>
+    <form action="/account/my_orders" method="get">
+        <button type="submit">Moje Zamówienia</button>
+    </form>
+    <form action="/users/edit" method="get">
+        <button type="submit">Edytuj Konto</button>
+    </form>
+    <form action="/" method="get">
+        <button type="submit">Powrót do Strony Głównej</button>
+    </form>
+</div>
+
+</body>
+</html>

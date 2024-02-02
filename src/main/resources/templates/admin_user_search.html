@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Wyszukiwanie użytkowników</title>
-    <!-- Dodaj potrzebne odniesienia do plików CSS -->
+    <script src="/js/navigation.js"></script> <!-- Zakładając, że mamy taki plik -->
 </head>
 <body>
 <h1>Wyszukiwanie użytkowników</h1>
@@ -11,5 +11,8 @@
     <input type="text" id="lastName" name="lastName" required>
     <button type="submit">Szukaj</button>
 </form>
+
+<button onclick="goBack()">Powrót</button>
+
 </body>
 </html>

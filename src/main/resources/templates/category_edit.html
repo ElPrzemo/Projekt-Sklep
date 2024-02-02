@@ -2,12 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edytuj Kategorię</title>
+    <script src="/js/navigation.js"></script>
 </head>
 <body>
+<h2>Edytuj Kategorię</h2>
 <form th:action="@{/categories/edit/{id}(id=${category.id})}" th:object="${category}" method="post">
-    <input type="text" th:field="*{name}" placeholder="Nazwa kategorii"/>
-    <!-- inne pola formularza -->
+    <label for="name">Nazwa kategorii:</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="Nazwa kategorii"/>
+    <!-- Tutaj dodaj inne pola formularza, jeśli są potrzebne -->
     <button type="submit">Zapisz Zmiany</button>
 </form>
+
+<!-- Guzik powrotu do listy kategorii -->
+<button onclick="goBack()">Powrót</button>
 </body>
 </html>
