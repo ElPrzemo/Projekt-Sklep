@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Wyszukiwanie użytkowników</h1>
-<form th:action="@{/admin/user_search}" method="post">
+<form action="/users/search" method="get">
     <label for="lastName">Nazwisko użytkownika:</label>
     <input type="text" id="lastName" name="lastName" required>
     <button type="submit">Szukaj</button>

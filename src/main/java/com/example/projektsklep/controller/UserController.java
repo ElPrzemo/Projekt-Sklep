@@ -5,18 +5,23 @@ import com.example.projektsklep.exception.InvalidUserDataException;
 import com.example.projektsklep.exception.UserAlreadyExistsException;
 import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.AddressDTO;
+import com.example.projektsklep.model.dto.RoleDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @ControllerAdvice
 @Controller
 @RequestMapping("/users")
@@ -67,12 +72,15 @@ public class UserController {
         // Tworzenie obiektu AddressDTO z dostępnym konstruktorem
         AddressDTO addressDTO = new AddressDTO(1L, "Ulica", "Miasto", "Kod pocztowy", "Kraj");
 
-        // Tworzenie obiektu UserDTO z dostępnym konstruktorem
-        UserDTO userDTO = new UserDTO(1L, "Imię", "Nazwisko", "Email", 123, "Hasło", addressDTO);
+        // Przygotowanie pustego zestawu ról
+        Set<RoleDTO> roles = Collections.emptySet(); // Lub null, jeśli Twoja logika to akceptuje
+
+        // Tworzenie obiektu UserDTO z dostępnym konstruktorem, uwzględniając puste rôle
+        UserDTO userDTO = new UserDTO(1L, "Imię", "Nazwisko", "Email", 123, "Hasło", addressDTO, roles);
 
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("addressDTO", addressDTO);
-        model.addAttribute("roles", AdminOrUser.values());
+        model.addAttribute("roles", AdminOrUser.values()); // Możesz potrzebować listy RoleDTO zamiast AdminOrUser, zależnie od Twojej implementacji
         return "user_register";
     }
     @PostMapping("/new")
@@ -110,18 +118,27 @@ public class UserController {
 
 
 
-    @GetMapping("/search/email")
-    public String findUserByEmail(@RequestParam String email, Model model) {
-        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
-        userDTO.ifPresent(dto -> model.addAttribute("user", dto));
-        return userDTO.isPresent() ? "user_details" : "redirect:/users";
+//    @GetMapping("/search/email")
+//    public String findUserByEmail(@RequestParam String email, Model model) {
+//        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
+//        userDTO.ifPresent(dto -> model.addAttribute("user", dto));
+//        return userDTO.isPresent() ? "user_details" : "redirect:/users";
+//    }
+
+
+
+    @GetMapping("/search")
+    public String searchUsersByLastName(@RequestParam String lastName, Model model) {
+        List<UserDTO> users = userService.findUsersByLastName(lastName);
+        model.addAttribute("users", users);
+        return "admin_user_list"; // Upewnij się, że "admin_user_list" to nazwa Twojego szablonu Thymeleaf
     }
 
-    @GetMapping("/search/name")
-    public String findUsersByName(@RequestParam String name, Model model) {
-        List<UserDTO> users = userService.findUsersByName(name);
-        model.addAttribute("users", users);
-        return "users_list";
+    @PostMapping("/search")
+    public String searchUsersByName(@RequestParam String name, Model model) {
+        List<UserDTO> users = userService.findUsersByLastName(name);
+        model.addAttribute("users", users); // Dopasuj klucz do tego, co jest używane w Thymeleaf
+        return "admin_user_list"; // Nazwa widoku zawierającego listę użytkowników
     }
 
     // Tutaj można dodać inne metody potrzebne dla kontrolera

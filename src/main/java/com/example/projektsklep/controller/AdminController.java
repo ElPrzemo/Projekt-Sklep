@@ -46,7 +46,7 @@ public class AdminController {
 
     @PostMapping("/user_search")
     public String showUserOrders(@RequestParam String lastName, Model model) {
-        List<UserDTO> users = userService.findUsersByName(lastName);
+        List<UserDTO> users = userService.findUsersByLastName(lastName);
         model.addAttribute("users", users);
         return "admin_user_list"; // widok z listą użytkowników pasujących do kryteriów wyszukiwania
     }

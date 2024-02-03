@@ -70,8 +70,8 @@ public class UserService {
                 .map(this::convertToUserDTO);
     }
 
-    public List<UserDTO> findUsersByName(String name) {
-        return userRepository.findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContaining(name, name).stream()
+    public List<UserDTO> findUsersByLastName(String lastName) {
+        return userRepository.findByLastNameIgnoreCaseContaining(lastName).stream()
                 .map(this::convertToUserDTO)
                 .collect(Collectors.toList());
     }
