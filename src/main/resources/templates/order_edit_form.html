@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Order</title>
-    <!-- Dodaj linki do CSS, jeśli potrzebne -->
 </head>
 <body>
 <h1>Edit Order</h1>
@@ -10,10 +9,7 @@
     <div>
         <label for="status">Order Status:</label>
         <select id="status" th:field="*{orderStatus}">
-            <option th:each="status : ${statuses}"
-                    th:value="${status}"
-                    th:text="${status}">
-            </option>
+            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
         </select>
     </div>
 
@@ -35,10 +31,7 @@
     </div>
 
     <button type="submit">Update Order</button>
-
-    <!-- Szczegóły zamówienia -->
-    <!-- Dodaj ten link lub przycisk na końcu strony z detalami zamówienia -->
-    <button onclick="history.back()">Powrót</button>
 </form>
+<button onclick="history.back()">Powrót</button>
 </body>
 </html>

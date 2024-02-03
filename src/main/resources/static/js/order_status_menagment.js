@@ -1,3 +1,5 @@
+// orderStatusManagement.js
+
 document.addEventListener("DOMContentLoaded", function() {
     // Tutaj możesz umieścić wszelkie inicjalizacje
 });

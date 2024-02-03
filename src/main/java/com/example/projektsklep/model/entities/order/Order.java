@@ -1,6 +1,7 @@
 package com.example.projektsklep.model.entities.order;
 
 
+import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.notification.Observer;
@@ -34,6 +35,10 @@ public class Order implements Observable {
     @JoinColumn(name = "account_holder_id")
     private User accountHolder;
 
+
+    @ManyToOne
+    @JoinColumn(name = "shipping_address_id")
+    private Address shippingAddress;
     @Enumerated(EnumType.ORDINAL)
     private OrderStatus orderStatus;
 

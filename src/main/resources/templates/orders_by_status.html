@@ -2,13 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <script src="/js/order_status_management.js"></script> <!-- Zaktualizowana ścieżka do zewnętrznego JS -->
     <title>Zamówienia według statusu</title>
+<!--    <script src="/js/orderStatusManagement.js"></script> &lt;!&ndash; Zaktualizowana ścieżka do zewnętrznego JS &ndash;&gt;-->
 </head>
 <body>
 <h1>Zamówienia według statusu</h1>
 
-<!-- Formularz filtrujący zamówienia... -->
+<form th:action="@{/admin/ordersByStatus}" method="get">
+    <select name="orderStatus">
+        <option value="NEW_ORDER" th:selected="${selectedStatus == 'NEW_ORDER'}">Nowe zamówienie</option>
+        <option value="PROCESSED" th:selected="${selectedStatus == 'PROCESSED'}">Przetworzone</option>
+        <option value="SENT" th:selected="${selectedStatus == 'SENT'}">Wysłane</option>
+        <option value="DELIVERED" th:selected="${selectedStatus == 'DELIVERED'}">Dostarczone</option>
+        <option value="CANCELED" th:selected="${selectedStatus == 'CANCELED'}">Anulowane</option>
+    </select>
+    <button type="submit">Filtruj</button>
+</form>
 
 <table>
     <thead>
@@ -27,14 +36,12 @@
         <td th:text="${order.orderStatus}"></td>
         <td th:text="${order.totalPrice}"></td>
         <td>
-            <a th:href="@{/admin/orders/details/{orderId}(orderId=${order.id})}">Szczegóły</a>
-            <a th:href="@{/admin/orders/edit/{orderId}(orderId=${order.id})}">Edytuj</a>
-            <!-- Select i przycisk zmiany statusu jak wcześniej -->
+            <a th:href="@{/orders/details/{orderId}(orderId=${order.id})}">Szczegóły</a>
+            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}">Edytuj</a>
         </td>
     </tr>
     </tbody>
 </table>
-
 
 <button onclick="history.back()">Powrót</button>
 

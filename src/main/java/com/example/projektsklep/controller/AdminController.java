@@ -54,12 +54,7 @@ public class AdminController {
         return "admin_user_list"; // widok z listą użytkowników pasujących do kryteriów wyszukiwania
     }
 
-    @GetMapping("/user_orders/{userId}")
-    public String listOrdersByUser(@PathVariable long userId, Model model) {
-        List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
-        model.addAttribute("orders", orders);
-        return "admin_user_orders"; // widok zawierający listę zamówień danego użytkownika
-    }
+
 
     @GetMapping("/edit_user/{userId}")
     public String showEditUserForm(@PathVariable Long userId, Model model) {
@@ -118,12 +113,17 @@ public class AdminController {
     }
 
     @GetMapping("/ordersByStatus")
-    public String getOrdersByStatus(@RequestParam OrderStatus orderStatus, Model model) {
+    public String getOrdersByStatus(@RequestParam(required = false) OrderStatus orderStatus, Model model) {
+        // Ustaw domyślny status, jeśli nie podano
+        if (orderStatus == null) {
+            orderStatus = OrderStatus.NEW_ORDER;
+        }
+
         List<Order> orders = orderService.findAllOrdersByStatus(orderStatus);
         model.addAttribute("orders", orders);
+        model.addAttribute("selectedStatus", orderStatus.name()); // Dodaj wybrany status do modelu
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
     }
-
 
     @PostMapping("/changeOrderStatus/{orderId}")
     public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
@@ -132,7 +132,12 @@ public class AdminController {
             if (orderDTO == null) {
                 return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
             } else {
-                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders());
+                // Założenie: Tworzymy pusty AddressDTO jako zaślepkę
+                AddressDTO defaultAddress = new AddressDTO(null, "defaultStreet", "defaultCity", "defaultPostalCode", "defaultCountry");
+
+                // Access dateCreated directly as a field
+                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders(), defaultAddress);
+
                 if (!orderService.updateOrderDTO(orderId, orderDTO)) {
                     throw new AdminControllerException("Nie można zaktualizować statusu zamówienia");
                 }
@@ -145,10 +150,4 @@ public class AdminController {
                 return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-    }
-
-
-
-
-
-}
+    }}

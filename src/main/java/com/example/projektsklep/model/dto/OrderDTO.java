@@ -1,12 +1,13 @@
 package com.example.projektsklep.model.dto;
 
+import com.example.projektsklep.model.dto.AddressDTO;
+import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-
 
 @Builder
 public record OrderDTO(
@@ -16,19 +17,14 @@ public record OrderDTO(
         LocalDate dateCreated,
         LocalDate sentAt,
         BigDecimal totalPrice,
-        List<LineOfOrderDTO> lineOfOrders
+        List<LineOfOrderDTO> lineOfOrders,
+        AddressDTO shippingAddress // Upewnij się, że to pole jest obecne
 ) {
-
     public OrderDTO {
         Objects.requireNonNull(id);
         Objects.requireNonNull(userId);
         Objects.requireNonNull(orderStatus);
         Objects.requireNonNull(dateCreated);
-        //Objects.requireNonNull(lineOfOrders);
-        if (lineOfOrders != null) {
-            for (LineOfOrderDTO lineOfOrder : lineOfOrders) {
-                Objects.requireNonNull(lineOfOrder);
-            }
-        }
+        // Sprawdzenie, czy lineOfOrders i shippingAddress są niepuste, jeśli jest to wymagane
     }
 }
