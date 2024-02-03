@@ -11,10 +11,7 @@ public record CategoryDTO(
         String name,
         Long parentCategoryId
 ) {
-
     public CategoryDTO {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(name);
+        Objects.requireNonNull(name, "Name cannot be null"); // Tylko jeśli name musi być zawsze niepuste
     }
-
 }

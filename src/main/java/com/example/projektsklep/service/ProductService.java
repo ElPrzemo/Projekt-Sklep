@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -72,14 +74,22 @@ public class ProductService {
         product.setPrice(productDTO.price());
         product.setProductType(productDTO.productType());
 
-        Author author = new Author();
-        author.setId(productDTO.authorId());
-        product.setAuthor(author);
+        // Handle authorId and categoryId
+        if (productDTO.authorId() != null) {
+            Author author = new Author();
+            author.setId(productDTO.authorId());
+            product.setAuthor(author);
+        } else {
+            product.setAuthor(null);
+        }
 
-        // Pass categoryId as a parameter to this method
-        Category category = new Category();
-        category.setId(productDTO.categoryId());
-        product.setCategory(category);
+        if (productDTO.categoryId() != null) {
+            Category category = new Category();
+            category.setId(productDTO.categoryId());
+            product.setCategory(category);
+        } else {
+            product.setCategory(null);
+        }
 
         return product;
     }
@@ -97,15 +107,30 @@ public class ProductService {
     }
 
     public ProductDTO createDefaultProductDTO() {
-        return ProductDTO.builder()
-                .id(null)
-                .title("")
-                .description("")
-                .miniature("")
-                .price(BigDecimal.ZERO)
-                .productType(ProductType.DEFAULT_TYPE) // Zakładam, że ProductType.DEFAULT_TYPE to jakaś domyślna wartość.
+        // Ustaw domyślne wartości lub prawidłowe dane
+        Long id = 1L; // Przykładowe ID
+        String title = "Default Title"; // Tytuł
+        String description = "Default Description"; // Opis
+        String miniature = "Default Miniature"; // Miniatura
+        BigDecimal price = BigDecimal.valueOf(10.0); // Cena
+        ProductType productType = ProductType.DEFAULT_TYPE; // Typ produktu
+
+        // Utwórz instancję ProductDTO
+        ProductDTO productDTO = ProductDTO.builder()
+                .id(id)
+                .title(title)
+                .description(description)
+                .miniature(miniature)
+                .price(price)
+                .productType(productType)
                 .build();
+
+        return productDTO;
+    }
+    public List<ProductType> findAllProductTypes() {
+        return Arrays.asList(ProductType.values());
     }
 
-
 }
+
+

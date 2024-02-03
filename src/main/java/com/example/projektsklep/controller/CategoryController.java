@@ -1,11 +1,8 @@
 package com.example.projektsklep.controller;
 
-
-
 import com.example.projektsklep.exception.CategoryException;
 import com.example.projektsklep.model.dto.CategoryDTO;
 import com.example.projektsklep.model.entities.product.Category;
-
 import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.service.CategoryService;
 import org.springframework.stereotype.Controller;
@@ -13,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @Controller
 @RequestMapping("/categories")
@@ -29,8 +25,10 @@ public class CategoryController {
     public String listCategories(Model model) {
         List<CategoryDTO> categories = categoryService.getAllCategoryDTOs();
         model.addAttribute("categories", categories);
-        return "categories";
+        return "admin_category_list";
     }
+
+
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
@@ -55,23 +53,26 @@ public class CategoryController {
     @GetMapping("/edit/{id}")
     public String editCategoryForm(@PathVariable Long id, Model model) {
         CategoryDTO categoryDTO = categoryService.getCategoryDTOById(id);
-        model.addAttribute("categoryDTO", categoryDTO);
-        return "category_edit";
+        model.addAttribute("category", categoryDTO); // Zmieniłem nazwę atrybutu na "category" dla spójności z formularzem Thymeleaf
+        return "category_edit"; // Nazwa pliku widoku do edycji kategorii
     }
 
-
     @PostMapping("/edit/{id}")
-    public String editCategory(@PathVariable Long id, @ModelAttribute CategoryDTO categoryDTO) {
+    public String editCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDTO categoryDTO) {
         categoryService.updateCategoryDTO(id, categoryDTO);
         return "redirect:/categories";
     }
-    @GetMapping("/categories/tree")
+
+    @PostMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategoryById(id);
+        return "redirect:/categories";
+    }
+
+    @GetMapping("/tree")
     public String showCategoriesTree(Model model) {
         List<CategoryTree> categories = categoryService.getCategoriesTree();
         model.addAttribute("categories", categories);
         return "categories_tree";
     }
 }
-
-
-

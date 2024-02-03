@@ -1,15 +1,14 @@
-<form action="#" th:action="@{/categories/add}" th:object="${category}" method="post">
+<form action="#" th:action="@{/categories/add}" th:object="${categoryDTO}" method="post">
     <input type="text" th:field="*{name}" placeholder="Nazwa kategorii" />
-    <select th:field="*{parentCategory}">
+    <select th:field="*{parentCategoryId}">
         <option value="">Brak kategorii nadrzędnej</option>
         <option th:each="cat : ${allCategories}" th:value="${cat.id}" th:text="${cat.name}"></option>
     </select>
     <button type="submit">Dodaj Kategorię</button>
-
-    <div>
-        <form action="/adminPanel" method="get">
-            <button type="submit">Powrót do Panelu Admina</button>
-        </form>
-    </div>
-
 </form>
+
+<div>
+    <form action="/adminPanel" method="get">
+        <button onclick="goBack()">Powrót</button>
+    </form>
+</div>

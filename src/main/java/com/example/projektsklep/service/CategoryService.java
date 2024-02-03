@@ -1,12 +1,12 @@
 package com.example.projektsklep.service;
 
-
 import com.example.projektsklep.model.dto.CategoryDTO;
 import com.example.projektsklep.model.dto.CategoryTreeDTO;
 import com.example.projektsklep.model.entities.product.Category;
 import com.example.projektsklep.model.entities.product.CategoryTree;
 import com.example.projektsklep.model.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,10 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryService {
 
-    private CategoryRepository categoryRepository;
-
-
-
+    private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -41,7 +38,9 @@ public class CategoryService {
                 .map(this::convertToCategoryDTO)
                 .orElse(null);
     }
-
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
 
     public CategoryDTO updateCategoryDTO(Long id, CategoryDTO updatedCategoryDTO) {
         Category category = categoryRepository.findById(id)
@@ -49,25 +48,6 @@ public class CategoryService {
         updateCategoryData(category, updatedCategoryDTO);
         return convertToCategoryDTO(categoryRepository.save(category));
     }
-
-
-    private CategoryDTO convertToCategoryDTO(Category category) {
-        return CategoryDTO.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .parentCategoryId(category.getParentCategory() != null ? category.getParentCategory().getId() : null)
-                .build();
-    }
-
-    private void updateCategoryData(Category category, CategoryDTO categoryDTO) {
-        category.setName(categoryDTO.name());
-        // Ustaw parentCategory, jeśli jest wymagane
-    }
-
-
-
-
-
 
     public List<CategoryTree> getCategoriesTree() {
         List<Category> categories = categoryRepository.findAll();
@@ -92,5 +72,23 @@ public class CategoryService {
         }
 
         return new ArrayList<>(categoryTreesMap.values());
+    }
+
+    @Transactional
+    public void deleteCategoryById(Long id) {
+        categoryRepository.deleteById(id);
+    }
+
+    private CategoryDTO convertToCategoryDTO(Category category) {
+        return CategoryDTO.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .parentCategoryId(category.getParentCategory() != null ? category.getParentCategory().getId() : null)
+                .build();
+    }
+
+    private void updateCategoryData(Category category, CategoryDTO categoryDTO) {
+        category.setName(categoryDTO.name());
+        // Ustaw parentCategory, jeśli jest wymagane
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
@@ -32,8 +31,11 @@ public class AuthorService {
         author = authorRepository.save(author);
         return new AuthorDTO(author.getId(), author.getName());
     }
+    public List<Author> findAll() {
+        return authorRepository.findAll();
+    }
 
-    public Page<AuthorDTO> findAllAuthors(Pageable pageable) {
+    public Page<AuthorDTO> findAllAuthorsPageable(Pageable pageable) {
         return authorRepository.findAll(pageable)
                 .map(this::convertToAuthorDTO);
     }

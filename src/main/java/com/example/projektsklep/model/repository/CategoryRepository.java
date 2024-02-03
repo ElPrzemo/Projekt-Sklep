@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 
-
+    List<Category> findByParentCategoryId(Long parentCategoryId);
 
     Category save(Category category);
 

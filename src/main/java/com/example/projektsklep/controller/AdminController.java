@@ -3,13 +3,9 @@ package com.example.projektsklep.controller;
 import com.example.projektsklep.exception.AdminControllerException;
 import com.example.projektsklep.model.dto.*;
 import com.example.projektsklep.model.entities.order.Order;
-import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.UserRepository;
-import com.example.projektsklep.service.AuthorService;
-import com.example.projektsklep.service.OrderService;
-import com.example.projektsklep.service.ProductService;
-import com.example.projektsklep.service.UserService;
+import com.example.projektsklep.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -29,15 +24,17 @@ public class AdminController {
     private final UserService userService;
     private final OrderService orderService;
     private final AuthorService authorService;
+    private final CategoryService categoryService;
 
     private final ProductService productService;
     private final UserRepository userRepository;
 
 
-    public AdminController(UserService userService, OrderService orderService, AuthorService authorService, ProductService productService, UserRepository userRepository) {
+    public AdminController(UserService userService, OrderService orderService, AuthorService authorService, CategoryService categoryService, ProductService productService, UserRepository userRepository) {
         this.userService = userService;
         this.orderService = orderService;
         this.authorService = authorService;
+        this.categoryService = categoryService;
         this.productService = productService;
         this.userRepository = userRepository;
     }
@@ -94,7 +91,7 @@ public class AdminController {
                               @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AuthorDTO> authorPage = authorService.findAllAuthors(pageable);
+        Page<AuthorDTO> authorPage = authorService.findAllAuthorsPageable(pageable);
         model.addAttribute("authorPage", authorPage);
         return "admin_author_list";
     }
@@ -102,7 +99,13 @@ public class AdminController {
     public String showAddProductForm(Model model) {
         ProductDTO productDTO = productService.createDefaultProductDTO();
         model.addAttribute("product", productDTO);
-        return "admin_add_product"; // Zaktualizuj nazwę widoku zgodnie z Twoją konwencją
+
+        // Dodaj listy do modelu
+        model.addAttribute("productTypes", productService.findAllProductTypes());
+        model.addAttribute("categories", categoryService.findAll()); // Używamy nowej metody serwisu
+        model.addAttribute("authors", authorService.findAll());
+
+        return "admin_add_product";
     }
 
     // Metoda POST do przetwarzania dodawania produktu

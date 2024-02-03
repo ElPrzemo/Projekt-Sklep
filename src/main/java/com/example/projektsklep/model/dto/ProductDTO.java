@@ -20,7 +20,8 @@ public record ProductDTO(
         String description,
         String miniature,
         BigDecimal price,
-        ProductType productType
+        ProductType productType,
+        Integer quantity // Dodaj to pole, jeśli jest potrzebne
 ) {
 
     public ProductDTO {

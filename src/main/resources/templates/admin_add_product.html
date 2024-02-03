@@ -21,12 +21,23 @@
         <label for="price">Cena:</label>
         <input type="text" id="price" th:field="*{price}">
     </div>
-    <div>
-        <label for="productType">Typ Produktu:</label>
-        <select id="productType" th:field="*{productType}">
-            <!-- Wypełnij opcje typów produktów -->
-        </select>
-    </div>
+    <select id="productType" th:field="*{productType}">
+        <option th:each="type : ${productTypes}"
+                th:value="${type}"
+                th:text="${type}">Typ Produktu</option>
+    </select>
+
+    <select id="category" th:field="*{categoryId}">
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}">Kategoria</option>
+    </select>
+
+    <select id="author" th:field="*{authorId}">
+        <option th:each="author : ${authors}"
+                th:value="${author.id}"
+                th:text="${author.name}">Autor</option>
+    </select>
     <div>
         <label for="quantity">Ilość:</label>
         <input type="number" id="quantity" th:field="*{quantity}">
@@ -36,5 +47,7 @@
         <input type="submit" value="Dodaj Produkt">
     </div>
 </form>
+
+<button onclick="history.back()">Powrót</button>
 </body>
 </html>
