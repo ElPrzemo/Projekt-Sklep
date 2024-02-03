@@ -1,14 +1,36 @@
-<form action="#" th:action="@{/categories/add}" th:object="${categoryDTO}" method="post">
-    <input type="text" th:field="*{name}" placeholder="Nazwa kategorii" />
-    <select th:field="*{parentCategoryId}">
-        <option value="">Brak kategorii nadrzędnej</option>
-        <option th:each="cat : ${allCategories}" th:value="${cat.id}" th:text="${cat.name}"></option>
-    </select>
-    <button type="submit">Dodaj Kategorię</button>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="/js/navigation.js"></script>
+    <meta charset="UTF-8">
+    <title>Dodaj kategorię</title>
+</head>
+<body>
+<h1>Dodaj nową kategorię</h1>
+<form th:action="@{/categories/add}" th:object="${categoryDTO}" method="post">
+    <div>
+        <label for="name">Nazwa kategorii:</label>
+        <input type="text" id="name" th:field="*{name}" placeholder="Nazwa kategorii" required />
+    </div>
+    <div>
+        <label for="parentCategoryId">Kategoria nadrzędna:</label>
+        <select id="parentCategoryId" th:field="*{parentCategoryId}">
+            <option value="">Brak kategorii nadrzędnej</option>
+            <option th:each="cat : ${allCategories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Dodaj Kategorię</button>
+    </div>
 </form>
 
 <div>
     <form action="/adminPanel" method="get">
-        <button onclick="goBack()">Powrót</button>
+        <button type="button" onclick="goBack()">Powrót</button>
     </form>
 </div>
+
+
+</script>
+</body>
+</html>

@@ -32,8 +32,13 @@ public class CategoryController {
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("categoryDTO", new CategoryDTO(null, "", null));
-        return "category_add";
+        // Tworzenie nowego DTO dla formularza, jeśli jeszcze nie istnieje
+        if (!model.containsAttribute("categoryDTO")) {
+            model.addAttribute("categoryDTO", new CategoryDTO(null, "", null));
+        }
+        List<CategoryDTO> allCategories = categoryService.getAllCategoryDTOs(); // Załóżmy, że ta metoda istnieje i zwraca listę wszystkich kategorii
+        model.addAttribute("allCategories", allCategories); // Dodaj listę wszystkich kategorii do modelu
+        return "category_add"; // Nazwa Twojego pliku HTML formularza dodawania kategorii
     }
 
     @PostMapping("/add")
