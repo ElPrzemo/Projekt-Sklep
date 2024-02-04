@@ -50,6 +50,24 @@ public class UserAccountController {
         return "user_orders"; // Strona z zamóupdateProfileAndAddresswieniami użytkownika
     }
 
+    @GetMapping("/edit")
+    public String showEditForm(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
+
+        UserDTO userDTO = userService.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika."));
+
+        // Jeśli użytkownik nie ma przypisanego adresu, tworzymy pusty obiekt AddressDTO
+        if (userDTO.address() == null) {
+            userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName(),
+                    userDTO.phoneNumber(), userDTO.password(),
+                    new AddressDTO(null, "", "", "", ""), userDTO.roles());
+        }
+
+        model.addAttribute("userDTO", userDTO);
+        return "user_edit"; // Nazwa Twojego widoku Thymeleaf
+    }
 
     @PostMapping("/edit")
     public String updateProfileAndAddress(@ModelAttribute UserDTO userDTO,

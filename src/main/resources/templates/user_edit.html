@@ -7,7 +7,7 @@
 <h1>Edycja Profilu</h1>
 
 <!-- Formularz edycji danych użytkownika -->
-<form th:action="@{/user/edit_profile}" method="post">
+<form th:action="@{/account/edit}" th:object="${userDTO}" method="post">
     <input type="hidden" th:field="*{id}" />
 
     <label for="email">Email:</label>
@@ -16,32 +16,29 @@
     <label for="phoneNumber">Numer telefonu:</label>
     <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
 
-    <label for="password">Nowe hasło:</label>
-    <input type="password" id="password" th:field="*{password}" />
+    <!-- Pole hasła nie jest bezpośrednio powiązane z DTO, więc używamy tylko name -->
+    <label for="password">Nowe hasło (opcjonalnie):</label>
+    <input type="password" id="password" name="password" />
 
-    <button type="submit">Zapisz zmiany użytkownika</button>
-    <a href="/userPanel">Powrót do Panelu Użytkownika</a>
+    <div>
+        <h2>Adres</h2>
+        <label for="street">Ulica:</label>
+        <input type="text" id="street" th:field="*{address.street}" />
+
+        <label for="city">Miasto:</label>
+        <input type="text" id="city" th:field="*{address.city}" />
+
+        <label for="postalCode">Kod pocztowy:</label>
+        <input type="text" id="postalCode" th:field="*{address.postalCode}" />
+
+        <label for="country">Kraj:</label>
+        <input type="text" id="country" th:field="*{address.country}" />
+    </div>
+
+    <button type="submit">Zapisz zmiany</button>
 </form>
 
-<!-- Oddzielny formularz edycji adresu -->
-<form th:action="@{/user/edit_address}" method="post">
-    <input type="hidden" th:field="*{id}" />
-
-    <label for="street">Ulica:</label>
-    <input type="text" id="street" th:field="*{address.street}" />
-
-    <label for="city">Miasto:</label>
-    <input type="text" id="city" th:field="*{address.city}" />
-
-    <label for="postalCode">Kod pocztowy:</label>
-    <input type="text" id="postalCode" th:field="*{address.postalCode}" />
-
-    <label for="country">Kraj:</label>
-    <input type="text" id="country" th:field="*{address.country}" />
-
-    <button type="submit">Zapisz adres</button>
-    <button onclick="history.back()">Powrót</button>
-</form>
+<button onclick="history.back()">Powrót</button>
 
 </body>
 </html>

@@ -42,30 +42,6 @@ public class UserController {
         return "user_list";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<UserDTO> userDTO = userService.findUserById(id);if (!userDTO.isPresent()) {
-            throw new UserNotFoundException("Użytkownik o podanym ID nie istnieje");
-        }
-        userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
-        return userDTO.isPresent() ? "user_edit" : "redirect:/users";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO,Model model) {
-        try {
-            userService.updateUserProfileOrAdmin(id, userDTO, false);
-        } catch (InvalidUserDataException e) {
-            // Dodanie obsługi błędnych danych użytkownika
-            model.addAttribute("error", e.getMessage());
-            return "user_edit";
-        } catch (DataAccessException e) {
-            // Dodanie obsługi błędów dostępu do bazy danych
-            model.addAttribute("error", "Wystąpił błąd podczas aktualizacji profilu");
-            return "user_edit";
-        } // false oznacza, że nie jest to admin
-        return "redirect:/users";
-    }
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {

@@ -12,13 +12,12 @@ public record UserDTO(
         String email,
         String firstName,
         String lastName,
-        int phoneNumber, // already added
+        Integer phoneNumber, // already added
         String password, // already added
         AddressDTO address,
         Set<RoleDTO> roles // now added
 ) {
     public UserDTO {
-        Objects.requireNonNull(id);
         Objects.requireNonNull(email);
         Objects.requireNonNull(firstName);
         Objects.requireNonNull(lastName);
