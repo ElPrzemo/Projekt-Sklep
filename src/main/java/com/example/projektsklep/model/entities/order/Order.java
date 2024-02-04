@@ -89,4 +89,10 @@ public class Order implements Observable {
     }
 
 
+    public void setUser(User user) {
+    }
+
+    public User getUser() {
+        return null;
+    }
 }
