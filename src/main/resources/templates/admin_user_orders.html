@@ -22,10 +22,10 @@
         <td th:text="${order.dateCreated}"></td>
         <td th:text="${order.totalPrice}"></td>
         <td>
-            <!-- Link do szczegółów zamówienia -->
-            <a th:href="@{/admin/orders/details/{orderId}(orderId=${order.id})}">Szczegóły</a>
-            <!-- Link do edycji zamówienia -->
-            <a th:href="@{/admin/orders/edit/{orderId}(orderId=${order.id})}">Edytuj</a>
+            <!-- Poprawiony Link do szczegółów zamówienia -->
+            <a th:href="@{/orders/{orderId}(orderId=${order.id})}">Szczegóły</a>
+            <!-- Poprawiony Link do edycji zamówienia -->
+            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}">Edytuj</a>
         </td>
     </tr>
     </tbody>
