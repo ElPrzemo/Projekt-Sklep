@@ -26,5 +26,6 @@ public record OrderDTO(
         Objects.requireNonNull(orderStatus);
         Objects.requireNonNull(dateCreated);
         // Sprawdzenie, czy lineOfOrders i shippingAddress są niepuste, jeśli jest to wymagane
+
     }
 }
