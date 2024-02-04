@@ -36,7 +36,7 @@
         <td th:text="${order.orderStatus}"></td>
         <td th:text="${order.totalPrice}"></td>
         <td>
-            <a th:href="@{/orders/details/{orderId}(orderId=${order.id})}">Szczegóły</a>
+            <a th:href="@{/orders/{orderId}(orderId=${order.id})}">Szczegóły</a>
             <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}">Edytuj</a>
         </td>
     </tr>

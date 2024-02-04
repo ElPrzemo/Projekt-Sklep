@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Lista użytkowników</title>
+    <title>Lista Użytkowników</title>
 </head>
 <body>
-<h1>Lista użytkowników</h1>
-
-<!-- Tutaj pozostała część formularza i tabeli... -->
-
+<h1>Lista Użytkowników</h1>
 <table>
     <thead>
     <tr>
+        <th>Email</th>
         <th>Imię</th>
         <th>Nazwisko</th>
-        <th>Email</th>
-        <th>Rola</th>
         <th>Akcje</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="user : ${userPage}">
+    <tr th:each="user : ${users}">
+        <td th:text="${user.email}"></td>
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
-        <td th:text="${user.email}"></td>
-        <td> <!-- Tutaj założono, że rola jest dostępna i wyświetlana jako ciąg tekstowy -->
-            <span th:text="${user.roles}"></span>
-        </td>
         <td>
-            <a th:href="@{/admin/edit_user/{userId}(userId=${user.id})}">Edytuj</a> |
-            <a th:href="@{/admin/user_orders/{userId}(userId=${user.id})}">Zamówienia</a>
+            <a th:href="@{'/admin/user_orders/' + ${user.id}}">Zamówienia</a>
+            <a th:href="@{'/admin/edit_user/' + ${user.id}}">Edytuj</a>
         </td>
     </tr>
     </tbody>

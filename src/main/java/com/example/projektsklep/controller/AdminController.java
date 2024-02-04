@@ -115,6 +115,13 @@ public class AdminController {
         return "redirect:/admin/products"; // Przekierowanie do listy produktów po pomyślnym dodaniu
     }
 
+    @GetMapping("/user_orders/{userId}")
+    public String listUserOrders(@PathVariable Long userId, Model model) {
+        List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
+        model.addAttribute("orders", orders);
+        return "admin_user_orders"; // Nazwa pliku HTML z listą zamówień
+    }
+
     @GetMapping("/ordersByStatus")
     public String getOrdersByStatus(@RequestParam(required = false) OrderStatus orderStatus, Model model) {
         // Ustaw domyślny status, jeśli nie podano
