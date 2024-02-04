@@ -11,10 +11,14 @@ import com.example.projektsklep.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 @ControllerAdvice
@@ -37,30 +41,51 @@ public class UserController {
         return "user_list";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<UserDTO> userDTO = userService.findUserById(id);if (!userDTO.isPresent()) {
-            throw new UserNotFoundException("Użytkownik o podanym ID nie istnieje");
-        }
-        userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
-        return userDTO.isPresent() ? "user_edit" : "redirect:/users";
+
+
+    @GetMapping("/edit")
+    public String showEditFormForCurrentUser(Principal principal, Model model) {
+        UserDTO userDTO = userService.findUserByEmail(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("user", userDTO);
+        return "users/edit";
     }
 
-    @PostMapping("/edit/{id}")
-    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO,Model model) {
-        try {
-            userService.updateUserProfileOrAdmin(id, userDTO, false);
-        } catch (InvalidUserDataException e) {
-            // Dodanie obsługi błędnych danych użytkownika
-            model.addAttribute("error", e.getMessage());
-            return "user_edit";
-        } catch (DataAccessException e) {
-            // Dodanie obsługi błędów dostępu do bazy danych
-            model.addAttribute("error", "Wystąpił błąd podczas aktualizacji profilu");
-            return "user_edit";
-        } // false oznacza, że nie jest to admin
-        return "redirect:/users";
-    }
+//    @PostMapping("/edit")
+//    public String editCurrentUser(@ModelAttribute UserDTO userDTO, BindingResult result, Principal principal, RedirectAttributes redirectAttributes) {
+//        if (result.hasErrors()) {
+//            return "users/edit";
+//        }
+//
+//        UserDTO updatedUser = userService.updateUserProfile(principal.getName(), userDTO);
+//        redirectAttributes.addFlashAttribute("success", "Profile updated successfully!");
+//        return "redirect:/users/profile";
+//    }
+//
+//    @GetMapping("/edit/{id}")
+//    public String showEditForm(@PathVariable Long id, Model model) {
+//        Optional<UserDTO> userDTO = userService.findUserById(id);if (!userDTO.isPresent()) {
+//            throw new UserNotFoundException("Użytkownik o podanym ID nie istnieje");
+//        }
+//        userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
+//        return userDTO.isPresent() ? "user_edit" : "redirect:/users";
+//    }
+//
+//    @PostMapping("/edit/{id}")
+//    public String editUser(@PathVariable Long id, @ModelAttribute UserDTO userDTO,Model model) {
+//        try {
+//            userService.updateUserProfileOrAdmin(id, userDTO, false);
+//        } catch (InvalidUserDataException e) {
+//            // Dodanie obsługi błędnych danych użytkownika
+//            model.addAttribute("error", e.getMessage());
+//            return "user_edit";
+//        } catch (DataAccessException e) {
+//            // Dodanie obsługi błędów dostępu do bazy danych
+//            model.addAttribute("error", "Wystąpił błąd podczas aktualizacji profilu");
+//            return "user_edit";
+//        } // false oznacza, że nie jest to admin
+//        return "redirect:/users";
+//    }
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {

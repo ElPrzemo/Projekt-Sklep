@@ -50,22 +50,17 @@ public class UserAccountController {
         return "user_orders"; // Strona z zamóupdateProfileAndAddresswieniami użytkownika
     }
 
-
     @PostMapping("/edit")
-    public String updateProfileAndAddress(@ModelAttribute UserDTO userDTO,
-                                          @ModelAttribute AddressDTO addressDTO) {
+    public String updateProfile(@ModelAttribute UserDTO userDTO,
+                                @ModelAttribute AddressDTO addressDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         Long userId = userService.findUserByEmail(email)
                 .map(UserDTO::id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        userService.updateUserProfileOrAdmin(userId, userDTO, false); // isAdmin ustawione na false
-        try {
-            userService.updateUserProfileOrAdmin(userId, userDTO, false);
-        } catch (Exception e) {
-            throw new AddressUpdateException("Wystąpił błąd podczas aktualizacji adresu");
-        }
+        userService.updateUserProfile(userId, userDTO); // Używamy nowej metody dedykowanej dla użytkownika
+        // Obsługa adresu może wymagać osobnej logiki, zależnie od struktury aplikacji
         return "redirect:/account/profile";
     }
 

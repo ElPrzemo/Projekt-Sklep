@@ -6,42 +6,52 @@
 <body>
 <h1>Edycja Profilu</h1>
 
-<!-- Formularz edycji danych użytkownika -->
-<form th:action="@{/user/edit_profile}" method="post">
-    <input type="hidden" th:field="*{id}" />
+<!-- Zintegrowany formularz edycji danych użytkownika i adresu -->
+<form th:action="@{/users/edit/{id}(id=${userDTO.id})}" th:method="post" th:object="${userDTO}">
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required />
+    </div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" th:field="*{email}" required />
+    <div>
+        <label for="phoneNumber">Numer telefonu:</label>
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
+    </div>
 
-    <label for="phoneNumber">Numer telefonu:</label>
-    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
+    <div>
+        <label for="firstName">Imię:</label>
+        <input type="text" id="firstName" th:field="*{firstName}" />
+    </div>
 
-    <label for="password">Nowe hasło:</label>
-    <input type="password" id="password" th:field="*{password}" />
+    <div>
+        <label for="lastName">Nazwisko:</label>
+        <input type="text" id="lastName" th:field="*{lastName}" />
+    </div>
 
-    <button type="submit">Zapisz zmiany użytkownika</button>
+    <!-- Sekcja edycji adresu -->
+    <h2>Adres</h2>
+    <div>
+        <label for="street">Ulica:</label>
+        <input type="text" id="street" th:field="*{address.street}" />
+    </div>
+
+    <div>
+        <label for="city">Miasto:</label>
+        <input type="text" id="city" th:field="*{address.city}" />
+    </div>
+
+    <div>
+        <label for="postalCode">Kod pocztowy:</label>
+        <input type="text" id="postalCode" th:field="*{address.postalCode}" />
+    </div>
+
+    <div>
+        <label for="country">Kraj:</label>
+        <input type="text" id="country" th:field="*{address.country}" />
+    </div>
+
+    <button type="submit">Zapisz zmiany</button>
     <a href="/userPanel">Powrót do Panelu Użytkownika</a>
 </form>
-
-<!-- Oddzielny formularz edycji adresu -->
-<form th:action="@{/user/edit_address}" method="post">
-    <input type="hidden" th:field="*{id}" />
-
-    <label for="street">Ulica:</label>
-    <input type="text" id="street" th:field="*{address.street}" />
-
-    <label for="city">Miasto:</label>
-    <input type="text" id="city" th:field="*{address.city}" />
-
-    <label for="postalCode">Kod pocztowy:</label>
-    <input type="text" id="postalCode" th:field="*{address.postalCode}" />
-
-    <label for="country">Kraj:</label>
-    <input type="text" id="country" th:field="*{address.country}" />
-
-    <button type="submit">Zapisz adres</button>
-    <button onclick="history.back()">Powrót</button>
-</form>
-
 </body>
 </html>

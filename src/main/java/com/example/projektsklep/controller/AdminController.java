@@ -52,27 +52,27 @@ public class AdminController {
     }
 
 
-
-    @GetMapping("/edit_user/{userId}")
-    public String showEditUserForm(@PathVariable Long userId, Model model) {
-        UserDTO userDTO = userService.findUserById(userId)
-                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
-
-        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
-                new AddressDTO(null, "", "", "", ""); // Utwórz instancję AddressDTO z pustymi stringami
-
-        model.addAttribute("userDTO", userDTO);
-        model.addAttribute("addressDTO", addressDTO);
-
-        return "admin_user_edit_form"; // Nazwa Twojego pliku HTML formularza edycji użytkownika
-    }
-    @PostMapping("/edit_user/{userId}")
-    public String updateUserAndAddress(@PathVariable Long userId,
-                                       @ModelAttribute UserDTO userDTO,
-                                       @ModelAttribute AddressDTO addressDTO) {
-        userService.updateUserProfileAndAddress(userId, userDTO, addressDTO);
-        return "redirect:/admin/users";
-    }
+//
+//    @GetMapping("/edit_user/{userId}")
+//    public String showEditUserForm(@PathVariable Long userId, Model model) {
+//        UserDTO userDTO = userService.findUserById(userId)
+//                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
+//
+//        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
+//                new AddressDTO(null, "", "", "", ""); // Utwórz instancję AddressDTO z pustymi stringami
+//
+//        model.addAttribute("userDTO", userDTO);
+//        model.addAttribute("addressDTO", addressDTO);
+//
+//        return "admin_user_edit_form"; // Nazwa Twojego pliku HTML formularza edycji użytkownika
+//    }
+//    @PostMapping("/edit_user/{userId}")
+//    public String updateUserAndAddress(@PathVariable Long userId,
+//                                       @ModelAttribute UserDTO userDTO,
+//                                       @ModelAttribute AddressDTO addressDTO) {
+//        userService.updateUserProfileAndAddress(userId, userDTO, addressDTO);
+//        return "redirect:/admin/user_search"; // Uwaga: Zaktualizuj ścieżkę zgodnie z Twoją logiką nawigacji
+//    }
 
     @GetMapping("/author")
     public String showAuthorForm(Model model) {

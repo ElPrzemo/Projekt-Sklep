@@ -10,6 +10,8 @@
     <ul>
         <li th:each="category : ${categories}">
             <span th:text="${category.name}">Nazwa Kategorii</span>
+            <!-- Tutaj dodamy przycisk usuń -->
+            <button th:if="${isAdmin}" th:onclick="'window.location.href=\'/categories/delete/' + ${category.id} + '\''">Usuń</button>
             <!-- Guzik Edycji widoczny tylko dla admina -->
             <button th:if="${isAdmin}" th:onclick="'window.location.href=\'/categories/edit/' + ${category.id} + '\''">Edytuj</button>
             <div th:if="${not #lists.isEmpty(category.subcategories)}">
