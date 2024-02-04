@@ -1,3 +1,6 @@
+
+
+
 package com.example.projektsklep.model.dto;
 
 import java.util.Objects;
@@ -5,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 
 @Builder
-
 public record AddressDTO(
         Long id,
         String street,
@@ -19,4 +21,7 @@ public record AddressDTO(
         Objects.requireNonNull(postalCode);
         Objects.requireNonNull(country);
     }
+
+
+
 }
