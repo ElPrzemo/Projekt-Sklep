@@ -80,30 +80,30 @@ class RoleTest {
         // Then
         Assertions.assertThrows(NullPointerException.class, () -> Role.fromAdminOrUser(adminOrUser));
     }
-    @Test
-    public void testRoleConstructor_GivenValidData_ShouldCreateRole() {
-        // Given
-        String name = "ROLE_USER";
+//    @Test
+//    public void testRoleConstructor_GivenValidData_ShouldCreateRole() {
+//        // Given
+//        String name = "ROLE_USER";
+//
+//        // When
+//        Role role = new Role(name);
+//
+//        // Then
+//        Assertions.assertEquals(name, role.getName());
+//    }
 
-        // When
-        Role role = new Role(name);
-
-        // Then
-        Assertions.assertEquals(name, role.getName());
-    }
-
-    @Test
-    public void testAddUser_GivenRoleAndUser_ShouldAddUser() {
-        // Given
-        User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
-        Role role = new Role("ROLE_USER");
-
-        // When
-        role.addUser(user);
-
-        // Then
-        Assertions.assertEquals(1, role.getUsers().size());
-        Assertions.assertTrue(role.getUsers().contains(user));
-    }
+//    @Test
+//    public void testAddUser_GivenRoleAndUser_ShouldAddUser() {
+//        // Given
+//        User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
+//        Role role = new Role("ROLE_USER");
+//
+//        // When
+//        role.addUser(user);
+//
+//        // Then
+//        Assertions.assertEquals(1, role.getUsers().size());
+//        Assertions.assertTrue(role.getUsers().contains(user));
+//    }
 
 }

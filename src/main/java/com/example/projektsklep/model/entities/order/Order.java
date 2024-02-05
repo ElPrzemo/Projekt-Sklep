@@ -2,6 +2,7 @@ package com.example.projektsklep.model.entities.order;
 
 
 import com.example.projektsklep.model.entities.adress.Address;
+import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.notification.Observer;
@@ -90,9 +91,48 @@ public class Order implements Observable {
 
 
     public void setUser(User user) {
+        if (user != null) {
+            this.accountHolder = user;
+            // Opcjonalnie: pobierz i ustaw dodatkowe dane użytkownika
+        }
     }
 
     public User getUser() {
-        return null;
+        // Sprawdź, czy w obiekcie Order jest ustawiony User
+        if (this.accountHolder != null) {
+            return this.accountHolder;
+        } else {
+            // Pobierz użytkownika z innego źródła na podstawie identyfikatora lub podobnie
+            // (wymaga implementacji dostępu do danych)
+            return null;
+        }
+    }
+
+    public void setListOfOrders(List<LineOfOrder> lineOfOrders) {
+        // Przypisz otrzymaną listę do odpowiedniej zmiennej w Order
+        this.lineOfOrders = lineOfOrders;
+        // Opcjonalnie: aktualizuj inne pola związane z zamówieniem i produktami
+    }
+
+    public Address getAddress() {
+        if (this.shippingAddress != null) {
+            return this.shippingAddress;
+        } else {
+            // Opcjonalnie: pobierz adres z innego źródła i ustaw go dla Order
+            return null;
+        }
+    }
+
+    public List<Product> getProducts() {
+        if (this.lineOfOrders != null) {
+            List<Product> products = new ArrayList<>();
+            for (LineOfOrder lineOfOrder : this.lineOfOrders) {
+                products.add(lineOfOrder.getProduct());
+            }
+            return products;
+        } else {
+            // Opcjonalnie: pobierz listę produktów z innego źródła
+            return null;
+        }
     }
 }

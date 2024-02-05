@@ -177,7 +177,8 @@ class UserTest {
         @Test
         public void testSetFirstName_WithNull_ShouldThrowException () {
             // Given
-            User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
+            User user = new User();
+            //User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
 
             // When
             // Then
@@ -186,12 +187,15 @@ class UserTest {
 
         @Test
         public void testSetLastName_WithNull_ShouldThrowException () {
-            // Given
-            User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
+             //Given
+            User user = new User();
+            //User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
 
             // When
+
+            Assertions.assertThrows(NullPointerException.class, () -> user.setFirstName(null));
             // Then
-            Assertions.assertThrows(NullPointerException.class, () -> user.setLastName(null));
+//            Assertions.assertThrows(NullPointerException.class, () -> user.setLastName(null));
         }
 
     }

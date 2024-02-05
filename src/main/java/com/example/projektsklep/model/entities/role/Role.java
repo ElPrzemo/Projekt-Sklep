@@ -1,14 +1,13 @@
 
 package com.example.projektsklep.model.entities.role;
 
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.AdminOrUser;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Data
@@ -25,6 +24,16 @@ public class Role {
 
     public static Role fromAdminOrUser(AdminOrUser adminOrUser) {
         return Role.builder().roleType(AdminOrUser.valueOf(adminOrUser.name())).build();
+    }
+    @ManyToMany // Zakładając relację wiele-do-wielu między Role i User
+    private Set<User> users = new HashSet<>();
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    public Set<User> getUsers() {
+        return users;
     }
 }
 

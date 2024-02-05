@@ -85,5 +85,11 @@ public class User {
     public void setAddress(Address address) {
         this.address = address;
     }
+    public void setFirstName(String firstName) {
+        if (firstName == null) {
+            throw new NullPointerException("First name cannot be null.");
+        }
+        this.firstName = firstName;
+    }
 }
 
