@@ -24,7 +24,33 @@
         </tr>
         </tbody>
     </table>
-</div>
+
+    <!-- Wybór liczby rekordów na stronę -->
+    <div>
+        <form th:action="@{/products/search}" method="post">
+            <input type="hidden" name="title" th:value="${title}" />
+            <input type="hidden" name="categoryId" th:value="${categoryId}" />
+            <input type="hidden" name="authorId" th:value="${authorId}" />
+            <select name="size" onchange="this.form.submit()">
+                <option th:each="sizeOption : ${new int[]{10, 25, 50}}" th:value="${sizeOption}" th:selected="${sizeOption == selectedPageSize}" th:text="${sizeOption}"></option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Paginacja -->
+    <div th:if="${productsPage.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${productsPage.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number - 1}, size=${selectedPageSize})}">Poprzednia</a>
+            </li>
+            <li th:each="pageNum : ${#numbers.sequence(0, productsPage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == productsPage.number ? 'active' : ''}">
+                <a class="page-link" th:text="${pageNum + 1}" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${pageNum}, size=${selectedPageSize})}"></a>
+            </li>
+            <li class="page-item" th:classappend="${productsPage.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number + 1}, size=${selectedPageSize})}">Następna</a>
+            </li>
+        </ul>
+    </div>
 <div th:if="${#lists.isEmpty(productsPage?.content)}">
     <p>Brak wyników.</p>
 </div>

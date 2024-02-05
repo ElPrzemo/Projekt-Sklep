@@ -102,13 +102,17 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long authorId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "10") int size, // Możesz usunąć tę wartość domyślną, jeśli chcesz, aby była dynamicznie zmieniana przez użytkownika
             Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
 
         model.addAttribute("productsPage", products);
+        model.addAttribute("selectedPageSize", size); // Dodajemy to do modelu, aby móc odtworzyć wybraną liczbę rekordów na stronie
+        model.addAttribute("title", title); // Przekazujemy te parametry z powrotem do widoku, aby można było je użyć w URL paginacji
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("authorId", authorId);
         return "product_search_results"; // Zwróć nazwę widoku z wynikami wyszukiwania
     }
 
