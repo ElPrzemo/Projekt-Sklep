@@ -2,35 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Wyniki wyszukiwania produktów</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" integrity="sha384-gH2yIJqQkNH2i8t13咫46A7E24KJE7XqZDsV40E+3H5+VT3q3H9+UF/h/H+k" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
 </head>
-<body>
-<div class="container mt-3">
-    <h1>Wyniki wyszukiwania</h1>
-    <div th:if="${productsPage != null}">
-    <div>Łączna liczba znalezionych produktów: <span th:text="${productsPage.totalElements}"></span></div>
-    <div th:if="${not #lists.isEmpty(productsPage.content)}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Tytuł</th>
-                <th>Cena</th>
-                <th>Akcje</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${productsPage.content}">
-                <td th:text="${product.title}"></td>
-                <td th:text="${product.price}"></td>
-                <td><a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-info">Szczegóły</a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div th:if="${#lists.isEmpty(productsPage.content)}">
-        <p>Brak wyników.</p>
-    </div>
-    <button onclick="history.back()">Powrót</button>
+<body class="container mt-3">
+<h2>Wyniki wyszukiwania</h2>
+<div>Łączna liczba znalezionych produktów: <span th:text="${productsPage.totalElements} ?: '0'">0</span></div>
+<div th:if="${not #lists.isEmpty(productsPage?.content)}">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Cena</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productsPage.content}">
+            <td th:text="${product.title}"></td>
+            <td th:text="${product.price}"></td>
+            <td><a th:href="@{/products/{productId}(productId=${product.id})}" class="btn btn-info">Szczegóły</a></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
+<div th:if="${#lists.isEmpty(productsPage?.content)}">
+    <p>Brak wyników.</p>
+</div>
+<button class="btn btn-secondary" onclick="history.back()">Powrót</button>
 </body>
 </html>

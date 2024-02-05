@@ -11,32 +11,21 @@
         <label for="title" class="form-label">Tytuł</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Wpisz tytuł produktu">
     </div>
+    <div class="mb-3">
+        <label for="authorId" class="form-label">Autor</label>
+        <select class="form-select" id="authorId" name="authorId">
+            <option value="">Wybierz autora</option>
+            <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.name}"></option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="categoryId" class="form-label">Kategoria</label>
+        <select class="form-select" id="categoryId" name="categoryId">
+            <option value="">Wybierz kategorię</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+        </select>
+    </div>
     <button type="submit" class="btn btn-primary">Szukaj</button>
 </form>
-
-<h2>Wyniki wyszukiwania</h2>
-<div>Łączna liczba znalezionych produktów: <span th:text="${productsPage.totalElements} ?: '0'">0</span></div>
-<div th:if="${not #lists.isEmpty(productsPage?.content)}">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Tytuł</th>
-            <th>Cena</th>
-            <th>Akcje</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${productsPage.content}">
-            <td th:text="${product.title}"></td>
-            <td th:text="${product.price}"></td>
-            <td><a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-info">Szczegóły</a></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<div th:if="${#lists.isEmpty(productsPage?.content)}">
-    <p>Brak wyników.</p>
-</div>
-<button class="btn btn-secondary" onclick="history.back()">Powrót</button>
 </body>
 </html>
