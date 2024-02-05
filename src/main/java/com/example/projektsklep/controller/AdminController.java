@@ -110,9 +110,16 @@ public class AdminController {
 
     // Metoda POST do przetwarzania dodawania produktu
     @PostMapping("/addProduct")
-    public String addProduct(@ModelAttribute ProductDTO productDTO) {
+    public String addProduct(@ModelAttribute ProductDTO productDTO, Model model) {
         productService.saveProductDTO(productDTO);
-        return "redirect:/admin/products"; // Przekierowanie do listy produktów po pomyślnym dodaniu
+        // Przygotuj model dla nowego formularza
+        ProductDTO newProductDTO = productService.createDefaultProductDTO();
+        model.addAttribute("product", newProductDTO);
+        model.addAttribute("productTypes", productService.findAllProductTypes());
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("successMessage", "Produkt został dodany.");
+        return "admin_add_product"; // Zostaje na stronie z formularzem
     }
 
     @GetMapping("/user_orders/{userId}")
@@ -120,6 +127,14 @@ public class AdminController {
         List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
         model.addAttribute("orders", orders);
         return "admin_user_orders"; // Nazwa pliku HTML z listą zamówień
+    }
+
+    @GetMapping("/products")
+    public String listProducts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
+        model.addAttribute("productPage", productPage);
+        return "admin_product_list"; // Nazwa Twojego pliku HTML z listą produktów
     }
 
     @GetMapping("/ordersByStatus")

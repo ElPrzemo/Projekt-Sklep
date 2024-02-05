@@ -1,7 +1,6 @@
 package com.example.projektsklep.model.repository;
 
 
-
 import com.example.projektsklep.model.entities.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,20 +29,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void deleteById(Long id);
 
 
-    @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<Product> findAllByTitleContainingIgnoreCase(String searchTerm);
+    Page<Product> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
+    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE " +
-            "(:title is null or LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
-            "(:minPrice is null or p.price >= :minPrice) AND " +
-            "(:maxPrice is null or p.price <= :maxPrice) AND " +
-            "(:categoryId is null or p.category.id = :categoryId) AND " +
-            "(:authorId is null or p.author.id = :authorId)")
-    Page<Product> findAllWithCriteria(@Param("title") String title,
-                                      @Param("minPrice") BigDecimal minPrice,
-                                      @Param("maxPrice") BigDecimal maxPrice,
-                                      @Param("categoryId") Long categoryId,
-                                      @Param("authorId") Long authorId,
-                                      Pageable pageable);
+    Page<Product> findByAuthorId(Long authorId, Pageable pageable);
 }
+
+

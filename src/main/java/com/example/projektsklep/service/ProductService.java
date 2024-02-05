@@ -93,17 +93,35 @@ public class ProductService {
 
         return product;
     }
-    public Page<ProductDTO> searchProducts(String searchTerm, Long categoryId, Double minPrice, Double maxPrice, Long authorId, Pageable pageable) {
-        BigDecimal minPriceDecimal = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
-        BigDecimal maxPriceDecimal = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
 
-        // Metoda zwraca teraz Page<Product>
-        Page<Product> productPage = productRepository.findAllWithCriteria(
-                searchTerm, minPriceDecimal, maxPriceDecimal, categoryId, authorId, pageable
-        );
+    public Page<ProductDTO> findProductsByTitle(String title, Pageable pageable) {
+        return productRepository.findByTitleContainingIgnoreCase(title, pageable)
+                .map(this::convertToProductDTO);
+    }
 
-        // Konwertowanie wyników do Page<ProductDTO>
-        return productPage.map(this::convertToProductDTO);
+    public Page<ProductDTO> findProductsByCategory(Long categoryId, Pageable pageable) {
+        return productRepository.findByCategoryId(categoryId, pageable)
+                .map(this::convertToProductDTO);
+    }
+
+    public Page<ProductDTO> findProductsByAuthor(Long authorId, Pageable pageable) {
+        return productRepository.findByAuthorId(authorId, pageable)
+                .map(this::convertToProductDTO);
+    }
+    public Page<ProductDTO> searchProducts(String title, Long categoryId, Long authorId, Pageable pageable) {
+        Page<Product> products;
+
+        if (title != null) {
+            products = productRepository.findByTitleContainingIgnoreCase(title, pageable);
+        } else if (categoryId != null) {
+            products = productRepository.findByCategoryId(categoryId, pageable);
+        } else if (authorId != null) {
+            products = productRepository.findByAuthorId(authorId, pageable);
+        } else {
+            products = productRepository.findAll(pageable);
+        }
+
+        return products.map(this::convertToProductDTO);
     }
 
     public ProductDTO createDefaultProductDTO() {

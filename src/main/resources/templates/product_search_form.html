@@ -1,52 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Wyszukiwanie Produktów</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" integrity="sha384-gH2yIJqQkNH2i8t13咫46A7E24KJE7XqZDsV40E+3H5+VT3q3H9+UF/h/H+k" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856UREqJFFbHnIF59F0m9/0Id/i675+T58Fz4NC596DCEeHjY4ceXJXnaEB" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9Yq36rI277C3H6C8=" crossorigin="anonymous"></script>
+    <title>Wyniki wyszukiwania produktów</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
 </head>
-<body>
-<h1>Wyszukiwanie produktów</h1>
-<form th:action="@{/products/search}" method="get">
-    <!-- Pole wyszukiwania po nazwie produktu -->
-    <label for="searchTerm">Nazwa produktu:</label>
-    <input type="text" id="searchTerm" name="searchTerm" th:value="${searchTerm}" placeholder="Nazwa produktu" />
-
-    <!-- Wybór kategorii -->
-    <label for="categoryId">Kategoria:</label>
-    <select id="categoryId" name="categoryId" th:value="${categoryId}">
-        <option value="">Wszystkie kategorie</option>
-        <!-- Tutaj iteruj po kategoriach i generuj opcje -->
-    </select>
-
-    <!-- Zakres cen -->
-    <label for="minPrice">Cena minimalna:</label>
-    <input type="number" id="minPrice" name="minPrice" th:value="${minPrice}" placeholder="Cena minimalna" />
-
-    <label for="maxPrice">Cena maksymalna:</label>
-    <input type="number" id="maxPrice" name="maxPrice" th:value="${maxPrice}" placeholder="Cena maksymalna" />
-
-    <!-- Wybór autora -->
-    <label for="authorId">Autor:</label>
-    <select id="authorId" name="authorId" th:value="${authorId}">
-        <option value="">Wszyscy autorzy</option>
-        <!-- Tutaj iteruj po autorach i generuj opcje -->
-    </select>
-
-    <button type="submit">Szukaj</button>
-</form>
-
-<!-- Sekcja Wyników Wyszukiwania -->
-<h2>Wyniki</h2>
+<body class="container mt-3">
+<h1>Wyniki wyszukiwania</h1>
+<div>Łączna liczba znalezionych produktów: <span th:text="${productsPage.totalElements}"></span></div>
 <div th:if="${not #lists.isEmpty(productsPage.content)}">
-    <!-- Tabela z wynikami wyszukiwania -->
-    <!-- ... -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Cena</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productsPage.content}">
+            <td th:text="${product.title}"></td>
+            <td th:text="${product.price}"></td>
+            <td><a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-info">Szczegóły</a></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <div th:if="${#lists.isEmpty(productsPage.content)}">
     <p>Brak wyników.</p>
 </div>
-
-<button onclick="history.back()">Powrót</button>
+<button class="btn btn-secondary" onclick="history.back()">Powrót</button>
+</div>
 </body>
 </html>
