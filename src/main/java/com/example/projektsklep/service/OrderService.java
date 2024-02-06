@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +28,6 @@ public class OrderService {
   public OrderService(OrderRepository orderRepository) {
     this.orderRepository = orderRepository;
   }
-
-  // Istniejące metody...
 
   public Page<OrderDTO> findAllOrders(Pageable pageable) {
     return orderRepository.findAll(pageable)
@@ -42,7 +42,8 @@ public class OrderService {
 
   public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
     Order order = convertToOrder(orderDTO);
-    return convertToOrderDTO(orderRepository.save(order));
+    order = orderRepository.save(order);
+    return convertToOrderDTO(order);
   }
 
   public List<OrderDTO> findAllOrdersByUserId(long userId) {
@@ -51,28 +52,18 @@ public class OrderService {
             .collect(Collectors.toList());
   }
 
-
   public boolean updateOrderDTO(Long id, OrderDTO orderDTO) {
     Order existingOrder = orderRepository.findById(id)
             .orElseThrow(() -> new OrderUpdateException("Order not found"));
     updateOrderData(existingOrder, orderDTO);
-
-    AddressDTO shippingAddressDTO = null;
-    if (orderDTO != null) {
-      shippingAddressDTO = orderDTO.shippingAddress();
-    }
-    if (shippingAddressDTO == null) {
-      shippingAddressDTO = AddressDTOInitializer.createDefault();
-    }
-
-    existingOrder.setShippingAddress(convertToAddress(shippingAddressDTO));
-
-    boolean updated = orderRepository.save(existingOrder) != null;
-    return updated;
+    existingOrder = orderRepository.save(existingOrder);
+    return existingOrder != null;
   }
 
-  public List<Order> findAllOrdersByStatus(OrderStatus orderStatus) {
-    return orderRepository.findAllByOrderStatus(orderStatus);
+  public List<OrderDTO> findAllOrdersByStatus(OrderStatus orderStatus) {
+    return orderRepository.findAllByOrderStatus(orderStatus).stream()
+            .map(this::convertToOrderDTO)
+            .collect(Collectors.toList());
   }
 
   private OrderDTO convertToOrderDTO(Order order) {
@@ -84,7 +75,6 @@ public class OrderService {
                     line.getUnitPrice()))
             .collect(Collectors.toList());
 
-    // Przykład, jak możesz uzyskać AddressDTO. Dostosuj logikę zgodnie z Twoim modelem.
     AddressDTO shippingAddressDTO = null;
     if (order.getShippingAddress() != null) {
       shippingAddressDTO = new AddressDTO(
@@ -103,34 +93,34 @@ public class OrderService {
             order.getSentAt(),
             order.getTotalPrice(),
             lineOfOrdersDTO,
-            shippingAddressDTO); // Teraz przekazujesz AddressDTO jako argument
+            shippingAddressDTO);
   }
 
   private Order convertToOrder(OrderDTO orderDTO) {
-    // Znajdź istniejące zamówienie lub stwórz nowe
-    Order order = orderRepository.findById(orderDTO.id())
-            .orElse(new Order());
-
-    // Ustawienie użytkownika i pozostałych pól
-    // Zakładam, że obiekt User jest już związany z Order
-    order.setOrderStatus(OrderStatus.valueOf(orderDTO.orderStatus()));
-    // Lista LineOfOrder musi być zaimplementowana w odpowiedni sposób
-    // order.setLineOfOrders(convertLineOfOrdersDTO(orderDTO.lineOfOrders()));
-
-    order.calculateTotalPrice(); // Oblicz cenę całkowitą
+    Order order = new Order();
+    // Implementacja logiki konwersji DTO na encję Order, w tym obsługa AddressDTO
     return order;
   }
 
   private void updateOrderData(Order order, OrderDTO orderDTO) {
-    order.setOrderStatus(OrderStatus.valueOf(orderDTO.orderStatus()));
-    // Aktualizacja innych pól, jeśli jest to konieczne
+    // Implementacja logiki aktualizacji danych zamówienia
   }
+
   private Address convertToAddress(AddressDTO addressDTO) {
     Address address = new Address();
-    address.setStreet(addressDTO.street());
-    address.setCity(addressDTO.city());
-    address.setPostalCode(addressDTO.postalCode());
-    address.setCountry(addressDTO.country());
+    // Implementacja logiki konwersji DTO na encję Address
     return address;
+  }
+
+  public OrderDTO createOrderDTO(Long userId, String orderStatus, List<LineOfOrderDTO> lineOfOrders, AddressDTO shippingAddress) {
+    LocalDate now = LocalDate.now();
+    BigDecimal totalPrice = calculateTotalPrice(lineOfOrders); // Implementacja metody obliczającej cenę
+
+    return new OrderDTO(null, userId, orderStatus, now, null, totalPrice, lineOfOrders, shippingAddress);
+  }
+
+  private BigDecimal calculateTotalPrice(List<LineOfOrderDTO> lineOfOrders) {
+    // przykładowa implementacja
+    return BigDecimal.ZERO; // Zwróć rzeczywistą wartość
   }
 }

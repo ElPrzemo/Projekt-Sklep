@@ -177,7 +177,7 @@ public class AdminController {
             orderStatus = OrderStatus.NEW_ORDER;
         }
 
-        List<Order> orders = orderService.findAllOrdersByStatus(orderStatus);
+        List<OrderDTO> orders = orderService.findAllOrdersByStatus(orderStatus);
         model.addAttribute("orders", orders);
         model.addAttribute("selectedStatus", orderStatus.name()); // Dodaj wybrany status do modelu
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
