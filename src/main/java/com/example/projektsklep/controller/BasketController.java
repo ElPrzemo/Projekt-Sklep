@@ -38,7 +38,7 @@ public class BasketController {
     public String showCheckoutForm(Model model) {
         OrderDTO orderDTO = basketService.createInitialOrderDTO(); // Załóżmy, że ta metoda istnieje i przygotowuje DTO.
         model.addAttribute("order", orderDTO);
-        return "checkoutForm";
+        return "order_checkout_form";
     }
 
     @PostMapping("/checkout")
