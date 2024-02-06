@@ -71,7 +71,7 @@ public class AdminController {
                                        @ModelAttribute UserDTO userDTO,
                                        @ModelAttribute AddressDTO addressDTO) {
         userService.updateUserProfileAndAddress(userId, userDTO, addressDTO);
-        return "redirect:/admin/users";
+        return "redirect:/admin/admin_user_list";
     }
 
     @GetMapping("/author")
