@@ -22,32 +22,29 @@
             <label for="email">Email:</label>
             <input type="email" id="email" class="form-control" th:field="*{email}" required>
         </div>
+        <!-- Usunięto pole numeru telefonu -->
+        <button type="submit" class="btn btn-primary">Zaktualizuj użytkownika</button>
+    </form>
+
+    <h3>Adres użytkownika</h3>
+    <form th:action="@{/admin/edit_address/{userId}(userId=${userDTO.id})}" th:object="${addressDTO}" method="post">
         <div class="form-group">
-            <label for="phoneNumber">Numer telefonu:</label>
-            <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}">
+            <label for="street">Ulica:</label>
+            <input type="text" id="street" class="form-control" th:field="*{street}" required>
         </div>
-
-        <!-- Informacje o adresie -->
-        <div th:object="${addressDTO}">
-            <div class="form-group">
-                <label for="street">Ulica:</label>
-                <input type="text" id="street" class="form-control" th:field="*{street}" required>
-            </div>
-            <div class="form-group">
-                <label for="city">Miasto:</label>
-                <input type="text" id="city" class="form-control" th:field="*{city}" required>
-            </div>
-            <div class="form-group">
-                <label for="postalCode">Kod pocztowy:</label>
-                <input type="text" id="postalCode" class="form-control" th:field="*{postalCode}" required>
-            </div>
-            <div class="form-group">
-                <label for="country">Kraj:</label>
-                <input type="text" id="country" class="form-control" th:field="*{country}" required>
-            </div>
+        <div class="form-group">
+            <label for="city">Miasto:</label>
+            <input type="text" id="city" class="form-control" th:field="*{city}" required>
         </div>
-
-        <button type="submit" class="btn btn-primary">Zaktualizuj</button>
+        <div class="form-group">
+            <label for="postalCode">Kod pocztowy:</label>
+            <input type="text" id="postalCode" class="form-control" th:field="*{postalCode}" required>
+        </div>
+        <div class="form-group">
+            <label for="country">Kraj:</label>
+            <input type="text" id="country" class="form-control" th:field="*{country}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Zaktualizuj adres</button>
     </form>
 </div>
 
