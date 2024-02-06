@@ -4,6 +4,7 @@ import com.example.projektsklep.exception.BasketException;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
+import com.example.projektsklep.utils.Basket;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,13 @@ public class BasketController {
     public BasketController(BasketService basketService, OrderService orderService) {
         this.basketService = basketService;
         this.orderService = orderService;
+    }
+
+    @GetMapping
+    public String viewBasket(Model model) {
+        Basket basket = basketService.getCurrentBasket(); // Pobierz aktualny koszyk
+        model.addAttribute("basket", basket);
+        return "basket_view"; // nazwa pliku HTML Thymeleaf
     }
 
     @GetMapping("/checkout")
@@ -39,12 +47,6 @@ public class BasketController {
         } catch (Exception e) {
             throw new BasketException("Error processing checkout", e);
         }
-    }
-
-    @GetMapping
-    public String viewBasket(Model model) {
-        model.addAttribute("products", basketService.getProducts());
-        return "basket_view"; // nazwa pliku HTML Thymeleaf
     }
 
     @PostMapping("/update/{productId}")
