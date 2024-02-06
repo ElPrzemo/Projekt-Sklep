@@ -19,9 +19,11 @@
 <div>
     <label>Nazwisko:</label>
     <span th:text="${user.lastName}">Kowalski</span>
-</div><div>
+</div>
+<div>
     <label>Edycja danych:</label>
-    <a th:href="@{/user/edit}">Edytuj profil</a>
+    <!-- Używamy dodanego atrybutu editLink do wygenerowania linku do edycji -->
+    <a th:href="${editLink}">Edytuj profil</a>
 </div>
 
 <button onclick="history.back()">Powrót</button>

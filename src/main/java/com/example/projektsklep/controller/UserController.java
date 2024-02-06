@@ -59,6 +59,7 @@ public class UserController {
         model.addAttribute("roles", AdminOrUser.values()); // Możesz potrzebować listy RoleDTO zamiast AdminOrUser, zależnie od Twojej implementacji
         return "user_register";
     }
+
     @PostMapping("/new")
     public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
         // Pobieramy AddressDTO i rolę z modelu
@@ -91,16 +92,6 @@ public class UserController {
         model.addAttribute("message", "Użytkownik zarejestrowany pomyślnie");
         return "registration_success";
     }
-
-
-
-//    @GetMapping("/search/email")
-//    public String findUserByEmail(@RequestParam String email, Model model) {
-//        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
-//        userDTO.ifPresent(dto -> model.addAttribute("user", dto));
-//        return userDTO.isPresent() ? "user_details" : "redirect:/users";
-//    }
-
 
 
     @GetMapping("/search")
