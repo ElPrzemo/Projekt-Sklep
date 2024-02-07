@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "line_of_orders")
 public class LineOfOrder {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,5 +38,13 @@ public class LineOfOrder {
         this.product = product;
         this.quantity = quantity;
         this.unitPrice = product.getPrice();
+
     }
+    public BigDecimal getTotalPrice() {
+        // Mnożymy cenę jednostkową przez ilość i zwracamy wynik
+        return unitPrice.multiply(new BigDecimal(quantity));
+    }
+
+
+
 }

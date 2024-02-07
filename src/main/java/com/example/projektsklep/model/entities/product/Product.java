@@ -40,7 +40,14 @@ public class Product {
  @DateTimeFormat(pattern = "yyyy-MM-dd")
  private LocalDate dateCreated;
 
+ public Product(String title, BigDecimal price) {
+  this.title = title;
+  this.price = price;
+  // Ustaw inne wymagane pola (np. dateCreated) w razie potrzeby
+ }
 
+ public Product(String description) {
+ }
 
 
  // Constructors, getters, and setters...

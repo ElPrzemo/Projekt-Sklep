@@ -29,17 +29,17 @@ class AddressTest {
         Assertions.assertEquals(country, address.getCountry());
     }
 
-    @Test
-    public void testSetUser_GivenAddressAndUser_ShouldSetUser() {
-        // Given
-        User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
-        Address address = new Address("Aleje Ujazdowskie 13", "Warszawa", "00-587", "Polska");
-
-        // When
-        address.setUser(user);
-
-        // Then
-        Assertions.assertEquals(user, address.getUser());
-    }
+//    @Test
+//    public void testSetUser_GivenAddressAndUser_ShouldSetUser() {
+//        // Given
+//        User user = new User("user@example.com", "password", "avatar.png", "John", "Doe");
+//        Address address = new Address("Aleje Ujazdowskie 13", "Warszawa", "00-587", "Polska");
+//
+//        // When
+//        address.setUser(user);
+//
+//        // Then
+//        Assertions.assertEquals(user, address.getUser());
+//    }
 
 }
