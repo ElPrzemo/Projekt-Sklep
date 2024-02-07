@@ -7,41 +7,54 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9Yq36rI277C3H6C8=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>Edycja Profilu</h1>
+<div class="container mt-5">
+    <h1>Edycja Profilu</h1>
+    <form th:action="@{/account/edit}" th:object="${userDTO}" method="post" class="row g-3">
+        <input type="hidden" th:field="*{id}">
 
-<!-- Formularz edycji danych użytkownika -->
-<form th:action="@{/account/edit}" th:object="${userDTO}" method="post">
-    <input type="hidden" th:field="*{id}" />
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" th:field="*{email}" required />
+            <form th:action="@{/account/edit}" th:object="${userDTO}" method="post" class="row g-3">
+                <input type="hidden" th:field="*{id}">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Imię:</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Nazwisko:</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Nowe hasło (opcjonalnie):</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}">
+                </div>
+                <!-- Sekcja adresu -->
+                <div class="col-md-6">
+                    <label for="street" class="form-label">Ulica:</label>
+                    <input type="text" class="form-control" id="street" th:field="*{address.street}">
+                </div>
+                <div class="col-md-6">
+                    <label for="city" class="form-label">Miasto:</label>
+                    <input type="text" class="form-control" id="city" th:field="*{address.city}">
+                </div>
+                <div class="col-md-6">
+                    <label for="postalCode" class="form-label">Kod pocztowy:</label>
+                    <input type="text" class="form-control" id="postalCode" th:field="*{address.postalCode}">
+                </div>
+                <div class="col-md-6">
+                    <label for="country" class="form-label">Kraj:</label>
+                    <input type="text" class="form-control" id="country" th:field="*{address.country}">
+                </div>
 
-    <label for="phoneNumber">Numer telefonu:</label>
-    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
-
-    <!-- Pole hasła nie jest bezpośrednio powiązane z DTO, więc używamy tylko name -->
-    <label for="password">Nowe hasło (opcjonalnie):</label>
-    <input type="password" id="password" name="password" />
-
-    <div>
-        <h2>Adres</h2>
-        <label for="street">Ulica:</label>
-        <input type="text" id="street" th:field="*{address.street}" />
-
-        <label for="city">Miasto:</label>
-        <input type="text" id="city" th:field="*{address.city}" />
-
-        <label for="postalCode">Kod pocztowy:</label>
-        <input type="text" id="postalCode" th:field="*{address.postalCode}" />
-
-        <label for="country">Kraj:</label>
-        <input type="text" id="country" th:field="*{address.country}" />
-    </div>
-
-    <button type="submit">Zapisz zmiany</button>
-</form>
-
-<button onclick="history.back()">Powrót</button>
-
+            </form>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>

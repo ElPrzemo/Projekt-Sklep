@@ -7,21 +7,32 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9Yq36rI277C3H6C8=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>Panel Użytkownika</h1>
+<div class="container mt-5">
+    <h1>Panel Użytkownika</h1>
 
-<!-- Przyciski nawigacyjne -->
-<div>
-    <form action="/basket" method="get">
-        <button type="submit">Koszyk</button>
-    </form>
-    <form action="/account/my_orders" method="get">
-        <button type="submit">Moje Zamówienia</button>
-    </form>
-    <form action="/account/edit" method="get">
-        <button type="submit">Edytuj Konto</button>
-    </form>
-    <button onclick="history.back()">Powrót</button>
+    <div class="mb-3">
+        <a href="/account/edit" class="btn btn-primary">Edytuj Konto</a>
+        <a href="/account/my_orders" class="btn btn-info">Moje Zamówienia</a>
+        <a href="/basket" class="btn btn-warning">Koszyk</a>
+    </div>
+
+
+
+    <div class="card mt-3">
+        <div class="card-header">Twoje dane</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Email: <span th:text="${userDTO.email}"></span></li>
+            <li class="list-group-item">Imię: <span th:text="${userDTO.firstName}"></span></li>
+            <li class="list-group-item">Nazwisko: <span th:text="${userDTO.lastName}"></span></li>
+            <!-- Bezpieczne wyświetlanie adresu z kontrolą wartości null -->
+            <li class="list-group-item">Adres:
+                <span th:if="${userDTO.address != null}" th:text="${userDTO.address.street} + ', ' + ${userDTO.address.city} + ', ' + ${userDTO.address.postalCode} + ', ' + ${userDTO.address.country}">Brak adresu</span>
+                <span th:if="${userDTO.address == null}">Brak adresu</span>
+            </li>
+        </ul>
+    </div>
+
+    <button onclick="history.back()" class="btn btn-outline-dark">Powrót</button>
 </div>
-
 </body>
 </html>

@@ -92,19 +92,22 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Address address = user.getAddress();
 
-        // Aktualizacja danych użytkownika
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
         user.setEmail(userDTO.email());
-        // Ustawienie innych pól, pomijając hasło
+        // Zakładamy, że hasło jest już zahaszowane lub null, jeśli nie zmieniamy
 
-        // Aktualizacja adresu
-        if (address != null) {
-            address.setStreet(addressDTO.street());
-            address.setCity(addressDTO.city());
-            address.setPostalCode(addressDTO.postalCode());
-            address.setCountry(addressDTO.country());
-            addressRepository.save(address);
+        if (address == null) {
+            address = new Address();
+        }
+        address.setStreet(addressDTO.street());
+        address.setCity(addressDTO.city());
+        address.setPostalCode(addressDTO.postalCode());
+        address.setCountry(addressDTO.country());
+
+        if (user.getAddress() == null) {
+            address = addressRepository.save(address);
+            user.setAddress(address);
         }
 
         userRepository.save(user);
@@ -135,7 +138,6 @@ public class UserService {
 
     private void updateUserFields(User user, UserDTO userDTO) {
         user.setEmail(userDTO.email());
-        user.setPhoneNumber(userDTO.phoneNumber());
         if (userDTO.password() != null) {
             user.setPasswordHash(userDTO.password());
         }
@@ -149,7 +151,6 @@ public class UserService {
         user.setEmail(userDTO.email());
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-        user.setPhoneNumber(userDTO.phoneNumber());
         if (userDTO.address() != null) {
             Address address = addressService.convertToEntity(userDTO.address());
             user.setAddress(address);

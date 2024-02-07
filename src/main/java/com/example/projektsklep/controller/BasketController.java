@@ -44,21 +44,17 @@ public class BasketController {
     @PostMapping("/checkout")
     public String processCheckout(@Valid @ModelAttribute("order") OrderDTO orderDTO, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "order_checkout_form";
+            return "checkoutForm";
         }
 
-        // Tutaj możesz dodać logikę przekazującą aktualny stan koszyka do DTO, jeśli jest to wymagane.
-        // Przykładowo, możemy założyć, że stan koszyka jest już zawarty w `orderDTO`.
-
-        OrderDTO savedOrder = orderService.saveOrderDTO(orderDTO); // Zakładając, że metoda zapisuje zamówienie i zwraca zapisane DTO.
-
-        if (savedOrder != null) {
-            basketService.clear(); // Oczyść koszyk po pomyślnym złożeniu zamówienia.
-            return "redirect:/order_succes"; // Przekieruj do strony sukcesu.
-        } else {
-            model.addAttribute("error", "Nie udało się złożyć zamówienia.");
-            return "order_checkout_form";
+        // Here, you would include any logic needed to handle the shippingAddress
+        // For example, if the form allows for entering an optional new shipping address:
+        if (orderDTO.shippingAddress() != null) {
+            // Process the shipping address as needed
         }
+
+        orderService.saveOrderDTO(orderDTO);
+        return "redirect:/orderSuccess";
     }
 
 

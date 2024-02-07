@@ -43,49 +43,48 @@ public class UserController {
     }
 
 
-    @GetMapping("/new")
-    public String showNewUserForm(Model model) {
-        // Tworzenie obiektu AddressDTO z dostępnym konstruktorem
-        AddressDTO addressDTO = new AddressDTO(1L, "Ulica", "Miasto", "Kod pocztowy", "Kraj");
-
-        // Przygotowanie pustego zestawu ról
-        Set<RoleDTO> roles = Collections.emptySet(); // Lub null, jeśli Twoja logika to akceptuje
-
-        // Tworzenie obiektu UserDTO z dostępnym konstruktorem, uwzględniając puste rôle
-        UserDTO userDTO = new UserDTO(1L, "Imię", "Nazwisko", "Email", 123, "Hasło", addressDTO, roles);
-
-        model.addAttribute("userDTO", userDTO);
-        model.addAttribute("addressDTO", addressDTO);
-        model.addAttribute("roles", AdminOrUser.values()); // Możesz potrzebować listy RoleDTO zamiast AdminOrUser, zależnie od Twojej implementacji
-        return "user_register";
-    }
-
-    @PostMapping("/new")
-    public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
-        // Pobieramy AddressDTO i rolę z modelu
-        AddressDTO addressDTO = (AddressDTO) model.getAttribute("addressDTO");
-        AdminOrUser role = (AdminOrUser) model.getAttribute("role");
-        try {
-            userService.saveUser(userDTO, addressDTO, role);
-        } catch (UserAlreadyExistsException e) {
-            // Dodanie obsługi użytkownika o tym samym emailu
-            model.addAttribute("error", e.getMessage());
-            return "user_register";
-        } catch (InvalidUserDataException e) {
-            // Dodanie obsługi błędnych danych użytkownika
-            model.addAttribute("error", e.getMessage());
-            return "user_register";
-        } catch (DataAccessException e) {
-            // Dodanie obsługi błędów dostępu do bazy danych
-            model.addAttribute("error", "Wystąpił błąd podczas rejestracji");
-            return "user_register";
-        }
-
-        // Używamy przekazanych obiektów userDTO, addressDTO i roli
-        userService.saveUser(userDTO, addressDTO, role);
-
-        return "redirect:/users/registration-success";
-    }
+//    @GetMapping("/new")
+//    public String showNewUserForm(Model model) {
+//        // Utworzenie pustego obiektu AddressDTO
+//        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
+//
+//        // Przygotowanie pustego zestawu ról
+//        Set<RoleDTO> roles = Collections.emptySet();
+//
+//        // Utworzenie nowego obiektu UserDTO z null jako ID i null jako phoneNumber
+//        UserDTO userDTO = new UserDTO(null, "", "", "", null, "", addressDTO, roles);
+//
+//        model.addAttribute("userDTO", userDTO);
+//        model.addAttribute("addressDTO", addressDTO);
+//        model.addAttribute("roles", AdminOrUser.values());
+//        return "user_register";
+//    }
+//    @PostMapping("/new")
+//    public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
+//        // Pobieramy AddressDTO i rolę z modelu
+//        AddressDTO addressDTO = (AddressDTO) model.getAttribute("addressDTO");
+//        AdminOrUser role = (AdminOrUser) model.getAttribute("role");
+//        try {
+//            userService.saveUser(userDTO, addressDTO, role);
+//        } catch (UserAlreadyExistsException e) {
+//            // Dodanie obsługi użytkownika o tym samym emailu
+//            model.addAttribute("error", e.getMessage());
+//            return "user_register";
+//        } catch (InvalidUserDataException e) {
+//            // Dodanie obsługi błędnych danych użytkownika
+//            model.addAttribute("error", e.getMessage());
+//            return "user_register";
+//        } catch (DataAccessException e) {
+//            // Dodanie obsługi błędów dostępu do bazy danych
+//            model.addAttribute("error", "Wystąpił błąd podczas rejestracji");
+//            return "user_register";
+//        }
+//
+//        // Używamy przekazanych obiektów userDTO, addressDTO i roli
+//        userService.saveUser(userDTO, addressDTO, role);
+//
+//        return "redirect:/users/registration-success";
+//    }
 
     @GetMapping("/registration-success")
     public String registrationSuccess(Model model) {

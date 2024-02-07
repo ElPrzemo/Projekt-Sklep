@@ -12,8 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 @ControllerAdvice
@@ -60,8 +62,8 @@ public class UserAccountController {
 
         // Jeśli użytkownik nie ma przypisanego adresu, tworzymy pusty obiekt AddressDTO
         if (userDTO.address() == null) {
-            userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName(),
-                    userDTO.phoneNumber(), userDTO.password(),
+            userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName()
+                   , userDTO.password(),
                     new AddressDTO(null, "", "", "", ""), userDTO.roles());
         }
 
@@ -70,21 +72,27 @@ public class UserAccountController {
     }
 
     @PostMapping("/edit")
-    public String updateProfileAndAddress(@ModelAttribute UserDTO userDTO,
-                                          @ModelAttribute AddressDTO addressDTO) {
+    public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
+                                          BindingResult userResult,
+                                          @Valid @ModelAttribute("addressDTO") AddressDTO addressDTO,
+                                          BindingResult addressResult,
+                                          Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
+        if (userResult.hasErrors() || addressResult.hasErrors()) {
+            model.addAttribute("userDTO", userDTO); // Przekazanie ponownie użytkownika do widoku, jeśli wystąpią błędy
+            model.addAttribute("addressDTO", addressDTO); // Przekazanie ponownie adresu do widoku, jeśli wystąpią błędy
+            return "user_edit"; // Nazwa widoku formularza edycji, który ma być wyświetlony ponownie w przypadku błędów
+        }
         Long userId = userService.findUserByEmail(email)
                 .map(UserDTO::id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        userService.updateUserProfileOrAdmin(userId, userDTO, false); // isAdmin ustawione na false
         try {
-            userService.updateUserProfileOrAdmin(userId, userDTO, false);
+            userService.updateUserProfileAndAddress(userId, userDTO, addressDTO); // Zakładając, że ta metoda aktualizuje zarówno użytkownika, jak i adres
         } catch (Exception e) {
-            throw new AddressUpdateException("Wystąpił błąd podczas aktualizacji adresu");
+            model.addAttribute("updateError", "Wystąpił błąd podczas aktualizacji profilu");
+            return "user_edit"; // Powrót do formularza edycji z komunikatem o błędzie
         }
-        return "redirect:/account/profile";
-    }
-
-}
+        return "redirect:/userPanel"; // Przekierowanie do panelu użytkownika po pomyślnej aktualizacji
+    }}

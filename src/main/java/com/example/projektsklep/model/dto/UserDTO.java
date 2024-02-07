@@ -3,24 +3,17 @@ package com.example.projektsklep.model.dto;
 
 import lombok.Builder;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.Set;
 
 @Builder
 public record UserDTO(
         Long id,
-        String email,
-        String firstName,
-        String lastName,
-        Integer phoneNumber, // already added
-        String password, // already added
+        @NotBlank String email,
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        String password,
         AddressDTO address,
-        Set<RoleDTO> roles // now added
-) {
-    public UserDTO {
-        Objects.requireNonNull(email);
-        Objects.requireNonNull(firstName);
-        Objects.requireNonNull(lastName);
-        // roles field can be null if you want to allow users without roles
-    }
-}
+        Set<RoleDTO> roles
+) {}

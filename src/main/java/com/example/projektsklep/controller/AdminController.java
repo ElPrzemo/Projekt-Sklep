@@ -66,28 +66,6 @@ public class AdminController {
         return "admin_user_edit_form";
     }
 
-    @PostMapping("/edit_user/{userId}")
-    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute("userDTO") UserDTO userDTO,
-                             BindingResult userResult, Model model) {
-        if (userResult.hasErrors()) {
-            model.addAttribute("addressDTO", userService.findUserById(userId).map(UserDTO::address).orElse(new AddressDTO(null, "", "", "", ""))); // Dostosuj zgodnie z możliwym konstruktorem AddressDTO
-            return "admin_user_edit_form";
-        }
-        userService.updateUserProfileAndAddress(userId, userDTO, userDTO.address()); // Założenie, że ta metoda istnieje i aktualizuje zarówno użytkownika, jak i adres
-        return "redirect:/admin/user_details/" + userId;
-    }
-
-    @PostMapping("/edit_address/{userId}")
-    public String updateAddress(@PathVariable Long userId, @Valid @ModelAttribute("addressDTO") AddressDTO addressDTO,
-                                BindingResult addressResult, Model model) {
-        if (addressResult.hasErrors()) {
-            model.addAttribute("userDTO", userService.findUserById(userId).orElse(new UserDTO(null, "", "", "", null, "", new AddressDTO(null, "", "", "", ""), null))); // Dostosuj zgodnie z możliwym konstruktorem UserDTO
-            return "admin_user_edit_form";
-        }
-        UserDTO userDTO = userService.findUserById(userId).orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
-        userService.updateUserProfileAndAddress(userId, userDTO, addressDTO); // Używam istniejącej metody do aktualizacji adresu
-        return "redirect:/admin/user_details/" + userId;
-    }
 
     @GetMapping("/user_details/{userId}")
     public String userDetails(@PathVariable Long userId, Model model) {
