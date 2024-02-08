@@ -1,5 +1,6 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.UserDTO;
 
 import com.example.projektsklep.service.UserService;
@@ -44,22 +45,13 @@ public class SimpleViewController {
     }
 
     @GetMapping("/userPanel")
-    public String getUserPanel(Model model, Principal principal) {
-        // Pobierz nazwę użytkownika z obiektu Principal
-        String email = principal.getName();
-        // Pobierz UserDTO na podstawie e-maila (lub innego identyfikatora)
-        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
+    public String showUserPanel(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        UserDTO userDTO = userService.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika."));
+        model.addAttribute("userDTO", userDTO); // Zmiana z "user" na "userDTO"
 
-        // Upewnij się, że userDTO jest obecny przed dodaniem do modelu
-        userDTO.ifPresent(dto -> model.addAttribute("userDTO", dto));
-
-        // Jeśli userDTO nie jest obecne, możesz przekierować do strony błędu lub dodać obsługę błędów
-        if (userDTO.isEmpty()) {
-            // Przykład przekierowania do strony błędu
-            return "redirect:/errorPage";
-        }
-
-        return "userPanel"; // Nazwa widoku Thymeleaf
+        return "userPanel";
     }
     @GetMapping("/security")
     public String security() {
