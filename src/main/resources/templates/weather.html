@@ -7,15 +7,17 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9Yq36rI277C3H6C8=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>Pogoda</h1>
-<div th:if="${weatherData}" th:utext="${weatherData}"></div>
+<div class="container mt-4">
+    <h1>Pogoda</h1>
+    <div th:if="${weatherData}" class="alert alert-info" th:utext="${weatherData}"></div>
 
-<h2>Sprawdź pogodę dla innego miasta</h2>
-<form action="/weather" method="get">
-    <input type="text" name="city" placeholder="Wpisz nazwę miasta" />
-    <button type="submit">Sprawdź pogodę</button>
-</form>
+    <h2>Sprawdź pogodę dla innego miasta</h2>
+    <form action="/weather" method="get" class="input-group mb-3">
+        <input type="text" name="city" placeholder="Wpisz nazwę miasta" class="form-control" />
+        <button type="submit" class="btn btn-primary">Sprawdź pogodę</button>
+    </form>
 
-<button onclick="history.back()">Powrót</button>
+    <button onclick="history.back()" class="btn btn-secondary">Powrót</button>
+</div>
 </body>
 </html>

@@ -25,7 +25,7 @@
         <td th:text="${order.totalPrice}"></td>
         <td>
             <a th:href="@{/orders/{orderId}(orderId=${order.id})}" class="btn btn-info">Szczegóły</a>
-            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}" class="btn btn-warning">Edytuj</a>
+            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}" class="btn btn-warning">Zmień status</a>
         </td>
     </tr>
     </tbody>
