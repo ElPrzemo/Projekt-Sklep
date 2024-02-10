@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/categories")
@@ -23,7 +24,13 @@ public class CategoryController {
 
     @GetMapping
     public String listCategories(Model model) {
-        List<CategoryDTO> categories = categoryService.getAllCategoryDTOs();
+        List<CategoryDTO> categories = categoryService.getAllCategoryDTOs().stream().map(category -> {
+            // Uzyskaj nazwę kategorii nadrzędnej, jeśli istnieje
+            String parentCategoryName = category.parentCategoryId() != null
+                    ? categoryService.getCategoryDTOById(category.parentCategoryId()).name()
+                    : null;
+            return new CategoryDTO(category.id(), category.name(), category.parentCategoryId(), parentCategoryName);
+        }).collect(Collectors.toList());
         model.addAttribute("categories", categories);
         return "admin_category_list";
     }
@@ -34,7 +41,7 @@ public class CategoryController {
     public String showAddForm(Model model) {
         // Tworzenie nowego DTO dla formularza, jeśli jeszcze nie istnieje
         if (!model.containsAttribute("categoryDTO")) {
-            model.addAttribute("categoryDTO", new CategoryDTO(null, "", null));
+            model.addAttribute("categoryDTO", new CategoryDTO(null, "", null, null));
         }
         List<CategoryDTO> allCategories = categoryService.getAllCategoryDTOs(); // Załóżmy, że ta metoda istnieje i zwraca listę wszystkich kategorii
         model.addAttribute("allCategories", allCategories); // Dodaj listę wszystkich kategorii do modelu

@@ -8,13 +8,9 @@
 <h2>Lista Kategorii</h2>
 <div class="list-group">
     <div th:each="category : ${categories}" class="list-group-item">
-        <h5 class="mb-1" th:text="${category.name} + (category.parentCategory != null ? ' (' + category.parentCategory.name + ')' : '')">Nazwa Kategorii</h5>
-        <button th:if="${isAdmin}" th:onclick="'window.location.href=\'/categories/edit/' + ${category.id} + '\''" class="btn btn-primary btn-sm">Edytuj</button>
-        <div th:if="${not #lists.isEmpty(category.subcategories)}" class="ms-2 mt-2">
-            <ul class="list-unstyled">
-                <li th:each="subCategory : ${category.subcategories}" th:text="${subCategory.name}">Podkategoria</li>
-            </ul>
-        </div>
+        <h5 class="mb-1" th:text="${category.name} + (category.parentCategoryName != null ? ' (' + category.parentCategoryName + ')' : '')">Nazwa Kategorii</h5>
+        <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-primary btn-sm">Edytuj</a>
+        <a th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-danger btn-sm" th:onclick="'return confirm(\'Czy na pewno chcesz usunąć tę kategorię?\')'">Usuń</a>
     </div>
 </div>
 
