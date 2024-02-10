@@ -92,49 +92,7 @@ class OrderTest {
     }
 
 
-//    @Test
-//    public void testChangeOrderStatus_ShouldChangeStatusAndNotifyObservers() {
-//        // Given
-//        Order order = new Order();
-//        order.registerObserver(mockObserver);
-//        order.setOrderStatus(OrderStatus.PENDING);
-//
-//        // When
-//        order.changeOrderStatus(OrderStatus.SHIPPED);
-//
-//        // Then
-//        assertEquals(OrderStatus.SHIPPED, order.getOrderStatus());
-//        verify(mockObserver).update(order);
-//    }
 
-//    @Test
-//    public void testRegisterObserver_ShouldAddObserverToList() {
-//        // Given
-//        Order order = new Order();
-//        Observer mockObserver = Mockito.mock(Observer.class);
-//
-//        // When
-//        order.registerObserver(mockObserver);
-//
-//        // Then
-//        List<Observer> observers = order.getRegisteredObservers();
-//        assertTrue(observers.contains(mockObserver));
-//    }
-
-//    @Test
-//    public void testUnregisterObserver_ShouldRemoveObserverFromList() {
-//        // Given
-//        Order order = new Order();
-//        Observer mockObserver = Mockito.mock(Observer.class);
-//        order.registerObserver(mockObserver);
-//
-//        // When
-//        order.unregisterObserver(mockObserver);
-//
-//        // Then
-//        List<Observer> observers = order.getRegisteredObservers();
-//        assertFalse(observers.contains(mockObserver));
-//    }
 
     @Test
     public void testSetUser_GivenOrderAndUser_ShouldSetUser() {
@@ -163,66 +121,5 @@ class OrderTest {
         assertEquals(user, retrievedUser);
     }
 
-//    @Test
-//    public void testGetProducts_WithPositions_ShouldReturnListOfProducts() {
-//        // Given
-//        Product product1 = new Product("Product 1", "Description of product 1", "miniature1.jpg", BigDecimal.TEN, ProductType.COOKING_EQUIPMENT, true, LocalDate.now(), new Author(), new Category());
-//        Product product2 = new Product("Product 2", "Description of product 2", "miniature2.jpg", BigDecimal.FIVE, ProductType.KITCHEN_EQUIPMENT, true, LocalDate.now(), new Author(), new Category());
-//        List<Product> products = Arrays.asList(product1, product2);
-//
-//        List<LineOfOrder> lineOfOrders = new ArrayList<>();
-//        lineOfOrders.add(new LineOfOrder(product1, 2, BigDecimal.TEN));
-//        lineOfOrders.add(new LineOfOrder(product2, 3, BigDecimal.TEN));
-//        Order order = new Order();
-//        order.setListOfOrders(lineOfOrders);
-//
-//        // When
-//        List<Product> retrievedProducts = order.getProducts();
-//
-//        // Then
-//        assertEquals(products, retrievedProducts);
-//    }
 
-//    @Test
-//    public void testSetListOfOrders_WithValidList_ShouldSetList() {
-//        // Given
-//        List<LineOfOrder> lineOfOrders = createLineOfOrders(); // Create a list of LineOfOrder objects
-//        Order order = new Order();
-//
-//        // When
-//        order.setListOfOrders(lineOfOrders);
-//
-//        // Then
-//        assertEquals(lineOfOrders, order.getLineOfOrders());
-//    }
-
-//    private List<LineOfOrder> createLineOfOrders() {
-//        List<LineOfOrder> lineOfOrders = new ArrayList<>();
-//
-//        // Example product data
-//        Product product1 = new Product(1L, mockAuthor, mockCategory, "Title", "Description",
-//                "miniature.jpg", BigDecimal.TEN, ProductType.COOKING_EQUIPMENT, true, LocalDate.now());;
-//        Product product2 = new Product(1L, mockAuthor, mockCategory, "Title", "Description",
-//                "miniature.jpg", BigDecimal.TEN, ProductType.COOKING_EQUIPMENT, true, LocalDate.now());
-//
-//        // Create LineOfOrder objects with sample quantities
-//        lineOfOrders.add(new LineOfOrder(product1, 2, BigDecimal.TEN));
-//        lineOfOrders.add(new LineOfOrder(product2, 3, BigDecimal.TEN));
-//
-//        return lineOfOrders;
-//    }
-
-//    @Test(expected = NullPointerException.class)
-//    public void testRegisterObserver_WithNull_ShouldThrowException() {
-//        Order order = new Order();
-//
-//
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testChangeOrderStatus_WithInvalidStatus_ShouldThrowException() {
-//        Order order = new Order();
-//
-//        order.changeOrderStatus(null);
-//    }
 }

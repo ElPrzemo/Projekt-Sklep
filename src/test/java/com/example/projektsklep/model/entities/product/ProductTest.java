@@ -30,7 +30,7 @@ public class ProductTest {
 
         assertEquals(1L, product.getId());
         assertEquals(mockAuthor, product.getAuthor());
-        // ... other assertions for other fields
+
     }
 
     @Test
@@ -41,20 +41,7 @@ public class ProductTest {
         assertSame(mockAuthor, product.getAuthor());
     }
 
-//    @Test
-//    public void testGetPrice_ShouldReturnFormattedPrice() {
-//        Product product = new Product();
-//
-//        String formattedPrice = product.getPrice().toString(); // Assuming you have custom formatting
-//        assertEquals("$123.45", formattedPrice);
-//    }
-//    @Test
-//    public void testGetDescription_ShouldReturnDescription() {
-//        String description = "Example product description";
-//        Product product = new Product(description);
-//
-//        assertEquals(description, product.getDescription());
-//    }
+
     @Test
     public void testSetDescription_ShouldSetDescription() {
         Product product = new Product();
@@ -63,13 +50,7 @@ public class ProductTest {
 
         assertEquals(newDescription, product.getDescription());
     }
-//    @Test
-//    public void testGetDescription_ShouldReturnDescription() {
-//        String description = "Example product description";
-//        Product product = new Product(description = description);
-//
-//        assertEquals(description, product.getDescription());
-//    }
+
     @Test
     public void testSetDescription_ShouldSetEmptyDescription() {
         Product product = new Product();
@@ -77,11 +58,7 @@ public class ProductTest {
 
         assertEquals("", product.getDescription());
     }
-//    @Test(expected = NullPointerException.class)
-//    public void testSetDescription_ShouldThrowExceptionForNull() {
-//        Product product = new Product();
-//        product.setDescription(null);
-//    }
+
     @Test
     public void testIsPublished_ShouldReturnFalseForNewProduct() {
         Product product = new Product();
@@ -97,14 +74,5 @@ public class ProductTest {
         assertTrue(product.isPublished());
     }
 
-//    @Test
-//    public void testGetDateCreated_ShouldReturnCurrentDate() {
-//        Product product = new Product();
-//
-//        // Comparing date with system date
-//        LocalDate today = LocalDate.now();
-//        assertEquals(today, product.getDateCreated());
-//    }
 
-    // ... more tests for other methods and edge cases
 }

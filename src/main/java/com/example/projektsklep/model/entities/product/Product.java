@@ -50,5 +50,5 @@ public class Product {
  }
 
 
- // Constructors, getters, and setters...
+
 }

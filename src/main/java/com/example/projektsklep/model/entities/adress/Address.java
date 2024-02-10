@@ -2,7 +2,7 @@ package com.example.projektsklep.model.entities.adress;
 
 import com.example.projektsklep.model.entities.user.User;
 import jakarta.persistence.*;
-import jdk.internal.loader.BuiltinClassLoader;
+//import jdk.internal.loader.BuiltinClassLoader;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -36,10 +36,10 @@ public class Address {
 //    private Long userId; // Przechowuje ID powiązanego użytkownika
 
 
-    @Getter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+//    @Getter
+//    @OneToOne(fetch = FetchType.LAZY)
+////    @JoinColumn(name = "user_id")
+//    private User user;
 
     public void setUser(User user) {
         this.userId = user.getId(); // Set foreign key based on User ID

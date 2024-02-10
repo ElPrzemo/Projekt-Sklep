@@ -3,12 +3,15 @@ package com.example.projektsklep.model.entities.user;
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.role.Role;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
+
+
     @Test
     public void testCreateUserWithName() {
         User user = new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", "Doe");
@@ -19,61 +22,6 @@ class UserTest {
         assertEquals("Doe", user.getLastName());
     }
 
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testCreateUserWithNullEmail() {
-//        new User(null, "hashedPassword", "avatar.png", "John", "Doe");
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testCreateUserWithNullPasswordHash() {
-//        new User("john.doe@example.com", null, "avatar.png", "John", "Doe");
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testCreateUserWithNullFirstName() {
-//        new User("john.doe@example.com", "hashedPassword", "avatar.png", null, "Doe");
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testCreateUserWithNullLastName() {
-//        new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", null);
-//    }
-//
-//    @Test
-//    public void testSetAddress() {
-//        User user = new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", "Doe");
-//        Address address = new Address("123 Main St", "Anytown", "CA", "12345", "USA");
-//
-//        user.setAddress(address);
-//
-//        assertEquals(address, user.getAddress());
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSetAddressWithNull() {
-//        User user = new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", "Doe");
-//
-//        user.setAddress(null);
-//    }
-//
-//    @Test
-//    public void testAddOrder() {
-//        User user = new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", "Doe");
-//        Order order = new Order(1L, user, Date.now(), 100.00, "PENDING");
-//
-//        user.addOrder(order);
-//
-//        assertEquals(1, user.getOrders().size());
-//        assertTrue(user.getOrders().contains(order));
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testAddOrderWithNull() {
-//        User user = new User("john.doe@example.com", "hashedPassword", "avatar.png", "John", "Doe");
-//
-//        user.addOrder(null);
-//
-//// Similar tests for other setter methods if applicable
 
         @Test
         public void testUserConstructor_GivenValidData_ShouldCreateUser () {

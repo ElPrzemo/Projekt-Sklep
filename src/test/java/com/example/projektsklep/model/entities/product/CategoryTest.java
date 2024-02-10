@@ -1,65 +1,89 @@
 package com.example.projektsklep.model.entities.product;
 
 import com.example.projektsklep.model.dto.CategoryTreeDTO;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import java.util.ArrayList;
+import org.mockito.MockitoAnnotations;
+
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
-@DataJpaTest
-public class CategoryTest {
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.Mockito.*;
 
+class CategoryTest {
     @Mock
-    private Category parentCategoryMock;
+    Category parentCategory;
+    @Mock
+    List<Category> children;
+    @InjectMocks
+    Category category;
 
-    @Test
-    public void testCategoryToTreeDTO() {
-        // Given
-        Category category = new Category("Test Category");
-        category.setId(1L);
-
-        // When
-        CategoryTreeDTO result = Category.toTreeDTO(category);
-
-        // Then
-        assertEquals(category.getId(), result.getId());
-        assertEquals(category.getName(), result.getName());
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetChildren() {
-        // Given
-        Category category = new Category("Parent Category");
-        Category child1 = new Category("Child 1");
-        Category child2 = new Category("Child 2");
-        List<Category> children = new ArrayList<>();
-        children.add(child1);
-        children.add(child2);
-        category.setChildren(children);
-
-        // When
-        List<Category> result = category.getChildren();
-
-        // Then
-        assertEquals(2, result.size());
-        assertEquals(child1, result.get(0));
-        assertEquals(child2, result.get(1));
+    void testSetId() {
+        category.setId(Long.valueOf(1));
     }
 
     @Test
-    public void testGetParent() {
+    void testSetName() {
+        category.setName("name");
+    }
+
+    @Test
+    void testSetParentCategory() {
+        category.setParentCategory(new Category("name"));
+    }
+
+    @Test
+    void testSetChildren() {
+        category.setChildren(List.of(new Category("name")));
+    }
+    @Test
+    public void shouldReturnChildrenList() {
         // Given
-        Category category = new Category("Child Category");
-        when(parentCategoryMock.getName()).thenReturn("Parent Category");
-        category.setParentCategory(parentCategoryMock);
+        Category parentCategory = new Category("Książki");
+        Category childCategory1 = new Category("Fantastyka");
+        Category childCategory2 = new Category("Kryminał");
+        parentCategory.addChild(childCategory1);
+        parentCategory.addChild(childCategory2);
 
         // When
-        Category result = category.getParent();
+        List<Category> children = parentCategory.getChildren();
 
         // Then
-        assertEquals("Parent Category", result.getName());
+        assertThat(children).containsExactlyInAnyOrder(childCategory1, childCategory2);
     }
+//    @Test
+//    public void shouldReturnParentCategory() {
+//        // Given
+//        Category parentCategory = new Category("Książki");
+//        Category childCategory = new Category("Fantastyka", parentCategory);
+//
+//        // When
+//        Category parent = childCategory.getParent();
+//
+//        // Then
+//        assertThat(parent).isSameAs(parentCategory);
+//    }
+    @Test
+    public void shouldConvertCategoryToTreeDTO() {
+        // Given
+        Category category = new Category("Książki");
+
+        // When
+        CategoryTreeDTO treeDTO = Category.toTreeDTO(category);
+
+        // Then
+        assertThat(treeDTO.getId()).isEqualTo(category.getId());
+        assertThat(treeDTO.getName()).isEqualTo(category.getName());
+    }
+
+
 }

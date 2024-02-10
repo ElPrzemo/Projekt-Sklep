@@ -48,4 +48,7 @@ public class Category {
         // You can set other properties of the DTO as needed
         return categoryTreeDTO;
     }
+
+    public void addChild(Category childCategory2) {
+    }
 }

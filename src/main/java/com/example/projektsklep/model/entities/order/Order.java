@@ -133,7 +133,7 @@ public class Order implements Observable {
             }
             return products;
         } else {
-            // Opcjonalnie: pobierz listę produktów z innego źródła
+
             return null;
         }
     }
