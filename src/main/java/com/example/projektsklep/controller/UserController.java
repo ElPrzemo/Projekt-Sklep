@@ -5,7 +5,7 @@ import com.example.projektsklep.exception.InvalidUserDataException;
 import com.example.projektsklep.exception.UserAlreadyExistsException;
 import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.AddressDTO;
-import com.example.projektsklep.model.dto.RoleDTO;
+
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.service.UserService;
