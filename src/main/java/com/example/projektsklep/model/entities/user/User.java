@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import java.util.HashSet;
 
 import java.util.Date;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "app_user")
+@Table(name = "user_id")
 public class User {
 
     @Id
@@ -74,13 +75,21 @@ public class User {
     }
 
 
-    public User addOrder(Order order) {
-        this.orders.add(order);
-        return this;
+    public void addOrder(Order order) {
+        if (orders == null) {
+            orders = new HashSet<>(); // Zainicjuj, jeśli null
+        }
+        orders.add(order);
     }
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+    public void setFirstName(String firstName) {
+        if (firstName == null) {
+            throw new NullPointerException("First name cannot be null.");
+        }
+        this.firstName = firstName;
     }
 }
 

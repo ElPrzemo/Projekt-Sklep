@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,5 +62,14 @@ public class Basket {
     // Czyszczenie koszyka
     public void clear() {
         lineOfOrders.clear();
+    }
+
+
+    public BigDecimal getTotalPrice() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (LineOfOrder lineOfOrder : lineOfOrders) {
+            total = total.add(lineOfOrder.getUnitPrice().multiply(new BigDecimal(lineOfOrder.getQuantity())));
+        }
+        return total;
     }
 }
