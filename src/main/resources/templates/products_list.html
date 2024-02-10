@@ -10,13 +10,11 @@
 <div class="container mt-4">
     <h1>Lista Produktów</h1>
     <div class="d-flex justify-content-between my-2">
-        <a href="@{/products(viewType='list', gridSize=${gridSize}, page=${productsPage.number})}" class="btn btn-info">Przełącz na widok listy</a>
         <form action="#" method="get" class="d-flex">
             <select name="pageSize" onchange="this.form.submit()" class="form-select mx-2">
                 <option value="10" th:selected="${pageSize == 10}">10</option>
                 <option value="20" th:selected="${pageSize == 20}">20</option>
             </select>
-            <input type="hidden" name="viewType" th:value="${currentViewType}">
         </form>
     </div>
     <ul class="list-group mb-3">
@@ -31,9 +29,9 @@
         </li>
     </ul>
     <div class="d-flex justify-content-between">
-        <button th:if="${productsPage.hasPrevious()}" th:href="@{/products(page=${productsPage.number - 1}, size=${productsPage.size}, viewType=${currentViewType})}" class="btn btn-secondary">Poprzednia strona</button>
+        <a th:if="${productsPage.hasPrevious()}" th:href="@{/products(page=${productsPage.number - 1}, size=${productsPage.size})}" class="btn btn-secondary">Poprzednia strona</a>
         <span th:text="${productsPage.number + 1}">1</span> z <span th:text="${productsPage.totalPages}">N</span>
-        <button th:if="${productsPage.hasNext()}" th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size}, viewType=${currentViewType})}" class="btn btn-secondary">Następna strona</button>
+        <a th:if="${productsPage.hasNext()}" th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size})}" class="btn btn-secondary">Następna strona</a>
     </div>
     <button onclick="history.back()" class="btn btn-outline-secondary mt-3">Powrót</button>
 </div>

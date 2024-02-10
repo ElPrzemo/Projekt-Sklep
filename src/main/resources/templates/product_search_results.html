@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -27,12 +28,12 @@
 
     <!-- Wybór liczby rekordów na stronę -->
     <div>
-        <form th:action="@{/products/search}" method="post">
+        <form th:action="@{/products/search}" method="get">
             <input type="hidden" name="title" th:value="${title}" />
             <input type="hidden" name="categoryId" th:value="${categoryId}" />
             <input type="hidden" name="authorId" th:value="${authorId}" />
             <select name="size" onchange="this.form.submit()">
-                <option th:each="sizeOption : ${new int[]{10, 25, 50}}" th:value="${sizeOption}" th:selected="${sizeOption == selectedPageSize}" th:text="${sizeOption}"></option>
+                <option th:each="sizeOption : ${sizeOptions}" th:value="${sizeOption}" th:selected="${sizeOption == selectedPageSize}" th:text="${sizeOption}"></option>
             </select>
         </form>
     </div>
@@ -51,6 +52,7 @@
             </li>
         </ul>
     </div>
+</div>
 <div th:if="${#lists.isEmpty(productsPage?.content)}">
     <p>Brak wyników.</p>
 </div>

@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+
 @Controller
 @ControllerAdvice
 @RequestMapping("/products")
@@ -38,21 +40,21 @@ public class ProductController {
 
 
     @GetMapping
-    public String listProducts(@RequestParam(name = "viewType", defaultValue = "list") String viewType,
-                               @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                               @RequestParam(name = "gridSize", defaultValue = "20") int gridSize,
-                               @RequestParam(name = "page", defaultValue = "0") int page,
-                               Model model) {
-        Pageable pageable = viewType.equals("list") ? PageRequest.of(page, pageSize) : PageRequest.of(page, gridSize);
+    public String listProducts(
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, pageSize);
         Page<ProductDTO> productsPage = productService.findAllProductDTOs(pageable);
 
         model.addAttribute("productsPage", productsPage);
-        model.addAttribute("currentViewType", viewType);
         model.addAttribute("pageSize", pageSize);
-        model.addAttribute("gridSize", gridSize);
 
-        return viewType.equals("list") ? "products_list" : "products_grid";
+        // Usunięcie wszelkich odniesień do viewType i gridSize, ponieważ chcemy zawsze używać widoku listy
+        return "products_list"; // Zwróć nazwę pliku HTML dla widoku listy produktów
     }
+
 
 
     @GetMapping("/{productId}")
@@ -87,34 +89,27 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public String showSearchForm(Model model, Pageable pageable) {
-        // Upewnij się, że `productsPage` jest dostępny w modelu nawet jeśli jest pusty
-        Page<ProductDTO> emptyPage = Page.empty(pageable);
-        model.addAttribute("productsPage", emptyPage);
+    public String showSearchForm(Model model) {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("authors", authorService.findAll());
-        return "product_search_form"; // Zwróć widok formularza wyszukiwania
+        return "product_search_form";
     }
 
+    // Metoda do przetwarzania wyszukiwania i wyświetlania wyników
     @PostMapping("/search")
     public String handleSearch(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long authorId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, // Możesz usunąć tę wartość domyślną, jeśli chcesz, aby była dynamicznie zmieniana przez użytkownika
             Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(0, 10); // Domyślna paginacja, można dostosować
         Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
 
         model.addAttribute("productsPage", products);
-        model.addAttribute("selectedPageSize", size); // Dodajemy to do modelu, aby móc odtworzyć wybraną liczbę rekordów na stronie
-        model.addAttribute("title", title); // Przekazujemy te parametry z powrotem do widoku, aby można było je użyć w URL paginacji
-        model.addAttribute("categoryId", categoryId);
-        model.addAttribute("authorId", authorId);
-        return "product_search_results"; // Zwróć nazwę widoku z wynikami wyszukiwania
+        return "product_search_results";
     }
+
 
 
     @ExceptionHandler(ProductNotFoundException.class)
