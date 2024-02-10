@@ -88,27 +88,58 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @GetMapping("/search")
+
+    @GetMapping("/search/form")
     public String showSearchForm(Model model) {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("authors", authorService.findAll());
         return "product_search_form";
     }
 
-    // Metoda do przetwarzania wyszukiwania i wyświetlania wyników
-    @PostMapping("/search")
-    public String handleSearch(
+    @GetMapping("/search")
+    public String searchProducts(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long authorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             Model model) {
 
-        Pageable pageable = PageRequest.of(0, 10); // Domyślna paginacja, można dostosować
+        Pageable pageable = PageRequest.of(page, size);
         Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
 
         model.addAttribute("productsPage", products);
+        model.addAttribute("selectedPageSize", size);
+        model.addAttribute("title", title);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("authorId", authorId);
+
         return "product_search_results";
     }
+
+
+
+//    @GetMapping("/search")
+//    public String showSearchForm(Model model) {
+//        model.addAttribute("categories", categoryService.findAll());
+//        model.addAttribute("authors", authorService.findAll());
+//        return "product_search_form";
+//    }
+//
+//    // Metoda do przetwarzania wyszukiwania i wyświetlania wyników
+//    @PostMapping("/search")
+//    public String handleSearch(
+//            @RequestParam(required = false) String title,
+//            @RequestParam(required = false) Long categoryId,
+//            @RequestParam(required = false) Long authorId,
+//            Model model) {
+//
+//        Pageable pageable = PageRequest.of(0, 10); // Domyślna paginacja, można dostosować
+//        Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
+//
+//        model.addAttribute("productsPage", products);
+//        return "product_search_results";
+//    }
 
 
 

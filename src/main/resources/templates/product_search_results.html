@@ -42,7 +42,7 @@
     <div th:if="${productsPage.totalPages > 1}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${productsPage.first ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number - 1}, size=${selectedPageSize})}">Poprzednia</a>
+              <a th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number - 1}, size=${selectedPageSize})}">Poprzednia</a>
             </li>
             <li th:each="pageNum : ${#numbers.sequence(0, productsPage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == productsPage.number ? 'active' : ''}">
                 <a class="page-link" th:text="${pageNum + 1}" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${pageNum}, size=${selectedPageSize})}"></a>
