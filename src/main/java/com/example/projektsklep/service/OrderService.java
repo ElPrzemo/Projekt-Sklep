@@ -99,7 +99,8 @@ public class OrderService {
   public boolean updateOrderStatus(Long id, String orderStatus) {
     Order existingOrder = orderRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Order not found"));
-    existingOrder.setOrderStatus(OrderStatus.valueOf(orderStatus));
+    // Użyj poprawnej wartości enum, np. OrderStatus.SHIPPED zamiast SENT
+    existingOrder.setOrderStatus(OrderStatus.valueOf(orderStatus.toUpperCase()));
     existingOrder = orderRepository.save(existingOrder);
     return existingOrder != null;
   }

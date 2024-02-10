@@ -11,6 +11,7 @@ import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
 import com.example.projektsklep.utils.AddressDTOInitializer;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +72,6 @@ public class OrderController {
         try {
             OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
             model.addAttribute("order", orderDTO);
-            // Dodanie listy dostępnych statusów zamówień
             model.addAttribute("statuses", OrderStatus.values());
             return "order_edit_form";
         } catch (OrderNotFoundException e) {
@@ -81,29 +81,17 @@ public class OrderController {
     }
 
     @PostMapping("/edit/{orderId}")
-    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model) {
+    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model, HttpServletRequest request) {
         try {
             orderService.updateOrderStatus(orderId, orderDTO.orderStatus());
-            return "redirect:/orders";
+            String referer = request.getHeader("Referer");
+            return "redirect:" + (referer != null ? referer : "/user_orders");
         } catch (OrderNotFoundException e) {
             model.addAttribute("error", "Zamówienie nie znalezione");
             return "error";
         } catch (Exception e) {
             model.addAttribute("error", "Błąd podczas aktualizacji statusu zamówienia");
-            return "order_edit_form";
-        }
-    }
-
-    @GetMapping("/user/{userId}")
-    public String listOrdersByUser(@PathVariable long userId, Model model) {
-        try {
-            List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
-            model.addAttribute("orders", orders);
-            return "orders_by_user";
-        } catch (OrderRetrievalException e) {
-            // Obsłuż błąd pobierania zamówień
-            model.addAttribute("error", "Błąd podczas pobierania zamówień");
-            return "error"; // Lub przekieruj do strony błędu
+            return "order_edit_form"; // Tutaj możemy dodać ponownie atrybuty do modelu, jeśli potrzebujemy
         }
     }
 

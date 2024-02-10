@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Zamówienia użytkownika</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
 </head>
 <body class="container mt-4">
@@ -25,12 +24,10 @@
         <td th:text="${order.totalPrice}"></td>
         <td>
             <a th:href="@{/orders/{orderId}(orderId=${order.id})}" class="btn btn-info">Szczegóły</a>
-            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}" class="btn btn-warning">Zmień status</a>
         </td>
     </tr>
     </tbody>
 </table>
-
 <button onclick="history.back()" class="btn btn-secondary">Powrót</button>
 </body>
 </html>

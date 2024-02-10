@@ -14,8 +14,8 @@
     <div class="input-group mb-3">
         <select name="orderStatus" class="form-select">
             <option value="NEW_ORDER" th:selected="${selectedStatus == 'NEW_ORDER'}">Nowe zamówienie</option>
-            <option value="PROCESSED" th:selected="${selectedStatus == 'PROCESSED'}">Przetworzone</option>
-            <option value="SENT" th:selected="${selectedStatus == 'SENT'}">Wysłane</option>
+            <option value="PROCESSED" th:selected="${selectedStatus == 'PROCESSED'}">Przetwarzane</option>
+            <option value="SHIPPED" th:selected="${selectedStatus == 'SHIPPED'}">Wysłane</option>
             <option value="DELIVERED" th:selected="${selectedStatus == 'DELIVERED'}">Dostarczone</option>
             <option value="CANCELED" th:selected="${selectedStatus == 'CANCELED'}">Anulowane</option>
         </select>
