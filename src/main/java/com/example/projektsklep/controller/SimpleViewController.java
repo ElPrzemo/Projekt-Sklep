@@ -57,8 +57,5 @@ public class SimpleViewController {
     public String security() {
         return "security"; // Zwraca userPanel.html
     }
-    @GetMapping("/security")
-    public String securityCheck() {
-        return "security_check"; // Zwraca userPanel.html
-    }
+
 }
