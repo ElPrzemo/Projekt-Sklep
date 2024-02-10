@@ -44,7 +44,7 @@ public class User {
     private Address address;
 
     @Column(name = "phone_number")
-    private int phoneNumber;
+    private Integer phoneNumber;
 
     @Column(name = "avatar_path")
     private String avatarPath;

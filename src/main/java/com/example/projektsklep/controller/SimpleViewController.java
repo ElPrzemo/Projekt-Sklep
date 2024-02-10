@@ -1,18 +1,28 @@
 package com.example.projektsklep.controller;
 
+import com.example.projektsklep.exception.UserNotFoundException;
+import com.example.projektsklep.model.dto.UserDTO;
+
+import com.example.projektsklep.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Optional;
 
 @Controller
 public class SimpleViewController {
+
+    private final UserService userService;
+
+    public SimpleViewController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/home")
     public String showHomePage(Model model, Principal principal) {
@@ -35,8 +45,17 @@ public class SimpleViewController {
     }
 
     @GetMapping("/userPanel")
-    public String showUserPanel() {
-        return "userPanel"; // Zwraca userPanel.html
+    public String showUserPanel(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        UserDTO userDTO = userService.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika."));
+        model.addAttribute("userDTO", userDTO); // Zmiana z "user" na "userDTO"
+
+        return "userPanel";
+    }
+    @GetMapping("/security")
+    public String security() {
+        return "security"; // Zwraca userPanel.html
     }
     @GetMapping("/security")
     public String securityCheck() {

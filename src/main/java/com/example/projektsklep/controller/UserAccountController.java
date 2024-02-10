@@ -12,8 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 @ControllerAdvice
@@ -50,18 +52,47 @@ public class UserAccountController {
         return "user_orders"; // Strona z zamóupdateProfileAndAddresswieniami użytkownika
     }
 
-    @PostMapping("/edit")
-    public String updateProfile(@ModelAttribute UserDTO userDTO,
-                                @ModelAttribute AddressDTO addressDTO) {
+    @GetMapping("/edit")
+    public String showEditForm(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Long userId = userService.findUserByEmail(email)
-                .map(UserDTO::id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
 
-        userService.updateUserProfile(userId, userDTO); // Używamy nowej metody dedykowanej dla użytkownika
-        // Obsługa adresu może wymagać osobnej logiki, zależnie od struktury aplikacji
-        return "redirect:/account/profile";
+        UserDTO userDTO = userService.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika."));
+
+        // Jeśli użytkownik nie ma przypisanego adresu, tworzymy pusty obiekt AddressDTO
+        if (userDTO.address() == null) {
+            userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName()
+                   , userDTO.password(),
+                    new AddressDTO(null, "", "", "", ""), userDTO.roles());
+        }
+
+        model.addAttribute("userDTO", userDTO);
+        return "user_edit"; // Nazwa Twojego widoku Thymeleaf
     }
 
-}
+    @PostMapping("/edit")
+    public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
+                                          BindingResult userResult,
+                                          @Valid @ModelAttribute("addressDTO") AddressDTO addressDTO,
+                                          BindingResult addressResult,
+                                          Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        if (userResult.hasErrors() || addressResult.hasErrors()) {
+            model.addAttribute("userDTO", userDTO); // Przekazanie ponownie użytkownika do widoku, jeśli wystąpią błędy
+            model.addAttribute("addressDTO", addressDTO); // Przekazanie ponownie adresu do widoku, jeśli wystąpią błędy
+            return "user_edit"; // Nazwa widoku formularza edycji, który ma być wyświetlony ponownie w przypadku błędów
+        }
+        Long userId = userService.findUserByEmail(email)
+                .map(UserDTO::id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            userService.updateUserProfileAndAddress(userId, userDTO, addressDTO); // Zakładając, że ta metoda aktualizuje zarówno użytkownika, jak i adres
+        } catch (Exception e) {
+            model.addAttribute("updateError", "Wystąpił błąd podczas aktualizacji profilu");
+            return "user_edit"; // Powrót do formularza edycji z komunikatem o błędzie
+        }
+        return "redirect:/userPanel"; // Przekierowanie do panelu użytkownika po pomyślnej aktualizacji
+    }}

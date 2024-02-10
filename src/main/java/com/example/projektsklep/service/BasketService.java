@@ -9,6 +9,7 @@ import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.OrderRepository;
+import com.example.projektsklep.utils.Basket;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -26,15 +27,17 @@ public class BasketService {
     private final UserService userService;
     private final ProductService productService;
     private final Map<Long, Integer> products = new HashMap<>();
+    private  Basket basket;
 
     // Konstruktor z wstrzyknięciem zależności
-
 
     public BasketService(OrderRepository orderRepository, UserService userService, ProductService productService) {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productService = productService;
+        this.basket = new Basket(); // Inicjalizacja koszyka
     }
+
 
     public void addProduct(Product product) {
         products.put(product.getId(), products.getOrDefault(product.getId(), 0) + 1);
@@ -50,6 +53,13 @@ public class BasketService {
 
     public void clear() {
         products.clear();
+    }
+
+    public Basket getCurrentBasket() {
+        if (this.basket == null) {
+            this.basket = new Basket();
+        }
+        return this.basket;
     }
 
     public void updateProductQuantity(Long productId, int quantity) {

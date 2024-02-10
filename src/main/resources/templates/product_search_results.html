@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wyniki wyszukiwania produktów</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+</head>
+<body class="container mt-3">
+<h2>Wyniki wyszukiwania</h2>
+<div>Łączna liczba znalezionych produktów: <span th:text="${productsPage.totalElements} ?: '0'">0</span></div>
+<div th:if="${not #lists.isEmpty(productsPage?.content)}">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Cena</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productsPage.content}">
+            <td th:text="${product.title}"></td>
+            <td th:text="${product.price}"></td>
+            <td><a th:href="@{/products/{productId}(productId=${product.id})}" class="btn btn-info">Szczegóły</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Wybór liczby rekordów na stronę -->
+    <div>
+        <form th:action="@{/products/search}" method="post">
+            <input type="hidden" name="title" th:value="${title}" />
+            <input type="hidden" name="categoryId" th:value="${categoryId}" />
+            <input type="hidden" name="authorId" th:value="${authorId}" />
+            <select name="size" onchange="this.form.submit()">
+                <option th:each="sizeOption : ${new int[]{10, 25, 50}}" th:value="${sizeOption}" th:selected="${sizeOption == selectedPageSize}" th:text="${sizeOption}"></option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Paginacja -->
+    <div th:if="${productsPage.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${productsPage.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number - 1}, size=${selectedPageSize})}">Poprzednia</a>
+            </li>
+            <li th:each="pageNum : ${#numbers.sequence(0, productsPage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == productsPage.number ? 'active' : ''}">
+                <a class="page-link" th:text="${pageNum + 1}" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${pageNum}, size=${selectedPageSize})}"></a>
+            </li>
+            <li class="page-item" th:classappend="${productsPage.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/products/search(title=${title}, categoryId=${categoryId}, authorId=${authorId}, page=${productsPage.number + 1}, size=${selectedPageSize})}">Następna</a>
+            </li>
+        </ul>
+    </div>
+<div th:if="${#lists.isEmpty(productsPage?.content)}">
+    <p>Brak wyników.</p>
+</div>
+<button class="btn btn-secondary" onclick="history.back()">Powrót</button>
+</body>
+</html>

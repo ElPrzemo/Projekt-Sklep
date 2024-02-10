@@ -1,31 +1,20 @@
 package com.example.projektsklep.model.dto;
 
-import com.example.projektsklep.model.dto.AddressDTO;
-import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
 @Builder
 public record OrderDTO(
         Long id,
-        Long userId,
-        String orderStatus,
+        @NotNull(message = "User ID cannot be null") Long userId,
+        @NotNull(message = "Order status cannot be null") String orderStatus,
         LocalDate dateCreated,
         LocalDate sentAt,
         BigDecimal totalPrice,
-        List<LineOfOrderDTO> lineOfOrders,
-        AddressDTO shippingAddress // Upewnij się, że to pole jest obecne
-) {
-    public OrderDTO {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(userId);
-        Objects.requireNonNull(orderStatus);
-        Objects.requireNonNull(dateCreated);
-        // Sprawdzenie, czy lineOfOrders i shippingAddress są niepuste, jeśli jest to wymagane
-
-    }
-}
+        @NotNull(message = "List of order lines cannot be null") List<LineOfOrderDTO> lineOfOrders,
+        AddressDTO shippingAddress // Tutaj dodajemy AddressDTO jako opcjonalne pole
+) {}

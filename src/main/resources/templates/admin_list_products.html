@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista Produktów</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+<div>
+    <h2>Lista Produktów</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Cena</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productPage.content}">
+            <td th:text="${product.title}"></td>
+            <td th:text="${product.description}"></td>
+            <td th:text="${product.price}"></td>
+            <td>
+                <a th:href="@{/admin/deleteProduct/{id}(id=${product.id})}" class="btn btn-danger">Usuń</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-between">
+        <a th:href="@{/admin/products(page=${productPage.number - 1})}" th:unless="${productPage.first}" class="btn btn-primary">Poprzednia</a>
+        <span class="badge bg-secondary">Strona <span th:text="${productPage.number + 1}"></span> z <span th:text="${productPage.totalPages}"></span></span>
+        <a th:href="@{/admin/products(page=${productPage.number + 1})}" th:unless="${productPage.last}" class="btn btn-primary">Następna</a>
+    </div>
+    <a href="/admin/addProduct" class="btn btn-success mt-2">Dodaj Produkt</a>
+</div>
+</body>
+</html>

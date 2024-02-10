@@ -13,9 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -46,44 +50,51 @@ public class AdminController {
 
     @PostMapping("/user_search")
     public String showUserOrders(@RequestParam String lastName, Model model) {
-        List<UserDTO> users = userService.findUsersByName(lastName);
+        List<UserDTO> users = userService.findUsersByLastName(lastName);
         model.addAttribute("users", users);
         return "admin_user_list"; // widok z listą użytkowników pasujących do kryteriów wyszukiwania
     }
 
+    @GetMapping("/edit_user/{userId}")
+    public String showEditUserForm(@PathVariable Long userId, Model model) {
+        UserDTO userDTO = userService.findUserById(userId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
+        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
+                new AddressDTO(null, "", "", "", "");
+        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("addressDTO", addressDTO);
+        return "admin_user_edit_form";
+    }
 
-//
-//    @GetMapping("/edit_user/{userId}")
-//    public String showEditUserForm(@PathVariable Long userId, Model model) {
-//        UserDTO userDTO = userService.findUserById(userId)
-//                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
-//
-//        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
-//                new AddressDTO(null, "", "", "", ""); // Utwórz instancję AddressDTO z pustymi stringami
-//
-//        model.addAttribute("userDTO", userDTO);
-//        model.addAttribute("addressDTO", addressDTO);
-//
-//        return "admin_user_edit_form"; // Nazwa Twojego pliku HTML formularza edycji użytkownika
-//    }
-//    @PostMapping("/edit_user/{userId}")
-//    public String updateUserAndAddress(@PathVariable Long userId,
-//                                       @ModelAttribute UserDTO userDTO,
-//                                       @ModelAttribute AddressDTO addressDTO) {
-//        userService.updateUserProfileAndAddress(userId, userDTO, addressDTO);
-//        return "redirect:/admin/user_search"; // Uwaga: Zaktualizuj ścieżkę zgodnie z Twoją logiką nawigacji
-//    }
+
+    @GetMapping("/user_details/{userId}")
+    public String userDetails(@PathVariable Long userId, Model model) {
+        userService.findUserById(userId).ifPresentOrElse(userDTO -> {
+            model.addAttribute("user", userDTO);
+            AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() : new AddressDTO(null, "", "", "", "");
+            model.addAttribute("address", addressDTO);
+            // Dodajemy atrybut do modelu, który zawiera link do edycji użytkownika
+            model.addAttribute("editLink", "/admin/edit_user/" + userId);
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+        });
+
+        return "user_details"; // Nazwa widoku szczegółów użytkownika
+    }
 
     @GetMapping("/author")
     public String showAuthorForm(Model model) {
-        model.addAttribute("author", new AuthorDTO());
-        return "admin_author_form"; // Widok formularza dla Author
+        model.addAttribute("author", new AuthorDTO(null, ""));
+        return "admin_author_form";
     }
 
     @PostMapping("/author")
-    public String saveAuthor(@ModelAttribute AuthorDTO authorDTO) {
+    public String saveAuthor(@Valid @ModelAttribute("author") AuthorDTO authorDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin_author_form";
+        }
         authorService.saveAuthor(authorDTO);
-        return "redirect:/admin/author"; // Przekierowanie po zapisaniu
+        return "redirect:/admin/authors";
     }
 
     @GetMapping("/authors")
@@ -95,6 +106,7 @@ public class AdminController {
         model.addAttribute("authorPage", authorPage);
         return "admin_author_list";
     }
+
     @GetMapping("/addProduct")
     public String showAddProductForm(Model model) {
         ProductDTO productDTO = productService.createDefaultProductDTO();
@@ -108,11 +120,35 @@ public class AdminController {
         return "admin_add_product";
     }
 
+
+
     // Metoda POST do przetwarzania dodawania produktu
     @PostMapping("/addProduct")
-    public String addProduct(@ModelAttribute ProductDTO productDTO) {
+    public String addProduct(@ModelAttribute ProductDTO productDTO, Model model) {
         productService.saveProductDTO(productDTO);
-        return "redirect:/admin/products"; // Przekierowanie do listy produktów po pomyślnym dodaniu
+        // Przygotuj model dla nowego formularza
+        ProductDTO newProductDTO = productService.createDefaultProductDTO();
+        model.addAttribute("product", newProductDTO);
+        model.addAttribute("productTypes", productService.findAllProductTypes());
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("successMessage", "Produkt został dodany.");
+        return "admin_add_product"; // Zostaje na stronie z formularzem
+    }
+
+    @GetMapping("/user_orders/{userId}")
+    public String listUserOrders(@PathVariable Long userId, Model model) {
+        List<OrderDTO> orders = orderService.findAllOrdersByUserId(userId);
+        model.addAttribute("orders", orders);
+        return "admin_user_orders"; // Nazwa pliku HTML z listą zamówień
+    }
+
+    @GetMapping("/products")
+    public String listProducts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
+        model.addAttribute("productPage", productPage);
+        return "admin_product_list"; // Nazwa Twojego pliku HTML z listą produktów
     }
 
     @GetMapping("/ordersByStatus")
@@ -122,7 +158,7 @@ public class AdminController {
             orderStatus = OrderStatus.NEW_ORDER;
         }
 
-        List<Order> orders = orderService.findAllOrdersByStatus(orderStatus);
+        List<OrderDTO> orders = orderService.findAllOrdersByStatus(orderStatus);
         model.addAttribute("orders", orders);
         model.addAttribute("selectedStatus", orderStatus.name()); // Dodaj wybrany status do modelu
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
@@ -153,4 +189,5 @@ public class AdminController {
                 return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-    }}
+    }
+}
