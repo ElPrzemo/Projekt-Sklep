@@ -10,16 +10,14 @@ import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.service.UserService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @ControllerAdvice
@@ -43,49 +41,44 @@ public class UserController {
     }
 
 
-//    @GetMapping("/new")
-//    public String showNewUserForm(Model model) {
-//        // Utworzenie pustego obiektu AddressDTO
-//        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
-//
-//        // Przygotowanie pustego zestawu ról
-//        Set<RoleDTO> roles = Collections.emptySet();
-//
-//        // Utworzenie nowego obiektu UserDTO z null jako ID i null jako phoneNumber
-//        UserDTO userDTO = new UserDTO(null, "", "", "", null, "", addressDTO, roles);
-//
-//        model.addAttribute("userDTO", userDTO);
-//        model.addAttribute("addressDTO", addressDTO);
-//        model.addAttribute("roles", AdminOrUser.values());
-//        return "user_register";
-//    }
-//    @PostMapping("/new")
-//    public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
-//        // Pobieramy AddressDTO i rolę z modelu
-//        AddressDTO addressDTO = (AddressDTO) model.getAttribute("addressDTO");
-//        AdminOrUser role = (AdminOrUser) model.getAttribute("role");
-//        try {
-//            userService.saveUser(userDTO, addressDTO, role);
-//        } catch (UserAlreadyExistsException e) {
-//            // Dodanie obsługi użytkownika o tym samym emailu
-//            model.addAttribute("error", e.getMessage());
-//            return "user_register";
-//        } catch (InvalidUserDataException e) {
-//            // Dodanie obsługi błędnych danych użytkownika
-//            model.addAttribute("error", e.getMessage());
-//            return "user_register";
-//        } catch (DataAccessException e) {
-//            // Dodanie obsługi błędów dostępu do bazy danych
-//            model.addAttribute("error", "Wystąpił błąd podczas rejestracji");
-//            return "user_register";
-//        }
-//
-//        // Używamy przekazanych obiektów userDTO, addressDTO i roli
-//        userService.saveUser(userDTO, addressDTO, role);
-//
-//        return "redirect:/users/registration-success";
-//    }
+    @GetMapping("/new")
+    public String showNewUserForm(Model model) {
+        // Utworzenie pustego obiektu AddressDTO
+        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
 
+        // Przygotowanie pustego zestawu ról
+        Set<RoleDTO> roles = Collections.emptySet();
+
+        // Utworzenie nowego obiektu UserDTO z null jako ID i null jako phoneNumber);
+        UserDTO userDTO = new UserDTO(null, "", "", "", null, "", addressDTO, roles);
+        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("addressDTO", addressDTO);
+        model.addAttribute("roles", AdminOrUser.values());
+        return "user_register";
+    }
+    @PostMapping("/new")
+    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
+        // Ręczna walidacja
+        if (userDTO.firstName() == null || userDTO.firstName().isBlank()) {
+            result.rejectValue("firstName", "firstName.blank", "Imię jest wymagane.");
+        }
+        // Walidacja innych pól...
+
+        if (result.hasErrors()) {
+            model.addAttribute("addressDTO", userDTO.address());
+            model.addAttribute("roles", AdminOrUser.values());
+            return "user_register";
+        }
+
+        try {
+            AdminOrUser role = AdminOrUser.USER; // Przykład, ustawienie domyślnej roli
+            userService.saveUser(userDTO, userDTO.address(), role);
+        } catch (Exception e) {
+            model.addAttribute("error", "Wystąpił błąd podczas rejestracji: " + e.getMessage());
+            return "user_register";
+        }
+        return "redirect:/users/registration-success";
+    }
     @GetMapping("/registration-success")
     public String registrationSuccess(Model model) {
         model.addAttribute("message", "Użytkownik zarejestrowany pomyślnie");

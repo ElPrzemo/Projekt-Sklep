@@ -7,6 +7,7 @@ import com.example.projektsklep.model.entities.role.Role;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.model.repository.AddressRepository;
+import com.example.projektsklep.model.repository.RoleRepository;
 import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,13 +25,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressService addressService;
     private final AddressRepository addressRepository;
+    private final RoleRepository roleRepository;
 
-
-    public UserService(UserRepository userRepository, AddressService addressService, AddressRepository addressRepository) {
+    public UserService(UserRepository userRepository, AddressService addressService, AddressRepository addressRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.addressService = addressService;
-        this.addressRepository = addressRepository; // Dodanie AddressRepository
+        this.addressRepository = addressRepository;
+        this.roleRepository = roleRepository;
     }
+
 
     // Istniejące metody...
 
@@ -45,19 +48,34 @@ public class UserService {
     }
 
     public UserDTO saveUser(UserDTO userDTO, AddressDTO addressDTO, AdminOrUser role) {
+        // Sprawdzenie, czy addressDTO nie jest null i konwersja na encję Address
+        Address address = null;
+        if (addressDTO != null) {
+            address = addressService.convertToEntity(addressDTO);
+            address = addressRepository.save(address);
+        }
+
+        // Konwersja UserDTO na encję User
         User user = convertToUser(userDTO);
-        Address address = addressService.convertToEntity(addressDTO);
-        address = addressRepository.save(address);
-        user.setAddress(address);
+
+        // Przypisanie adresu do użytkownika, jeśli istnieje
+        if (address != null) {
+            user.setAddress(address);
+        }
 
         // Przypisanie roli użytkownikowi
         Set<Role> roles = new HashSet<>();
-        Role userRole = Role.fromAdminOrUser(role);
-        roles.add(userRole);
+        if (role != null) {
+            Role userRole = roleRepository.findByRoleType(role.name())
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + role));
+            roles.add(userRole);
+        }
         user.setRoles(roles);
 
+        // Zapis użytkownika
         user = userRepository.save(user);
 
+        // Konwersja zapisanego użytkownika z powrotem na UserDTO i zwrócenie
         return convertToUserDTO(user);
     }
 

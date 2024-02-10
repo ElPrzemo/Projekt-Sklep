@@ -1,6 +1,5 @@
 package com.example.projektsklep.controller;
 
-import com.example.projektsklep.exception.AddressUpdateException;
 import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
@@ -64,7 +63,7 @@ public class UserAccountController {
         if (userDTO.address() == null) {
             userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName()
                    , userDTO.password(),
-                    new AddressDTO(null, "", "", "", ""), userDTO.roles());
+                    "", new AddressDTO(null, "", "", "", ""), userDTO.roles());
         }
 
         model.addAttribute("userDTO", userDTO);
