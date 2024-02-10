@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/user/login")
                         .defaultSuccessUrl("/home")
 //                        .successForwardUrl("/products")
-                        .failureForwardUrl("/error")
+//                        .failureForwardUrl("/error")
                         .permitAll())
                 .logout((logout) -> logout
                         .logoutUrl("/")

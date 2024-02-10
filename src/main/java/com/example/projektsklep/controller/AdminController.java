@@ -84,14 +84,17 @@ public class AdminController {
 
     @GetMapping("/author")
     public String showAuthorForm(Model model) {
-        model.addAttribute("author", new AuthorDTO());
-        return "admin_author_form"; // Widok formularza dla Author
+        model.addAttribute("author", new AuthorDTO(null, ""));
+        return "admin_author_form";
     }
 
     @PostMapping("/author")
-    public String saveAuthor(@ModelAttribute AuthorDTO authorDTO) {
+    public String saveAuthor(@Valid @ModelAttribute("author") AuthorDTO authorDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin_author_form";
+        }
         authorService.saveAuthor(authorDTO);
-        return "redirect:/admin/author"; // Przekierowanie po zapisaniu
+        return "redirect:/admin/authors";
     }
 
     @GetMapping("/authors")

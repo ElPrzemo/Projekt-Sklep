@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>Add/Edit Author</title>
@@ -12,19 +12,20 @@
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9Yq36rI277C3H6C8=" crossorigin="anonymous"></script>
 </head>
 
+
 <body>
 <div class="container mt-5">
-    <h2 class="mb-3">Wprowadź Producenta </h2>
+    <h2 class="mb-3">Wprowadź Producenta</h2>
 
-    <form action="/admin/author" method="post" class="mb-3">
+    <form th:action="@{/admin/author}" th:object="${author}" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Producent</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Producent" value="" required>
+            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Producent" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Błąd</div>
         </div>
         <button type="submit" class="btn btn-primary">Zapisz Producenta</button>
     </form>
 
-    <!-- Przycisk powrotu do listy autorów -->
     <div>
         <a href="/admin/authors" class="btn btn-secondary">Powrót do Listy Producentów</a>
     </div>

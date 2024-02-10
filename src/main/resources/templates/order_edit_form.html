@@ -2,50 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Order</title>
-    <!-- Link do arkusza stylów Bootstrap, który zapewnia wygląd formularza -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" integrity="sha384-gH2yIJqQkNH2i8t13咫46A7E24KJE7XqZDsV40E+3H5+VT3q3H9+UF/h/H+k" crossorigin="anonymous">
 </head>
 <body class="container mt-4">
 <h1>Edycja zamówienia</h1>
-<!-- Formularz edycji zamówienia, th:action wskazuje na endpoint w Twojej aplikacji -->
 <form th:action="@{/orders/edit/{orderId}(orderId=${order.id})}" th:object="${order}" method="post" class="row g-3">
-    <!-- Pole wyboru statusu zamówienia -->
     <div class="col-md-4">
         <label for="status" class="form-label">Status zamówienia:</label>
         <select id="status" th:field="*{orderStatus}" class="form-select">
-            <!-- Wartości statusów są dynamicznie generowane i dodawane do listy rozwijanej -->
             <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
         </select>
     </div>
-
-    <!-- Pola formularza dla adresu wysyłkowego -->
-    <!-- Ulica -->
-    <div class="col-md-6">
-        <label for="street" class="form-label">Ulica:</label>
-        <input type="text" id="street" th:field="*{shippingAddress.street}" class="form-control" />
-    </div>
-    <!-- Miasto -->
-    <div class="col-md-6">
-        <label for="city" class="form-label">Miasto:</label>
-        <input type="text" id="city" th:field="*{shippingAddress.city}" class="form-control" />
-    </div>
-    <!-- Kod pocztowy -->
-    <div class="col-md-4">
-        <label for="postalCode" class="form-label">Kod pocztowy:</label>
-        <input type="text" id="postalCode" th:field="*{shippingAddress.postalCode}" class="form-control" />
-    </div>
-    <!-- Kraj -->
-    <div class="col-md-4">
-        <label for="country" class="form-label">Kraj:</label>
-        <input type="text" id="country" th:field="*{shippingAddress.country}" class="form-control" />
-    </div>
-
-    <!-- Przycisk do zatwierdzenia formularza -->
     <div class="col-12">
         <button type="submit" class="btn btn-primary">Aktualizuj</button>
     </div>
 </form>
-<!-- Przycisk powrotu do poprzedniej strony -->
 <button onclick="history.back()" class="btn btn-secondary mt-2">Powrót</button>
 </body>
 </html>

@@ -2,19 +2,15 @@ package com.example.projektsklep.model.dto;
 
 import lombok.Builder;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Builder
 public record AuthorDTO(
         Long id,
-        String name
-) {
-    public AuthorDTO() {
-        this(null, "");
-    }
 
-    public AuthorDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-}
+        @NotBlank(message = "Nazwa nie może być pusta")
+        @Size(min = 2, max = 50, message = "Nazwa musi zawierać od 2 do 50 znaków")
+        String name
+) {}

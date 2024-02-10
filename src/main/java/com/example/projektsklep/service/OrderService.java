@@ -96,6 +96,13 @@ public class OrderService {
             shippingAddressDTO);
   }
 
+  public boolean updateOrderStatus(Long id, String orderStatus) {
+    Order existingOrder = orderRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+    existingOrder.setOrderStatus(OrderStatus.valueOf(orderStatus));
+    existingOrder = orderRepository.save(existingOrder);
+    return existingOrder != null;
+  }
   private Order convertToOrder(OrderDTO orderDTO) {
     Order order = new Order();
     // Implementacja logiki konwersji DTO na encję Order, w tym obsługa AddressDTO

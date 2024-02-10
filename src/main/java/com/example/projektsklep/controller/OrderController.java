@@ -7,6 +7,7 @@ import com.example.projektsklep.exception.OrderRetrievalException;
 import com.example.projektsklep.exception.OrderUpdateException;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
+import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
 import com.example.projektsklep.utils.AddressDTOInitializer;
@@ -69,42 +70,26 @@ public class OrderController {
     public String showEditOrderForm(@PathVariable Long orderId, Model model) {
         try {
             OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            if (orderDTO.shippingAddress() == null) {
-                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), orderDTO.orderStatus(), orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders(), AddressDTOInitializer.createDefault());
-            }
             model.addAttribute("order", orderDTO);
+            // Dodanie listy dostępnych statusów zamówień
+            model.addAttribute("statuses", OrderStatus.values());
             return "order_edit_form";
         } catch (OrderNotFoundException e) {
             model.addAttribute("error", "Zamówienie nie znalezione");
             return "error";
         }
     }
+
     @PostMapping("/edit/{orderId}")
-    public String updateOrder(@PathVariable Long orderId, @ModelAttribute OrderDTO orderDTO, Model model) {
+    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model) {
         try {
-            // Pobierz istniejący OrderDTO
-            OrderDTO existingOrderDTO = orderService.findOrderDTOById(orderId);
-
-            // Utwórz nowy OrderDTO z adresem dostawy
-            OrderDTO updatedOrderDTO = new OrderDTO(
-                    existingOrderDTO.id(),
-                    existingOrderDTO.userId(),
-                    existingOrderDTO.orderStatus(),
-                    existingOrderDTO.dateCreated(),
-                    existingOrderDTO.sentAt(),
-                    existingOrderDTO.totalPrice(),
-                    existingOrderDTO.lineOfOrders(),
-                    orderDTO.shippingAddress() != null ? orderDTO.shippingAddress() : AddressDTOInitializer.createDefault()
-            );
-
-            // Wywołaj serwis do aktualizacji OrderDTO
-            orderService.updateOrderDTO(orderId, updatedOrderDTO);
+            orderService.updateOrderStatus(orderId, orderDTO.orderStatus());
             return "redirect:/orders";
         } catch (OrderNotFoundException e) {
             model.addAttribute("error", "Zamówienie nie znalezione");
             return "error";
-        } catch (OrderUpdateException e) {
-            model.addAttribute("error", "Błąd podczas aktualizacji zamówienia");
+        } catch (Exception e) {
+            model.addAttribute("error", "Błąd podczas aktualizacji statusu zamówienia");
             return "order_edit_form";
         }
     }
