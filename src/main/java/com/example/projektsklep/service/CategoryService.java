@@ -27,6 +27,20 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    public CategoryDTO addCategoryWithParent(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setName(categoryDTO.name());
+
+        if (categoryDTO.parentCategoryId() != null) {
+            Category parentCategory = categoryRepository.findById(categoryDTO.parentCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Parent category not found"));
+            category.setParentCategory(parentCategory);
+        }
+
+        Category savedCategory = categoryRepository.save(category);
+        return convertToCategoryDTO(savedCategory);
+    }
+
     public List<CategoryDTO> getAllCategoryDTOs() {
         return categoryRepository.findAll().stream()
                 .map(this::convertToCategoryDTO)
@@ -74,19 +88,32 @@ public class CategoryService {
         return new ArrayList<>(categoryTreesMap.values());
     }
 
+    public CategoryDTO saveOrUpdateCategory(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setName(categoryDTO.name());
+        if (categoryDTO.parentCategoryId() != null) {
+            Category parent = categoryRepository.findById(categoryDTO.parentCategoryId()).orElseThrow(() -> new RuntimeException("Parent category not found"));
+            category.setParentCategory(parent);
+        }
+        // Additional logic for setting other fields or handling update scenarios
+        Category savedCategory = categoryRepository.save(category);
+        return convertToCategoryDTO(savedCategory);
+    }
+
     @Transactional
     public void deleteCategoryById(Long id) {
         categoryRepository.deleteById(id);
     }
 
     private CategoryDTO convertToCategoryDTO(Category category) {
-        return CategoryDTO.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .parentCategoryId(category.getParentCategory() != null ? category.getParentCategory().getId() : null)
-                .build();
+        String parentCategoryName = category.getParentCategory() != null ? category.getParentCategory().getName() : null;
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getParentCategory() != null ? category.getParentCategory().getId() : null,
+                parentCategoryName
+        );
     }
-
     private void updateCategoryData(Category category, CategoryDTO categoryDTO) {
         category.setName(categoryDTO.name());
         // Ustaw parentCategory, jeśli jest wymagane

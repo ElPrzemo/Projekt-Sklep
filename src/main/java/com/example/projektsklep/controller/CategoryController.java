@@ -25,7 +25,6 @@ public class CategoryController {
     @GetMapping
     public String listCategories(Model model) {
         List<CategoryDTO> categories = categoryService.getAllCategoryDTOs().stream().map(category -> {
-            // Uzyskaj nazwę kategorii nadrzędnej, jeśli istnieje
             String parentCategoryName = category.parentCategoryId() != null
                     ? categoryService.getCategoryDTOById(category.parentCategoryId()).name()
                     : null;
@@ -34,7 +33,6 @@ public class CategoryController {
         model.addAttribute("categories", categories);
         return "admin_category_list";
     }
-
 
 
     @GetMapping("/add")
@@ -50,16 +48,12 @@ public class CategoryController {
 
     @PostMapping("/add")
     public String addCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        Category category;
         try {
-            category = new Category();
-            category.setName(categoryDTO.name());
-            // You may need to set the parentCategory if required
-            categoryService.addCategory(category);
+            categoryService.addCategoryWithParent(categoryDTO);
+            return "redirect:/categories";
         } catch (Exception e) {
             throw new CategoryException("Error adding category", e);
         }
-        return "redirect:/categories";
     }
 
     @GetMapping("/edit/{id}")

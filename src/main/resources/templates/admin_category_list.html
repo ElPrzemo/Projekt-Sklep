@@ -20,7 +20,7 @@
         <tbody>
         <th:block th:each="category : ${categories}">
             <tr>
-                <td th:text="${category.name}"></td>
+                <td th:text="${category.name} + (category.parentCategoryName != null ? ' (' + category.parentCategoryName + ')' : '')"></td>
                 <td>
                     <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-primary btn-sm">Edytuj</a>
                     <form th:action="@{/categories/delete/{id}(id=${category.id})}" method="post" style="display: inline-block;">
