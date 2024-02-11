@@ -85,18 +85,11 @@ public class UserAccountController {
             return "user_edit"; // Nazwa widoku formularza edycji, który ma być wyświetlony ponownie w przypadku błędów
         }
 
-        Long userId = userService.findUserByEmail(email)
-                .map(UserDTO::id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Ustawienie adresu e-mail zalogowanego użytkownika na niezmienioną wartość
-        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), email, userDTO.password(),
-                userDTO.s(), userDTO.address(), userDTO.roles());
-
         try {
-            userService.updateUserProfileAndAddress(userId, userDTO, addressDTO); // Zakładając, że ta metoda aktualizuje zarówno użytkownika, jak i adres
+            // Teraz używamy e-maila zalogowanego użytkownika jako identyfikatora
+            userService.updateUserProfileAndAddress(email, userDTO, addressDTO);
         } catch (Exception e) {
-            model.addAttribute("updateError", "Wystąpił błąd podczas aktualizacji profilu");
+            model.addAttribute("updateError", "Wystąpił błąd podczas aktualizacji profilu: " + e.getMessage());
             return "user_edit"; // Powrót do formularza edycji z komunikatem o błędzie
         }
         return "redirect:/userPanel"; // Przekierowanie do panelu użytkownika po pomyślnej aktualizacji

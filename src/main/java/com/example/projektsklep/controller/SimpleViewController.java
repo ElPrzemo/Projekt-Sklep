@@ -1,6 +1,7 @@
 package com.example.projektsklep.controller;
 
 import com.example.projektsklep.exception.UserNotFoundException;
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 
 import com.example.projektsklep.service.UserService;
@@ -49,7 +50,16 @@ public class SimpleViewController {
         String email = authentication.getName();
         UserDTO userDTO = userService.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika."));
-        model.addAttribute("userDTO", userDTO); // Zmiana z "user" na "userDTO"
+        model.addAttribute("userDTO", userDTO);
+
+        // Dodajemy logowanie danych użytkownika i adresu
+        System.out.println("UserDTO: " + userDTO);
+        if(userDTO.address() != null) {
+            AddressDTO address = userDTO.address();
+            System.out.println("Address: " + address.street() + ", " + address.city() + ", " + address.postalCode() + ", " + address.country());
+        } else {
+            System.out.println("Address is null");
+        }
 
         return "userPanel";
     }
