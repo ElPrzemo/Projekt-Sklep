@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +48,7 @@ public class UserService {
         return userRepository.findById(id)
                 .map(this::convertToUserDTO);
     }
-
+@Transactional
     public UserDTO saveUser(UserDTO userDTO, AddressDTO addressDTO, AdminOrUser role) {
         // Sprawdzenie, czy addressDTO nie jest null i konwersja na encję Address
         Address address = null;
@@ -112,42 +113,29 @@ public class UserService {
         return convertToUserDTO(existingUser);
     }
 
-    public UserDTO updateUserProfileAndAddress(String email, UserDTO userDTO, AddressDTO addressDTO) {
-        // Znajdź użytkownika po e-mailu
+    public UserDTO updateUserProfileAndAddress(String email, UserDTO userDTO) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
         // Aktualizacja danych użytkownika
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-        // Przypuśćmy, że hasło jest już odpowiednio zahashowane przed przekazaniem do tej metody
-        user.setPasswordHash(userDTO.password());
+        // Zakładam, że hasło jest odpowiednio obsługiwane
 
-        // Jeśli użytkownik ma już adres, zaktualizuj go. W przeciwnym razie, stwórz nowy adres
-        Address address;
-        if (user.getAddress() != null) {
-            address = user.getAddress();
-        } else {
-            address = new Address();
+        Address address = user.getAddress() != null ? user.getAddress() : new Address();
+        AddressDTO addressDTO = userDTO.address();
+        if (addressDTO != null) {
+            address.setStreet(addressDTO.street());
+            address.setCity(addressDTO.city());
+            address.setPostalCode(addressDTO.postalCode());
+            address.setCountry(addressDTO.country());
+            address = addressRepository.save(address); // Zapisz lub zaktualizuj adres
+            user.setAddress(address);
         }
 
-        // Aktualizacja danych adresowych
-        address.setStreet(addressDTO.street());
-        address.setCity(addressDTO.city());
-        address.setPostalCode(addressDTO.postalCode());
-        address.setCountry(addressDTO.country());
+        userRepository.save(user); // Zapisz zmiany użytkownika
 
-        // Zapisz adres (jeśli adres był nowy, to zostanie przypisany nowe ID)
-        address = addressRepository.save(address);
-
-        // Przypisz zaktualizowany lub nowy adres do użytkownika
-        user.setAddress(address);
-
-        // Zapisz zaktualizowanego użytkownika w bazie danych
-        user = userRepository.save(user);
-
-        // Konwersja zaktualizowanego użytkownika na DTO i zwróć
-        return convertToUserDTO(user);
+        return convertToUserDTO(user); // Konwersja na UserDTO i zwrócenie
     }
 
     private UserDTO convertToUserDTO(User user) {

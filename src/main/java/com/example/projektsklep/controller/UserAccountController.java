@@ -72,25 +72,13 @@ public class UserAccountController {
 
     @PostMapping("/edit")
     public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
-                                          BindingResult userResult,
-                                          @Valid @ModelAttribute("addressDTO") AddressDTO addressDTO,
-                                          BindingResult addressResult,
-                                          Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                                          BindingResult result,
+                                          Model model, Authentication authentication) {
+        if (result.hasErrors()) {
+            return "user_edit";
+        }
+
         String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
-
-        if (userResult.hasErrors() || addressResult.hasErrors()) {
-            model.addAttribute("userDTO", userDTO); // Przekazanie ponownie użytkownika do widoku, jeśli wystąpią błędy
-            model.addAttribute("addressDTO", addressDTO); // Przekazanie ponownie adresu do widoku, jeśli wystąpią błędy
-            return "user_edit"; // Nazwa widoku formularza edycji, który ma być wyświetlony ponownie w przypadku błędów
-        }
-
-        try {
-            // Teraz używamy e-maila zalogowanego użytkownika jako identyfikatora
-            userService.updateUserProfileAndAddress(email, userDTO, addressDTO);
-        } catch (Exception e) {
-            model.addAttribute("updateError", "Wystąpił błąd podczas aktualizacji profilu: " + e.getMessage());
-            return "user_edit"; // Powrót do formularza edycji z komunikatem o błędzie
-        }
+        userService.updateUserProfileAndAddress(email, userDTO); // Zakładając, że ta metoda obsługuje zarówno użytkownika, jak i adres
         return "redirect:/userPanel"; // Przekierowanie do panelu użytkownika po pomyślnej aktualizacji
     }}

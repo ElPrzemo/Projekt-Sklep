@@ -1,14 +1,11 @@
 package com.example.projektsklep.controller;
 
-import com.example.projektsklep.exception.DataAccessException;
-import com.example.projektsklep.exception.InvalidUserDataException;
-import com.example.projektsklep.exception.UserAlreadyExistsException;
-import com.example.projektsklep.exception.UserNotFoundException;
+
 import com.example.projektsklep.model.dto.AddressDTO;
-import com.example.projektsklep.model.dto.RoleDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.AdminOrUser;
 import com.example.projektsklep.service.UserService;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
+
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @ControllerAdvice
 @Controller
@@ -43,48 +41,34 @@ public class UserController {
 
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
-        // Utworzenie pustego obiektu AddressDTO
-        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
+        // Tworzenie pustego lub domyślnie wypełnionego AddressDTO
+        AddressDTO addressDTO = new AddressDTO(0L, "", "", "", "");
 
-        // Przygotowanie pustego zestawu ról
-        Set<RoleDTO> roles = Collections.emptySet();
+        // Inicjalizacja UserDTO z pustym AddressDTO
+        UserDTO userDTO = new UserDTO(0L, "", "", "", "", "", addressDTO, new HashSet<>());
 
-        // Utworzenie nowego obiektu UserDTO z null jako ID i null jako phoneNumber);
-        UserDTO userDTO = new UserDTO(null, "", "", "", null, "", addressDTO, roles);
         model.addAttribute("userDTO", userDTO);
-        model.addAttribute("addressDTO", addressDTO);
-        model.addAttribute("roles", AdminOrUser.values());
         return "user_register";
     }
     @PostMapping("/new")
-    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
-        // Ręczna walidacja
-        if (userDTO.firstName() == null || userDTO.firstName().isBlank()) {
-            result.rejectValue("firstName", "firstName.blank", "Imię jest wymagane.");
-        }
-        // Walidacja innych pól...
-
+    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model, @RequestParam("roleType") String roleTypeStr) {
         if (result.hasErrors()) {
-            model.addAttribute("addressDTO", userDTO.address());
-            model.addAttribute("roles", AdminOrUser.values());
             return "user_register";
         }
+
+        // Konwersja roleTypeStr na enum AdminOrUser
+        AdminOrUser roleType = AdminOrUser.valueOf(roleTypeStr.toUpperCase());
 
         try {
-            AdminOrUser role = AdminOrUser.USER; // Przykład, ustawienie domyślnej roli
-            userService.saveUser(userDTO, userDTO.address(), role);
+            // Zakładam, że metoda saveUser wymaga przekazania enuma roleType jako argumentu
+            userService.saveUser(userDTO, userDTO.address(), roleType);
         } catch (Exception e) {
-            model.addAttribute("error", "Wystąpił błąd podczas rejestracji: " + e.getMessage());
+            model.addAttribute("registrationError", "Nie udało się zarejestrować użytkownika: " + e.getMessage());
             return "user_register";
         }
+
         return "redirect:/users/registration-success";
     }
-    @GetMapping("/registration-success")
-    public String registrationSuccess(Model model) {
-        model.addAttribute("message", "Użytkownik zarejestrowany pomyślnie");
-        return "registration_success";
-    }
-
 
     @GetMapping("/search")
     public String searchUsersByLastName(@RequestParam String lastName, Model model) {

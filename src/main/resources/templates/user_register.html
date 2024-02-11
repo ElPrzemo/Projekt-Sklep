@@ -9,36 +9,34 @@
 <body>
 <div class="container mt-4">
     <h2>Rejestracja Użytkownika</h2>
-    <form action="#" th:action="@{/users/new}" method="post" class="mt-3">
+    <form th:action="@{/users/new}" th:object="${userDTO}" method="post" class="mt-3">
         <div class="mb-3">
-            <input type="text" name="firstName" placeholder="Imię" class="form-control"/>
+            <input type="text" th:field="*{firstName}" placeholder="Imię" class="form-control"/>
         </div>
         <div class="mb-3">
-            <input type="text" name="lastName" placeholder="Nazwisko" class="form-control"/>
+            <input type="text" th:field="*{lastName}" placeholder="Nazwisko" class="form-control"/>
         </div>
         <div class="mb-3">
-            <input type="email" name="email" placeholder="Email" class="form-control"/>
+            <input type="email" th:field="*{email}" placeholder="Email" class="form-control"/>
         </div>
         <div class="mb-3">
-            <input type="password" name="password" placeholder="Hasło" class="form-control"/>
+            <input type="password" th:field="*{password}" placeholder="Hasło" class="form-control"/>
+        </div>
+        <select th:name="roleType" class="form-select">
+            <option value="USER">Użytkownik</option>
+            <option value="ADMIN">Administrator</option>
+        </select>
+        <div class="mb-3">
+            <input type="text" th:field="*{address.street}" placeholder="Ulica" class="form-control"/>
         </div>
         <div class="mb-3">
-            <select name="role" class="form-select">
-                <option value="USER">Użytkownik</option>
-                <option value="ADMIN">Administrator</option>
-            </select>
+            <input type="text" th:field="*{address.city}" placeholder="Miasto" class="form-control"/>
         </div>
         <div class="mb-3">
-            <input type="text" name="street" placeholder="Ulica" class="form-control"/>
+            <input type="text" th:field="*{address.postalCode}" placeholder="Kod pocztowy" class="form-control"/>
         </div>
         <div class="mb-3">
-            <input type="text" name="city" placeholder="Miasto" class="form-control"/>
-        </div>
-        <div class="mb-3">
-            <input type="text" name="postalCode" placeholder="Kod pocztowy" class="form-control"/>
-        </div>
-        <div class="mb-3">
-            <input type="text" name="country" placeholder="Kraj" class="form-control"/>
+            <input type="text" th:field="*{address.country}" placeholder="Kraj" class="form-control"/>
         </div>
         <button type="submit" class="btn btn-primary">Zarejestruj</button>
     </form>
