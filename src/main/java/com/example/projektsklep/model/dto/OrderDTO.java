@@ -17,4 +17,11 @@ public record OrderDTO(
         BigDecimal totalPrice,
         @NotNull(message = "List of order lines cannot be null") List<LineOfOrderDTO> lineOfOrders,
         AddressDTO shippingAddress // Tutaj dodajemy AddressDTO jako opcjonalne pole
-) {}
+) {
+    public OrderDTO(long id, UserDTO user, String orderStatus) {
+        // Wywołaj kanoniczny konstruktor w pierwszej linii, przekazując wymagane argumenty:
+        this(id, user.getId(), orderStatus, LocalDate.now(), null, BigDecimal.ZERO, List.of(), null);
+        // Uzupełnij pozostałe pola, jeśli to konieczne
+    }
+
+}

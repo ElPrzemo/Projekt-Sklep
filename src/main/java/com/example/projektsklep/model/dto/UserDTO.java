@@ -16,4 +16,9 @@ public record UserDTO(
         String password,
         AddressDTO address,
         Set<RoleDTO> roles
-) {}
+) {
+
+    public Long getId() {
+        return id;
+    }
+}

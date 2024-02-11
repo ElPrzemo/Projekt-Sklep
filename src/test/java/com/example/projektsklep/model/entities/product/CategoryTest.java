@@ -1,6 +1,7 @@
 package com.example.projektsklep.model.entities.product;
 
 import com.example.projektsklep.model.dto.CategoryTreeDTO;
+import com.example.projektsklep.model.repository.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,30 +21,38 @@ class CategoryTest {
     List<Category> children;
     @InjectMocks
     Category category;
+    private CategoryRepository categoryRepository;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        category = new Category("Książki");
     }
 
     @Test
     void testSetId() {
-        category.setId(Long.valueOf(1));
+        category.setId(2L);
+        assertThat(category.getId()).isEqualTo(2L);
     }
 
     @Test
     void testSetName() {
-        category.setName("name");
+        category.setName("Fantastyka");
+        assertThat(category.getName()).isEqualTo("Fantastyka");
     }
 
     @Test
     void testSetParentCategory() {
-        category.setParentCategory(new Category("name"));
+        Category parent = new Category("Literatura");
+        category.setParentCategory(parent);
+        assertThat(category.getParentCategory()).isSameAs(parent);
     }
 
     @Test
     void testSetChildren() {
-        category.setChildren(List.of(new Category("name")));
+        Category child1 = new Category("Kryminał");
+        Category child2 = new Category("Science Fiction");
+        category.setChildren(List.of(child1, child2));
+        assertThat(category.getChildren()).containsExactlyInAnyOrder(child1, child2);
     }
     @Test
     public void shouldReturnChildrenList() {
@@ -60,18 +69,7 @@ class CategoryTest {
         // Then
         assertThat(children).containsExactlyInAnyOrder(childCategory1, childCategory2);
     }
-//    @Test
-//    public void shouldReturnParentCategory() {
-//        // Given
-//        Category parentCategory = new Category("Książki");
-//        Category childCategory = new Category("Fantastyka", parentCategory);
-//
-//        // When
-//        Category parent = childCategory.getParent();
-//
-//        // Then
-//        assertThat(parent).isSameAs(parentCategory);
-//    }
+
     @Test
     public void shouldConvertCategoryToTreeDTO() {
         // Given
@@ -84,6 +82,26 @@ class CategoryTest {
         assertThat(treeDTO.getId()).isEqualTo(category.getId());
         assertThat(treeDTO.getName()).isEqualTo(category.getName());
     }
+//    @Test
+//    void shouldAddChildCategory() {
+//        // Pobierz kategorie z bazy danych
+//        List<Category> categories = categoryRepository.findAll();
+//
+//        // Wybierz kategorię, do której chcesz dodać dziecko
+//        Category parentCategory = categories.get(0);
+//
+//        // Utwórz nową kategorię
+//        Category childCategory = new Category();
+//        childCategory.setName("Nowa kategoria");
+//
+//        // Dodaj dziecko do rodzica
+//        parentCategory.addChild(childCategory);
+//
+//        // Zapisz zmiany w bazie danych
+//        categoryRepository.save(parentCategory);
+//    }
+
+
 
 
 }

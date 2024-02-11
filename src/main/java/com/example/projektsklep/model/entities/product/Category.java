@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -26,6 +28,7 @@ public class Category {
     private List<Category> children;
 
     public Category() {
+        this.children = new ArrayList<>();
         // Domyślny konstruktor
     }
 
@@ -49,6 +52,25 @@ public class Category {
         return categoryTreeDTO;
     }
 
-    public void addChild(Category childCategory2) {
+    public void addChild(Category childCategory) {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        children.add(childCategory);
+        childCategory.setParentCategory(this);
+    }
+    public void setParentCategory(Category parentCategory) {
+        this.parentCategory = parentCategory;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return name.equals(category.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
