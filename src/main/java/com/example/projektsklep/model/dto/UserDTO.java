@@ -13,6 +13,7 @@ public record UserDTO(
         @NotBlank String lastName,
         @NotBlank String email,
         String password,
-        String s, AddressDTO address,
+        AddressDTO address,
         Set<RoleDTO> roles
-) {}
+
+)  {}

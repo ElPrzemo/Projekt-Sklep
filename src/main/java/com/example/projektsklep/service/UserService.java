@@ -101,7 +101,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Ustawienie emaila na adres email zalogowanego użytkownika
-        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), authenticatedUserEmail, userDTO.password(), userDTO.s(), userDTO.address(), userDTO.roles());
+        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), authenticatedUserEmail, userDTO.password(),  userDTO.address(), userDTO.roles());
 
         if (isAdmin) {
             updateAdminFields(existingUser, userDTO);
@@ -157,7 +157,6 @@ public class UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .password(null) // Nie zwracaj hasła
-                .s(null) // Załóżmy, że to pole jest niepotrzebne w DTO
                 .address(addressDTO)
                 .roles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getRoleType().name())).collect(Collectors.toSet()))
                 .build();

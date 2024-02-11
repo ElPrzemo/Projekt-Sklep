@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 
@@ -44,14 +45,24 @@ public class UserController {
         // Tworzenie pustego lub domyślnie wypełnionego AddressDTO
         AddressDTO addressDTO = new AddressDTO(0L, "", "", "", "");
 
-        // Inicjalizacja UserDTO z pustym AddressDTO
-        UserDTO userDTO = new UserDTO(0L, "", "", "", "", "", addressDTO, new HashSet<>());
+        // Inicjalizacja UserDTO z pustym AddressDTO i pustym Set<RoleDTO>
+        UserDTO userDTO = UserDTO.builder()
+                .id(0L) // lub null, jeśli id jest typu Long i może być null
+                .firstName("")
+                .lastName("")
+                .email("")
+                .password("") // Ustaw puste hasło, jeśli nie chcesz przekazywać null
+                .address(addressDTO)
+                .roles(new HashSet<>()) // Pusty Set dla ról
+                .build();
 
         model.addAttribute("userDTO", userDTO);
         return "user_register";
     }
     @PostMapping("/new")
-    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model, @RequestParam("roleType") String roleTypeStr) {
+    public String registerUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
+                               BindingResult result, Model model,
+                               @RequestParam("roleType") String roleTypeStr) {
         if (result.hasErrors()) {
             return "user_register";
         }

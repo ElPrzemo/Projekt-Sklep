@@ -61,14 +61,15 @@ public class UserAccountController {
 
         // Jeśli użytkownik nie ma przypisanego adresu, tworzymy pusty obiekt AddressDTO
         if (userDTO.address() == null) {
-            userDTO = new UserDTO(userDTO.id(), userDTO.email(), userDTO.firstName(), userDTO.lastName()
-                   , userDTO.password(),
-                    "", new AddressDTO(null, "", "", "", ""), userDTO.roles());
+            AddressDTO emptyAddress = new AddressDTO(null, "", "", "", ""); // Pusty obiekt AddressDTO
+            userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), userDTO.email(),
+                    userDTO.password(), emptyAddress, userDTO.roles());
         }
 
         model.addAttribute("userDTO", userDTO);
-        return "user_edit"; // Nazwa Twojego widoku Thymeleaf
+        return "user_edit";
     }
+
 
     @PostMapping("/edit")
     public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
