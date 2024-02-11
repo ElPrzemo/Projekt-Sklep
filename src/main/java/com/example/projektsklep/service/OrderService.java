@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +70,9 @@ public class OrderService {
   }
 
   private OrderDTO convertToOrderDTO(Order order) {
-    List<LineOfOrderDTO> lineOfOrdersDTO = order.getLineOfOrders().stream()
+    List<LineOfOrderDTO> lineOfOrdersDTO = Optional.ofNullable(order.getLineOfOrders())
+            .orElseGet(Collections::emptyList) // Używa pustej listy, jeśli getLineOfOrders() zwraca null
+            .stream()
             .map(line -> LineOfOrderDTO.builder()
                     .id(line.getId()) // Może być null, jeśli obiekt nie został jeszcze zapisany
                     .productId(line.getProduct().getId())
@@ -77,27 +81,26 @@ public class OrderService {
                     .build())
             .collect(Collectors.toList());
 
-    AddressDTO shippingAddressDTO = null;
-    if (order.getShippingAddress() != null) {
-      shippingAddressDTO = new AddressDTO(
-              order.getShippingAddress().getId(),
-              order.getShippingAddress().getStreet(),
-              order.getShippingAddress().getCity(),
-              order.getShippingAddress().getPostalCode(),
-              order.getShippingAddress().getCountry());
-    }
+    AddressDTO shippingAddressDTO = Optional.ofNullable(order.getShippingAddress())
+            .map(address -> new AddressDTO(
+                    address.getId(),
+                    address.getStreet(),
+                    address.getCity(),
+                    address.getPostalCode(),
+                    address.getCountry()))
+            .orElse(null);
 
-    return new OrderDTO(
-            order.getId(),
-            order.getAccountHolder().getId(),
-            order.getOrderStatus().name(),
-            order.getDateCreated(),
-            order.getSentAt(),
-            order.getTotalPrice(),
-            lineOfOrdersDTO,
-            shippingAddressDTO);
+    return OrderDTO.builder()
+            .id(order.getId())
+            .userId(order.getAccountHolder().getId())
+            .orderStatus(order.getOrderStatus().name())
+            .dateCreated(order.getDateCreated())
+            .sentAt(order.getSentAt())
+            .totalPrice(order.getTotalPrice())
+            .lineOfOrders(lineOfOrdersDTO)
+            .shippingAddress(shippingAddressDTO)
+            .build();
   }
-
   public boolean updateOrderStatus(Long id, String orderStatus) {
     Order existingOrder = orderRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Order not found"));

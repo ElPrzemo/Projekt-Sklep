@@ -50,8 +50,8 @@ public class Order implements Observable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate sentAt;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<LineOfOrder> lineOfOrders;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<LineOfOrder> lineOfOrders = new ArrayList<>();
 
     private BigDecimal totalPrice;
 
