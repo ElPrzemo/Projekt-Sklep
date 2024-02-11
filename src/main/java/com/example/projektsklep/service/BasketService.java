@@ -1,5 +1,6 @@
 package com.example.projektsklep.service;
 
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.dto.UserDTO;
@@ -73,13 +74,14 @@ public class BasketService {
     }
 
     public OrderDTO createInitialOrderDTO() {
-        // Tutaj tworzymy początkowe DTO, możemy ustawić domyślne wartości lub puste listy
+        // Inicjalizacja pustego AddressDTO
+        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
+
         return OrderDTO.builder()
                 .lineOfOrders(new ArrayList<>())
-                // Ustaw pozostałe pola, jeśli są wymagane
+                .shippingAddress(addressDTO) // Dodanie pustego AddressDTO
                 .build();
     }
-
     public OrderDTO createOrderDTOFromBasket(OrderDTO currentOrderDTO) {
         List<LineOfOrderDTO> lineOfOrders = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : products.entrySet()) {

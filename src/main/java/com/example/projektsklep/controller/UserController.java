@@ -78,8 +78,14 @@ public class UserController {
             return "user_register";
         }
 
-        return "redirect:/users/registration-success";
+        return "redirect:/users/registrationSuccess";
     }
+
+    @GetMapping("registrationSuccess")
+    public String registrationSuccess() {
+        return "registrationSucces";
+    }
+
 
     @GetMapping("/search")
     public String searchUsersByLastName(@RequestParam String lastName, Model model) {

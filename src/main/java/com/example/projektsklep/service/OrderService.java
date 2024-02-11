@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,11 +69,12 @@ public class OrderService {
 
   private OrderDTO convertToOrderDTO(Order order) {
     List<LineOfOrderDTO> lineOfOrdersDTO = order.getLineOfOrders().stream()
-            .map(line -> new LineOfOrderDTO(
-                    line.getId(),
-                    line.getProduct().getId(),
-                    line.getQuantity(),
-                    line.getUnitPrice()))
+            .map(line -> LineOfOrderDTO.builder()
+                    .id(line.getId()) // Może być null, jeśli obiekt nie został jeszcze zapisany
+                    .productId(line.getProduct().getId())
+                    .quantity(line.getQuantity())
+                    .unitPrice(line.getUnitPrice())
+                    .build())
             .collect(Collectors.toList());
 
     AddressDTO shippingAddressDTO = null;
