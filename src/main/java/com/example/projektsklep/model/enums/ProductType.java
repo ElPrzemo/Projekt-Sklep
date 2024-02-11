@@ -7,5 +7,7 @@ public enum ProductType {
     COOKING_EQUIPMENT, // Urządzenia do gotowania
     REFRIGERATION_EQUIPMENT, // Urządzenia chłodnicze
     FOOD_PREP_EQUIPMENT // Urządzenia do przygotowywania żywności
+    ;
     // Dodaj więcej typów zgodnie z potrzebami
+
 }

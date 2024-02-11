@@ -18,7 +18,7 @@ public class Author {
     private String name;
 
     public Author() {
-        // Domyślny konstruktor
+
     }
 
     public Author(String name) {

@@ -67,4 +67,5 @@ public class SimpleViewController {
     public String security() {
         return "security"; // Zwraca userPanel.html
     }
+
 }
