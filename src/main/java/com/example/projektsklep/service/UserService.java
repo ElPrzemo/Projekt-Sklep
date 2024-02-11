@@ -68,7 +68,7 @@ public class UserService {
         // Przypisanie roli użytkownikowi
         Set<Role> roles = new HashSet<>();
         if (role != null) {
-            Role userRole = roleRepository.findByRoleType(role.name())
+            Role userRole = roleRepository.findByRoleType(role)
                     .orElseThrow(() -> new RuntimeException("Role not found: " + role));
             roles.add(userRole);
         }
