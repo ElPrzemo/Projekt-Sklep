@@ -16,5 +16,5 @@ public record OrderDTO(
         LocalDate sentAt,
         BigDecimal totalPrice,
         @NotNull(message = "List of order lines cannot be null") List<LineOfOrderDTO> lineOfOrders,
-        AddressDTO shippingAddress // Tutaj dodajemy AddressDTO jako opcjonalne pole
+        AddressDTO shippingAddress
 ) {}

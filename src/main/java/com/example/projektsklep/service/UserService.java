@@ -1,6 +1,7 @@
 package com.example.projektsklep.service;
 
 import com.example.projektsklep.model.dto.AddressDTO;
+import com.example.projektsklep.model.dto.RoleDTO;
 import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.role.Role;
@@ -94,53 +95,83 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO updateUserProfileOrAdmin(Long userId, UserDTO userDTO, boolean isAdmin) {
+    public UserDTO updateUserProfileOrAdmin(Long userId, UserDTO userDTO, boolean isAdmin, String authenticatedUserEmail) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Ustawienie emaila na adres email zalogowanego użytkownika
+        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), authenticatedUserEmail, userDTO.password(), userDTO.s(), userDTO.address(), userDTO.roles());
+
         if (isAdmin) {
             updateAdminFields(existingUser, userDTO);
         } else {
+            // Zaktualizuj pola użytkownika, ale pomiń aktualizację emaila, ponieważ jest on już ustawiony
             updateUserFields(existingUser, userDTO);
         }
         userRepository.save(existingUser);
         return convertToUserDTO(existingUser);
     }
 
-    public void updateUserProfileAndAddress(Long userId, UserDTO userDTO, AddressDTO addressDTO) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Address address = user.getAddress();
+    public UserDTO updateUserProfileAndAddress(String email, UserDTO userDTO, AddressDTO addressDTO) {
+        // Znajdź użytkownika po e-mailu
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
+        // Aktualizacja danych użytkownika
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-        user.setEmail(userDTO.email());
-        // Zakładamy, że hasło jest już zahaszowane lub null, jeśli nie zmieniamy
+        // Przypuśćmy, że hasło jest już odpowiednio zahashowane przed przekazaniem do tej metody
+        user.setPasswordHash(userDTO.password());
 
-        if (address == null) {
+        // Jeśli użytkownik ma już adres, zaktualizuj go. W przeciwnym razie, stwórz nowy adres
+        Address address;
+        if (user.getAddress() != null) {
+            address = user.getAddress();
+        } else {
             address = new Address();
         }
+
+        // Aktualizacja danych adresowych
         address.setStreet(addressDTO.street());
         address.setCity(addressDTO.city());
         address.setPostalCode(addressDTO.postalCode());
         address.setCountry(addressDTO.country());
 
-        if (user.getAddress() == null) {
-            address = addressRepository.save(address);
-            user.setAddress(address);
-        }
+        // Zapisz adres (jeśli adres był nowy, to zostanie przypisany nowe ID)
+        address = addressRepository.save(address);
 
-        userRepository.save(user);
+        // Przypisz zaktualizowany lub nowy adres do użytkownika
+        user.setAddress(address);
+
+        // Zapisz zaktualizowanego użytkownika w bazie danych
+        user = userRepository.save(user);
+
+        // Konwersja zaktualizowanego użytkownika na DTO i zwróć
+        return convertToUserDTO(user);
     }
 
-    // Metody pomocnicze...
-
     private UserDTO convertToUserDTO(User user) {
-        AddressDTO addressDTO = user.getAddress() != null ? addressService.convertToDTO(user.getAddress()) : null;
+        AddressDTO addressDTO = null;
+        if (user.getAddress() != null) {
+            Address address = user.getAddress();
+            addressDTO = AddressDTO.builder()
+                    .id(address.getId())
+                    .street(address.getStreet())
+                    .city(address.getCity())
+                    .postalCode(address.getPostalCode())
+                    .country(address.getCountry())
+                    .build();
+        }
+
         return UserDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .password(null) // Nie zwracaj hasła
+                .s(null) // Załóżmy, że to pole jest niepotrzebne w DTO
                 .address(addressDTO)
+                .roles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getRoleType().name())).collect(Collectors.toSet()))
                 .build();
     }
 

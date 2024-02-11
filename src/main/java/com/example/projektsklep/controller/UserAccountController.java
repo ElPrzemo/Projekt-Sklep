@@ -77,15 +77,21 @@ public class UserAccountController {
                                           BindingResult addressResult,
                                           Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
+
         if (userResult.hasErrors() || addressResult.hasErrors()) {
             model.addAttribute("userDTO", userDTO); // Przekazanie ponownie użytkownika do widoku, jeśli wystąpią błędy
             model.addAttribute("addressDTO", addressDTO); // Przekazanie ponownie adresu do widoku, jeśli wystąpią błędy
             return "user_edit"; // Nazwa widoku formularza edycji, który ma być wyświetlony ponownie w przypadku błędów
         }
+
         Long userId = userService.findUserByEmail(email)
                 .map(UserDTO::id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Ustawienie adresu e-mail zalogowanego użytkownika na niezmienioną wartość
+        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), email, userDTO.password(),
+                userDTO.s(), userDTO.address(), userDTO.roles());
 
         try {
             userService.updateUserProfileAndAddress(userId, userDTO, addressDTO); // Zakładając, że ta metoda aktualizuje zarówno użytkownika, jak i adres
