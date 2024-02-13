@@ -51,7 +51,7 @@ public class BasketController {
         return "order_checkout_form";
     }
 
-    @PostMapping("/basket/add/{productId}")
+    @PostMapping("/add/{productId}")
     public String addToBasket(@PathVariable Long productId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
         try {
             basketService.addProductToBasket(productId, quantity);

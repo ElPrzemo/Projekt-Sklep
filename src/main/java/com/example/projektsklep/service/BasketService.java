@@ -9,7 +9,7 @@ import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
-import com.example.projektsklep.model.repository.BasketRepository;
+
 import com.example.projektsklep.model.repository.OrderRepository;
 import com.example.projektsklep.model.repository.ProductRepository;
 import com.example.projektsklep.utils.Basket;
@@ -31,23 +31,14 @@ public class BasketService {
     private final UserService userService;
     private final ProductRepository productRepository;
 
-
     private final Map<Long, Integer> products = new HashMap<>();
+    private Basket basket;
 
-    private BasketRepository basketRepository;
-    private ProductService productService;
-    private  Basket basket;
-
-    // Konstruktor z wstrzyknięciem zależności
-
-
-    public BasketService(OrderRepository orderRepository, UserService userService, ProductRepository productRepository, BasketRepository basketRepository, ProductService productService, Basket basket) {
+    public BasketService(OrderRepository orderRepository, UserService userService, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productRepository = productRepository;
-        this.basketRepository = basketRepository;
-        this.productService = productService;
-        this.basket = basket;
+        this.basket = new Basket(); // Inicjalizacja koszyka w konstruktorze
     }
 
     public void addProduct(Product product) {
@@ -121,19 +112,13 @@ public class BasketService {
         return orderDTO;
     }
 
+
     public void addProductToBasket(Long productId, int quantity) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono produktu o ID: " + productId));
-
-        // Tutaj logika dodawania produktu do koszyka.
-        // Możesz potrzebować dodatkowych informacji, jak zarządzasz koszykiem (np. sesja użytkownika, model koszyka).
-
-        // Przykład dodawania produktu do modelu koszyka (zakładając, że masz taki model i repozytorium).
-        // Musisz dostosować ten kod do swojej implementacji.
-        Basket basket = getCurrentUserBasket(); // Załóżmy, że ta metoda pobiera aktualny koszyk użytkownika
-        basket.addProduct(product, quantity); // Załóżmy, że istnieje taka metoda w klasie Basket
-        basketRepository.save(basket); // Zapisz zmiany w koszyku
+        basket.addProduct(product, quantity);
     }
+
 
     private Basket getCurrentUserBasket() {
         // Implementacja metody zależy od sposobu przechowywania koszyka
@@ -165,7 +150,8 @@ public class BasketService {
     private List<LineOfOrder> convertBasketToLineOfOrders() {
         List<LineOfOrder> lineOfOrders = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : products.entrySet()) {
-            Product product = productService.findProductById(entry.getKey());
+            Product product = productRepository.findById(entry.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono produktu o ID: " + entry.getKey()));
             LineOfOrder lineOfOrder = new LineOfOrder(product, entry.getValue());
             lineOfOrders.add(lineOfOrder);
         }
