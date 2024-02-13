@@ -1,6 +1,4 @@
-
 package com.example.projektsklep.service;
-
 
 import com.example.projektsklep.exception.OrderUpdateException;
 import com.example.projektsklep.model.dto.AddressDTO;
@@ -8,25 +6,31 @@ import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.order.Order;
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.OrderRepository;
-import com.example.projektsklep.utils.AddressDTOInitializer;
+import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
 
   private final OrderRepository orderRepository;
+  private final UserRepository userRepository;
 
-  public OrderService(OrderRepository orderRepository) {
+  public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
     this.orderRepository = orderRepository;
+    this.userRepository = userRepository;
   }
 
   public Page<OrderDTO> findAllOrders(Pageable pageable) {
@@ -42,6 +46,16 @@ public class OrderService {
 
   public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
     Order order = convertToOrder(orderDTO);
+    if (orderDTO.userId() != null) {
+      User user = userRepository.findById(orderDTO.userId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+      order.setAccountHolder(user);
+    }
+
+    if (orderDTO.shippingAddress() != null) {
+      // Tutaj powinna znaleźć się logika konwersji AddressDTO na Address i ustawienia go w zamówieniu
+    }
+
     order = orderRepository.save(order);
     return convertToOrderDTO(order);
   }
@@ -67,7 +81,11 @@ public class OrderService {
   }
 
   private OrderDTO convertToOrderDTO(Order order) {
-    List<LineOfOrderDTO> lineOfOrdersDTO = order.getLineOfOrders().stream()
+    String statusName = (order.getOrderStatus() != null) ? order.getOrderStatus().name() : "UNDEFINED";
+
+    List<LineOfOrderDTO> lineOfOrdersDTO = Optional.ofNullable(order.getLineOfOrders())
+            .orElseGet(Collections::emptyList)
+            .stream()
             .map(line -> new LineOfOrderDTO(
                     line.getId(),
                     line.getProduct().getId(),
@@ -75,20 +93,19 @@ public class OrderService {
                     line.getUnitPrice()))
             .collect(Collectors.toList());
 
-    AddressDTO shippingAddressDTO = null;
-    if (order.getShippingAddress() != null) {
-      shippingAddressDTO = new AddressDTO(
-              order.getShippingAddress().getId(),
-              order.getShippingAddress().getStreet(),
-              order.getShippingAddress().getCity(),
-              order.getShippingAddress().getPostalCode(),
-              order.getShippingAddress().getCountry());
-    }
+    AddressDTO shippingAddressDTO = Optional.ofNullable(order.getShippingAddress())
+            .map(address -> new AddressDTO(
+                    address.getId(),
+                    address.getStreet(),
+                    address.getCity(),
+                    address.getPostalCode(),
+                    address.getCountry()))
+            .orElse(null);
 
     return new OrderDTO(
             order.getId(),
             order.getAccountHolder().getId(),
-            order.getOrderStatus().name(),
+            statusName,
             order.getDateCreated(),
             order.getSentAt(),
             order.getTotalPrice(),
@@ -110,9 +127,11 @@ public class OrderService {
     return order;
   }
 
+
   private void updateOrderData(Order order, OrderDTO orderDTO) {
-    // Implementacja logiki aktualizacji danych zamówienia
+    // Tutaj powinna znaleźć się logika aktualizacji danych zamówienia na podstawie OrderDTO
   }
+
 
   private Address convertToAddress(AddressDTO addressDTO) {
     Address address = new Address();

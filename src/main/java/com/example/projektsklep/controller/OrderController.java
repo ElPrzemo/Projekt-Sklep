@@ -7,14 +7,18 @@ import com.example.projektsklep.exception.OrderRetrievalException;
 import com.example.projektsklep.exception.OrderUpdateException;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
+import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
+import com.example.projektsklep.service.UserService;
 import com.example.projektsklep.utils.AddressDTOInitializer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +33,13 @@ public class OrderController {
     private final OrderService orderService;
     private final BasketService basketService;
 
-    public OrderController(OrderService orderService, BasketService basketService) {
+    private final UserService userService;
+
+
+    public OrderController(OrderService orderService, BasketService basketService, UserService userService) {
         this.orderService = orderService;
         this.basketService = basketService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -96,9 +104,17 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public String createOrderFromBasket(RedirectAttributes redirectAttributes) {
-        // Utwórz OrderDTO na podstawie aktualnego stanu koszyka
-        OrderDTO orderDTO = basketService.createOrderDTOFromBasket(basketService.createInitialOrderDTO());
+    public String createOrderFromBasket(RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        // Zakładam, że używasz Spring Security do autentykacji
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Pobierz nazwę użytkownika (email lub login)
+
+        // Pobierz obiekt UserDTO na podstawie nazwy użytkownika
+        UserDTO userDTO = userService.findUserByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Utwórz OrderDTO na podstawie aktualnego stanu koszyka i userId
+        OrderDTO orderDTO = basketService.createOrderDTOFromBasket(userDTO.id()); // Tutaj przekazujesz userId
 
         // Utwórz zamówienie i wyczyść koszyk
         basketService.placeOrder(orderDTO);
@@ -107,6 +123,8 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("success", "Zamówienie zostało złożone.");
         return "redirect:/orders/confirmation";
     }
+
+
 
 }
 

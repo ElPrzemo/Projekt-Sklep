@@ -1,5 +1,6 @@
 package com.example.projektsklep.service;
 
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.dto.UserDTO;
@@ -8,11 +9,14 @@ import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
+
 import com.example.projektsklep.model.repository.OrderRepository;
+import com.example.projektsklep.model.repository.ProductRepository;
 import com.example.projektsklep.utils.Basket;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,19 +29,17 @@ public class BasketService {
 
     private final OrderRepository orderRepository;
     private final UserService userService;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
+
     private final Map<Long, Integer> products = new HashMap<>();
-    private  Basket basket;
+    private Basket basket;
 
-    // Konstruktor z wstrzyknięciem zależności
-
-    public BasketService(OrderRepository orderRepository, UserService userService, ProductService productService) {
+    public BasketService(OrderRepository orderRepository, UserService userService, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.userService = userService;
-        this.productService = productService;
-        this.basket = new Basket(); // Inicjalizacja koszyka
+        this.productRepository = productRepository;
+        this.basket = new Basket(); // Inicjalizacja koszyka w konstruktorze
     }
-
 
     public void addProduct(Product product) {
         products.put(product.getId(), products.getOrDefault(product.getId(), 0) + 1);
@@ -73,32 +75,56 @@ public class BasketService {
     }
 
     public OrderDTO createInitialOrderDTO() {
-        // Tutaj tworzymy początkowe DTO, możemy ustawić domyślne wartości lub puste listy
+        // Inicjalizacja pustego AddressDTO
+        AddressDTO addressDTO = new AddressDTO(null, "", "", "", "");
+
         return OrderDTO.builder()
                 .lineOfOrders(new ArrayList<>())
-                // Ustaw pozostałe pola, jeśli są wymagane
+                .shippingAddress(addressDTO) // Dodanie pustego AddressDTO
                 .build();
     }
+    public OrderDTO createOrderDTOFromBasket(Long userId) {
+        List<LineOfOrderDTO> lineOfOrdersDTO = new ArrayList<>();
+        BigDecimal totalPrice = BigDecimal.ZERO;
 
-    public OrderDTO createOrderDTOFromBasket(OrderDTO currentOrderDTO) {
-        List<LineOfOrderDTO> lineOfOrders = new ArrayList<>();
-        for (Map.Entry<Long, Integer> entry : products.entrySet()) {
-            // Tu tworzymy LineOfOrderDTO z każdego produktu w koszyku
-            lineOfOrders.add(new LineOfOrderDTO(null, entry.getKey(), entry.getValue(), null)); // Uzupełnij odpowiednimi danymi
+        for (LineOfOrder lineOfOrder : basket.getLineOfOrders()) {
+            Product product = lineOfOrder.getProduct();
+            LineOfOrderDTO lineOfOrderDTO = new LineOfOrderDTO(
+                    lineOfOrder.getId(),
+                    product.getId(),
+                    lineOfOrder.getQuantity(),
+                    product.getPrice());
+            lineOfOrdersDTO.add(lineOfOrderDTO);
+
+            // Obliczanie ceny dla każdej linii zamówienia i dodawanie do całkowitej ceny
+            BigDecimal linePrice = product.getPrice().multiply(BigDecimal.valueOf(lineOfOrder.getQuantity()));
+            totalPrice = totalPrice.add(linePrice);
         }
 
-        // Tworzenie nowej instancji OrderDTO z aktualizowanymi danymi
-        return OrderDTO.builder()
-                .id(currentOrderDTO.id())
-                .userId(currentOrderDTO.userId())
-                .orderStatus(currentOrderDTO.orderStatus())
-                .dateCreated(currentOrderDTO.dateCreated())
-                .sentAt(currentOrderDTO.sentAt())
-                .totalPrice(currentOrderDTO.totalPrice())
-                .lineOfOrders(lineOfOrders)
+        // Utwórz OrderDTO z uzyskanymi danymi
+        OrderDTO orderDTO = OrderDTO.builder()
+                .userId(userId)
+                .lineOfOrders(lineOfOrdersDTO)
+                .totalPrice(totalPrice)
+                // Możesz dodać więcej pól zgodnie z wymaganiami
                 .build();
+
+        return orderDTO;
     }
 
+
+    public void addProductToBasket(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono produktu o ID: " + productId));
+        basket.addProduct(product, quantity);
+    }
+
+
+    private Basket getCurrentUserBasket() {
+        // Implementacja metody zależy od sposobu przechowywania koszyka
+        // Może to być sesja użytkownika, baza danych itp.
+        return new Basket(); // Przykładowa implementacja, dostosuj do swoich potrzeb
+    }
     public void placeOrder(OrderDTO orderDTO) {
         Order newOrder = new Order();
         newOrder.setOrderStatus(OrderStatus.NEW_ORDER);
@@ -124,7 +150,8 @@ public class BasketService {
     private List<LineOfOrder> convertBasketToLineOfOrders() {
         List<LineOfOrder> lineOfOrders = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : products.entrySet()) {
-            Product product = productService.findProductById(entry.getKey());
+            Product product = productRepository.findById(entry.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono produktu o ID: " + entry.getKey()));
             LineOfOrder lineOfOrder = new LineOfOrder(product, entry.getValue());
             lineOfOrders.add(lineOfOrder);
         }
