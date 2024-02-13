@@ -1,14 +1,21 @@
 package com.example.projektsklep.controller;
 
 import com.example.projektsklep.exception.BasketException;
+import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
+import com.example.projektsklep.model.dto.UserDTO;
 import com.example.projektsklep.service.BasketService;
 import com.example.projektsklep.service.OrderService;
+import com.example.projektsklep.service.UserService;
 import com.example.projektsklep.utils.Basket;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -22,9 +29,12 @@ public class BasketController {
     private final BasketService basketService;
     private final OrderService orderService;
 
-    public BasketController(BasketService basketService, OrderService orderService) {
+    private final UserService userService;
+
+    public BasketController(BasketService basketService, OrderService orderService, UserService userService) {
         this.basketService = basketService;
         this.orderService = orderService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -41,21 +51,61 @@ public class BasketController {
         return "order_checkout_form";
     }
 
+    @PostMapping("/basket/add/{productId}")
+    public String addToBasket(@PathVariable Long productId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
+        try {
+            basketService.addProductToBasket(productId, quantity);
+            redirectAttributes.addFlashAttribute("successMessage", "Produkt dodany do koszyka!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Nie udało się dodać produktu do koszyka.");
+        }
+        return "redirect:/basket";
+    }
+
     @PostMapping("/checkout")
-    public String processCheckout(@Valid @ModelAttribute("order") OrderDTO orderDTO, BindingResult result, Model model) {
+    public String processCheckout(@Valid @ModelAttribute("order") OrderDTO orderDTO, BindingResult result, Model model, HttpServletRequest request) {
         if (result.hasErrors()) {
             return "checkoutForm";
         }
 
-        // Here, you would include any logic needed to handle the shippingAddress
-        // For example, if the form allows for entering an optional new shipping address:
-        if (orderDTO.shippingAddress() != null) {
-            // Process the shipping address as needed
+        // Pobranie ID zalogowanego użytkownika (zakładam użycie Spring Security)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserDTO userDTO = userService.findUserByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        AddressDTO shippingAddress = orderDTO.shippingAddress(); // Domyslny adres z OrderDTO
+
+        // Sprawdzenie, czy zaznaczono opcję nowego adresu dostawy
+        if (request.getParameter("differentAddress") != null) {
+            // Utworzenie nowego AddressDTO z danych formularza
+            shippingAddress = new AddressDTO(
+                    null,
+                    request.getParameter("street"),
+                    request.getParameter("city"),
+                    request.getParameter("postalCode"),
+                    request.getParameter("country")
+            );
         }
 
-        orderService.saveOrderDTO(orderDTO);
-        return "redirect:/orderSuccess";
+        // Utworzenie nowego OrderDTO z uwzględnieniem nowego adresu dostawy i ID użytkownika
+        OrderDTO finalOrderDTO = OrderDTO.builder()
+                .id(orderDTO.id()) // Można użyć null jeśli to nowe zamówienie
+                .userId(userDTO.id())
+                .orderStatus(orderDTO.orderStatus())
+                .dateCreated(orderDTO.dateCreated())
+                .sentAt(orderDTO.sentAt())
+                .totalPrice(orderDTO.totalPrice())
+                .lineOfOrders(orderDTO.lineOfOrders())
+                .shippingAddress(shippingAddress)
+                .build();
+
+        // Zapisanie zamówienia z nowo utworzonym OrderDTO
+        orderService.saveOrderDTO(finalOrderDTO);
+
+        return "redirect:/basket/orderSuccess";
     }
+
 
 
     @PostMapping("/update/{productId}")
@@ -68,5 +118,10 @@ public class BasketController {
     public String removeProductFromBasket(@PathVariable Long productId) {
         basketService.removeProduct(productId);
         return "redirect:/basket";
+    }
+
+    @GetMapping("/orderSuccess")
+    public String orderSuccess() {
+        return "order_success"; //
     }
 }

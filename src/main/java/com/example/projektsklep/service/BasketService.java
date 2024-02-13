@@ -9,11 +9,14 @@ import com.example.projektsklep.model.entities.order.Order;
 import com.example.projektsklep.model.entities.product.Product;
 import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
+import com.example.projektsklep.model.repository.BasketRepository;
 import com.example.projektsklep.model.repository.OrderRepository;
+import com.example.projektsklep.model.repository.ProductRepository;
 import com.example.projektsklep.utils.Basket;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,19 +29,26 @@ public class BasketService {
 
     private final OrderRepository orderRepository;
     private final UserService userService;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
+
+
     private final Map<Long, Integer> products = new HashMap<>();
+
+    private BasketRepository basketRepository;
+    private ProductService productService;
     private  Basket basket;
 
     // Konstruktor z wstrzyknięciem zależności
 
-    public BasketService(OrderRepository orderRepository, UserService userService, ProductService productService) {
+
+    public BasketService(OrderRepository orderRepository, UserService userService, ProductRepository productRepository, BasketRepository basketRepository, ProductService productService, Basket basket) {
         this.orderRepository = orderRepository;
         this.userService = userService;
+        this.productRepository = productRepository;
+        this.basketRepository = basketRepository;
         this.productService = productService;
-        this.basket = new Basket(); // Inicjalizacja koszyka
+        this.basket = basket;
     }
-
 
     public void addProduct(Product product) {
         products.put(product.getId(), products.getOrDefault(product.getId(), 0) + 1);
@@ -82,25 +92,54 @@ public class BasketService {
                 .shippingAddress(addressDTO) // Dodanie pustego AddressDTO
                 .build();
     }
-    public OrderDTO createOrderDTOFromBasket(OrderDTO currentOrderDTO) {
-        List<LineOfOrderDTO> lineOfOrders = new ArrayList<>();
-        for (Map.Entry<Long, Integer> entry : products.entrySet()) {
-            // Tu tworzymy LineOfOrderDTO z każdego produktu w koszyku
-            lineOfOrders.add(new LineOfOrderDTO(null, entry.getKey(), entry.getValue(), null)); // Uzupełnij odpowiednimi danymi
+    public OrderDTO createOrderDTOFromBasket(Long userId) {
+        List<LineOfOrderDTO> lineOfOrdersDTO = new ArrayList<>();
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for (LineOfOrder lineOfOrder : basket.getLineOfOrders()) {
+            Product product = lineOfOrder.getProduct();
+            LineOfOrderDTO lineOfOrderDTO = new LineOfOrderDTO(
+                    lineOfOrder.getId(),
+                    product.getId(),
+                    lineOfOrder.getQuantity(),
+                    product.getPrice());
+            lineOfOrdersDTO.add(lineOfOrderDTO);
+
+            // Obliczanie ceny dla każdej linii zamówienia i dodawanie do całkowitej ceny
+            BigDecimal linePrice = product.getPrice().multiply(BigDecimal.valueOf(lineOfOrder.getQuantity()));
+            totalPrice = totalPrice.add(linePrice);
         }
 
-        // Tworzenie nowej instancji OrderDTO z aktualizowanymi danymi
-        return OrderDTO.builder()
-                .id(currentOrderDTO.id())
-                .userId(currentOrderDTO.userId())
-                .orderStatus(currentOrderDTO.orderStatus())
-                .dateCreated(currentOrderDTO.dateCreated())
-                .sentAt(currentOrderDTO.sentAt())
-                .totalPrice(currentOrderDTO.totalPrice())
-                .lineOfOrders(lineOfOrders)
+        // Utwórz OrderDTO z uzyskanymi danymi
+        OrderDTO orderDTO = OrderDTO.builder()
+                .userId(userId)
+                .lineOfOrders(lineOfOrdersDTO)
+                .totalPrice(totalPrice)
+                // Możesz dodać więcej pól zgodnie z wymaganiami
                 .build();
+
+        return orderDTO;
     }
 
+    public void addProductToBasket(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono produktu o ID: " + productId));
+
+        // Tutaj logika dodawania produktu do koszyka.
+        // Możesz potrzebować dodatkowych informacji, jak zarządzasz koszykiem (np. sesja użytkownika, model koszyka).
+
+        // Przykład dodawania produktu do modelu koszyka (zakładając, że masz taki model i repozytorium).
+        // Musisz dostosować ten kod do swojej implementacji.
+        Basket basket = getCurrentUserBasket(); // Załóżmy, że ta metoda pobiera aktualny koszyk użytkownika
+        basket.addProduct(product, quantity); // Załóżmy, że istnieje taka metoda w klasie Basket
+        basketRepository.save(basket); // Zapisz zmiany w koszyku
+    }
+
+    private Basket getCurrentUserBasket() {
+        // Implementacja metody zależy od sposobu przechowywania koszyka
+        // Może to być sesja użytkownika, baza danych itp.
+        return new Basket(); // Przykładowa implementacja, dostosuj do swoich potrzeb
+    }
     public void placeOrder(OrderDTO orderDTO) {
         Order newOrder = new Order();
         newOrder.setOrderStatus(OrderStatus.NEW_ORDER);

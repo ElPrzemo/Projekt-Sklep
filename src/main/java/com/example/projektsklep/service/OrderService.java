@@ -1,6 +1,4 @@
-
 package com.example.projektsklep.service;
-
 
 import com.example.projektsklep.exception.OrderUpdateException;
 import com.example.projektsklep.model.dto.AddressDTO;
@@ -8,9 +6,10 @@ import com.example.projektsklep.model.dto.LineOfOrderDTO;
 import com.example.projektsklep.model.dto.OrderDTO;
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.order.Order;
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.OrderRepository;
-import com.example.projektsklep.utils.AddressDTOInitializer;
+import com.example.projektsklep.model.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,11 @@ import java.util.stream.Collectors;
 public class OrderService {
 
   private final OrderRepository orderRepository;
+  private final UserRepository userRepository;
 
-  public OrderService(OrderRepository orderRepository) {
+  public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
     this.orderRepository = orderRepository;
+    this.userRepository = userRepository;
   }
 
   public Page<OrderDTO> findAllOrders(Pageable pageable) {
@@ -45,6 +46,16 @@ public class OrderService {
 
   public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
     Order order = convertToOrder(orderDTO);
+    if (orderDTO.userId() != null) {
+      User user = userRepository.findById(orderDTO.userId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+      order.setAccountHolder(user);
+    }
+
+    if (orderDTO.shippingAddress() != null) {
+      // Tutaj powinna znaleźć się logika konwersji AddressDTO na Address i ustawienia go w zamówieniu
+    }
+
     order = orderRepository.save(order);
     return convertToOrderDTO(order);
   }
@@ -70,15 +81,16 @@ public class OrderService {
   }
 
   private OrderDTO convertToOrderDTO(Order order) {
+    String statusName = (order.getOrderStatus() != null) ? order.getOrderStatus().name() : "UNDEFINED";
+
     List<LineOfOrderDTO> lineOfOrdersDTO = Optional.ofNullable(order.getLineOfOrders())
-            .orElseGet(Collections::emptyList) // Używa pustej listy, jeśli getLineOfOrders() zwraca null
+            .orElseGet(Collections::emptyList)
             .stream()
-            .map(line -> LineOfOrderDTO.builder()
-                    .id(line.getId()) // Może być null, jeśli obiekt nie został jeszcze zapisany
-                    .productId(line.getProduct().getId())
-                    .quantity(line.getQuantity())
-                    .unitPrice(line.getUnitPrice())
-                    .build())
+            .map(line -> new LineOfOrderDTO(
+                    line.getId(),
+                    line.getProduct().getId(),
+                    line.getQuantity(),
+                    line.getUnitPrice()))
             .collect(Collectors.toList());
 
     AddressDTO shippingAddressDTO = Optional.ofNullable(order.getShippingAddress())
@@ -90,17 +102,17 @@ public class OrderService {
                     address.getCountry()))
             .orElse(null);
 
-    return OrderDTO.builder()
-            .id(order.getId())
-            .userId(order.getAccountHolder().getId())
-            .orderStatus(order.getOrderStatus().name())
-            .dateCreated(order.getDateCreated())
-            .sentAt(order.getSentAt())
-            .totalPrice(order.getTotalPrice())
-            .lineOfOrders(lineOfOrdersDTO)
-            .shippingAddress(shippingAddressDTO)
-            .build();
+    return new OrderDTO(
+            order.getId(),
+            order.getAccountHolder().getId(),
+            statusName,
+            order.getDateCreated(),
+            order.getSentAt(),
+            order.getTotalPrice(),
+            lineOfOrdersDTO,
+            shippingAddressDTO);
   }
+
   public boolean updateOrderStatus(Long id, String orderStatus) {
     Order existingOrder = orderRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -115,9 +127,11 @@ public class OrderService {
     return order;
   }
 
+
   private void updateOrderData(Order order, OrderDTO orderDTO) {
-    // Implementacja logiki aktualizacji danych zamówienia
+    // Tutaj powinna znaleźć się logika aktualizacji danych zamówienia na podstawie OrderDTO
   }
+
 
   private Address convertToAddress(AddressDTO addressDTO) {
     Address address = new Address();
