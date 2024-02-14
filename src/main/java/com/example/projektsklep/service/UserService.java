@@ -1,5 +1,6 @@
 package com.example.projektsklep.service;
 
+import com.example.projektsklep.exception.UserNotFoundException;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.RoleDTO;
 import com.example.projektsklep.model.dto.UserDTO;
@@ -88,10 +89,21 @@ public class UserService {
 
     @Transactional
     public UserDTO updateUserProfileAndAddress(String email, UserDTO userDTO) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-        updateUserDataAndAddress(user, userDTO);
-        user = userRepository.save(user);
-        return convertToUserDTO(user);
+        return userRepository.findByEmail(email)
+                .map(user -> {
+                    if (userDTO.password() != null && !userDTO.password().isBlank()) {
+                        user.setPasswordHash(userDTO.password()); // Założenie: hasło jest już zahashowane
+                    }
+                    // Aktualizacja danych użytkownika (bez zmiany e-mail)
+                    user.setFirstName(userDTO.firstName());
+                    user.setLastName(userDTO.lastName());
+                    // Aktualizacja adresu
+                    Address address = addressService.convertToEntity(userDTO.address());
+                    user.setAddress(address);
+                    return userRepository.save(user);
+                })
+                .map(this::convertToUserDTO)
+                .orElseThrow(() -> new UserNotFoundException("Nie znaleziono użytkownika o adresie e-mail: " + email));
     }
 
     private UserDTO convertToUserDTO(User user) {

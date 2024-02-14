@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
 @ControllerAdvice
 @Controller
 @RequestMapping("/account")
@@ -31,26 +32,20 @@ public class UserAccountController {
         this.userService = userService;
     }
 
-
-
-
     @GetMapping("/my_orders")
-    public String listUserOrders(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
+    public String listUserOrders(Model model, Authentication authentication) {
+        String email = authentication.getName();
 
-        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
-        if (!userDTO.isPresent()) {
-            throw new UserNotFoundException("Użytkownik o podanym adresie e-mail nie istnieje.");
-        }
-        userDTO.ifPresent(u -> {
-            List<OrderDTO> orders = orderService.findAllOrdersByUserId(u.id());
-            model.addAttribute("orders", orders);
-        });
+        // Znajdź ID użytkownika na podstawie e-maila. Zakładamy, że użytkownik zawsze istnieje.
+        UserDTO userDTO = userService.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Użytkownik o podanym adresie e-mail nie istnieje."));
 
-        return "user_orders"; // Strona z zamóupdateProfileAndAddresswieniami użytkownika
+        // Pobierz zamówienia dla zalogowanego użytkownika
+        List<OrderDTO> orders = orderService.findAllOrdersByUserId(userDTO.id());
+        model.addAttribute("orders", orders);
+
+        return "user_orders";
     }
-
     @GetMapping("/edit")
     public String showEditForm(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -72,14 +67,13 @@ public class UserAccountController {
 
 
     @PostMapping("/edit")
-    public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
-                                          BindingResult result,
-                                          Model model, Authentication authentication) {
+    public String updateProfileAndAddress(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model, Authentication authentication) {
         if (result.hasErrors()) {
             return "user_edit";
         }
+        String email = authentication.getName();
+        userService.updateUserProfileAndAddress(email, userDTO);
+        return "redirect:/userPanel";
+    }
 
-        String email = authentication.getName(); // Pobierz adres e-mail zalogowanego użytkownika
-        userService.updateUserProfileAndAddress(email, userDTO); // Zakładając, że ta metoda obsługuje zarówno użytkownika, jak i adres
-        return "redirect:/userPanel"; // Przekierowanie do panelu użytkownika po pomyślnej aktualizacji
-    }}
+}

@@ -60,7 +60,7 @@ public class OrderService {
     return convertToOrderDTO(order);
   }
 
-  public List<OrderDTO> findAllOrdersByUserId(long userId) {
+  public List<OrderDTO> findAllOrdersByUserId(Long userId) {
     return orderRepository.findByAccountHolder_Id(userId).stream()
             .map(this::convertToOrderDTO)
             .collect(Collectors.toList());

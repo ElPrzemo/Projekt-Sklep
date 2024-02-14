@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Controller
 @ControllerAdvice
@@ -59,25 +60,26 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public String productDetails(@PathVariable Long productId, Model model) {
-        ProductDTO productDTO = productService.findProductDTOById(productId);
-        if (productDTO == null) {
-            // Można tu zwrócić stronę błędu lub przekierować na stronę z informacją, że produkt nie istnieje
-            return "error"; // Przykład nazwy widoku dla strony "Produkt nie znaleziony"
+        Optional<ProductDTO> productDTO = productService.findProductDTOById(productId);
+        if (productDTO.isEmpty()) {
+            return "error";
         }
-        model.addAttribute("product", productDTO);
+        model.addAttribute("product", productDTO.get());
         return "product_details";
     }
 
-
     @GetMapping("/basket/add/{productId}")
     public String addProductToBasket(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
-        Product product = productService.findProductById(productId); // Zmieniamy na wyszukiwanie Product
-        if (product != null) {
-            basketService.addProduct(product); // Dodajemy Product do koszyka
-            redirectAttributes.addFlashAttribute("success", "Produkt dodany do koszyka.");
-        } else {
-            throw new ProductNotFoundException("Produkt o podanym ID nie istnieje.");
-        }
+        Optional<Product> product = productService.findProductById(productId);
+        product.ifPresentOrElse(
+                p -> {
+                    basketService.addProduct(p);
+                    redirectAttributes.addFlashAttribute("success", "Produkt dodany do koszyka.");
+                },
+                () -> {
+                    throw new ProductNotFoundException("Produkt o podanym ID nie istnieje.");
+                }
+        );
         return "redirect:/products_list";
     }
 
@@ -117,29 +119,6 @@ public class ProductController {
         return "product_search_results";
     }
 
-
-
-//    @GetMapping("/search")
-//    public String showSearchForm(Model model) {
-//        model.addAttribute("categories", categoryService.findAll());
-//        model.addAttribute("authors", authorService.findAll());
-//        return "product_search_form";
-//    }
-//
-//    // Metoda do przetwarzania wyszukiwania i wyświetlania wyników
-//    @PostMapping("/search")
-//    public String handleSearch(
-//            @RequestParam(required = false) String title,
-//            @RequestParam(required = false) Long categoryId,
-//            @RequestParam(required = false) Long authorId,
-//            Model model) {
-//
-//        Pageable pageable = PageRequest.of(0, 10); // Domyślna paginacja, można dostosować
-//        Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
-//
-//        model.addAttribute("productsPage", products);
-//        return "product_search_results";
-//    }
 
 
 

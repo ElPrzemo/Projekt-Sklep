@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -32,10 +33,9 @@ public class ProductService {
                 .map(this::convertToProductDTO);
     }
 
-    public ProductDTO findProductDTOById(Long id) {
+    public Optional<ProductDTO> findProductDTOById(Long id) {
         return productRepository.findById(id)
-                .map(this::convertToProductDTO)
-                .orElse(null);
+                .map(this::convertToProductDTO);
     }
 
     public ProductDTO saveProductDTO(ProductDTO productDTO) {
@@ -44,10 +44,9 @@ public class ProductService {
         return convertToProductDTO(savedProduct);
     }
 
-    public Product findProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+    public Optional<Product> findProductById(Long id) {
+        return productRepository.findById(id);
     }
-
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
