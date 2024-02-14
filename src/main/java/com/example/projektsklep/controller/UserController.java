@@ -39,26 +39,13 @@ public class UserController {
         return "user_list";
     }
 
-
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
-        // Tworzenie pustego lub domyślnie wypełnionego AddressDTO
-        AddressDTO addressDTO = new AddressDTO(0L, "", "", "", "");
-
-        // Inicjalizacja UserDTO z pustym AddressDTO i pustym Set<RoleDTO>
-        UserDTO userDTO = UserDTO.builder()
-                .id(0L) // lub null, jeśli id jest typu Long i może być null
-                .firstName("")
-                .lastName("")
-                .email("")
-                .password("") // Ustaw puste hasło, jeśli nie chcesz przekazywać null
-                .address(addressDTO)
-                .roles(new HashSet<>()) // Pusty Set dla ról
-                .build();
-
+        UserDTO userDTO = userService.createEmptyUserDTO();
         model.addAttribute("userDTO", userDTO);
         return "user_register";
     }
+
     @PostMapping("/new")
     public String registerUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
                                BindingResult result, Model model,
@@ -67,23 +54,19 @@ public class UserController {
             return "user_register";
         }
 
-        // Konwersja roleTypeStr na enum AdminOrUser
-        AdminOrUser roleType = AdminOrUser.valueOf(roleTypeStr.toUpperCase());
-
         try {
-            // Zakładam, że metoda saveUser wymaga przekazania enuma roleType jako argumentu
-            userService.saveUser(userDTO, userDTO.address(), roleType);
+            AdminOrUser roleType = AdminOrUser.valueOf(roleTypeStr.toUpperCase());
+            userService.registerNewUser(userDTO, roleType);
+            return "redirect:/users/registrationSuccess";
         } catch (Exception e) {
             model.addAttribute("registrationError", "Nie udało się zarejestrować użytkownika: " + e.getMessage());
             return "user_register";
         }
-
-        return "redirect:/users/registrationSuccess";
     }
 
-    @GetMapping("registrationSuccess")
+    @GetMapping("/registrationSuccess")
     public String registrationSuccess() {
-        return "registrationSucces";
+        return "registration_success";
     }
 
 

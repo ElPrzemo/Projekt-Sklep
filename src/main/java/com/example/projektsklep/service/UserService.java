@@ -3,6 +3,7 @@ package com.example.projektsklep.service;
 import com.example.projektsklep.model.dto.AddressDTO;
 import com.example.projektsklep.model.dto.RoleDTO;
 import com.example.projektsklep.model.dto.UserDTO;
+
 import com.example.projektsklep.model.entities.adress.Address;
 import com.example.projektsklep.model.entities.role.Role;
 import com.example.projektsklep.model.entities.user.User;
@@ -29,6 +30,7 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final RoleRepository roleRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository, AddressService addressService, AddressRepository addressRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.addressService = addressService;
@@ -36,48 +38,29 @@ public class UserService {
         this.roleRepository = roleRepository;
     }
 
-
-    // Istniejące metody...
-
     public Page<UserDTO> findAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable)
-                .map(this::convertToUserDTO);
+        return userRepository.findAll(pageable).map(this::convertToUserDTO);
     }
 
     public Optional<UserDTO> findUserById(Long id) {
-        return userRepository.findById(id)
-                .map(this::convertToUserDTO);
+        return userRepository.findById(id).map(this::convertToUserDTO);
     }
-@Transactional
+
+    @Transactional
     public UserDTO saveUser(UserDTO userDTO, AddressDTO addressDTO, AdminOrUser role) {
-        // Sprawdzenie, czy addressDTO nie jest null i konwersja na encję Address
-        Address address = null;
-        if (addressDTO != null) {
-            address = addressService.convertToEntity(addressDTO);
-            address = addressRepository.save(address);
-        }
+        Optional<Address> optionalAddress = Optional.ofNullable(addressDTO)
+                .map(addressService::convertToEntity)
+                .map(addressRepository::save);
 
-        // Konwersja UserDTO na encję User
         User user = convertToUser(userDTO);
+        optionalAddress.ifPresent(user::setAddress);
 
-        // Przypisanie adresu do użytkownika, jeśli istnieje
-        if (address != null) {
-            user.setAddress(address);
-        }
-
-        // Przypisanie roli użytkownikowi
+        // Poprawiona część dotycząca roli:
         Set<Role> roles = new HashSet<>();
-        if (role != null) {
-            Role userRole = roleRepository.findByRoleType(role)
-                    .orElseThrow(() -> new RuntimeException("Role not found: " + role));
-            roles.add(userRole);
-        }
+        roleRepository.findByRoleType(role).ifPresent(roles::add);
+
         user.setRoles(roles);
-
-        // Zapis użytkownika
         user = userRepository.save(user);
-
-        // Konwersja zapisanego użytkownika z powrotem na UserDTO i zwrócenie
         return convertToUserDTO(user);
     }
 
@@ -86,8 +69,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(this::convertToUserDTO);
+        return userRepository.findByEmail(email).map(this::convertToUserDTO);
     }
 
     public List<UserDTO> findUsersByLastName(String lastName) {
@@ -96,70 +78,28 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public UserDTO updateUserProfileOrAdmin(Long userId, UserDTO userDTO, boolean isAdmin, String authenticatedUserEmail) {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Ustawienie emaila na adres email zalogowanego użytkownika
-        userDTO = new UserDTO(userDTO.id(), userDTO.firstName(), userDTO.lastName(), authenticatedUserEmail, userDTO.password(),  userDTO.address(), userDTO.roles());
-
-        if (isAdmin) {
-            updateAdminFields(existingUser, userDTO);
-        } else {
-            // Zaktualizuj pola użytkownika, ale pomiń aktualizację emaila, ponieważ jest on już ustawiony
-            updateUserFields(existingUser, userDTO);
-        }
-        userRepository.save(existingUser);
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        updateUserFields(existingUser, userDTO, isAdmin, userDTO.password());
+        existingUser = userRepository.save(existingUser);
         return convertToUserDTO(existingUser);
     }
 
+    @Transactional
     public UserDTO updateUserProfileAndAddress(String email, UserDTO userDTO) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-
-        // Aktualizacja danych użytkownika
-        user.setFirstName(userDTO.firstName());
-        user.setLastName(userDTO.lastName());
-        // Zakładam, że hasło jest odpowiednio obsługiwane
-
-        Address address = user.getAddress() != null ? user.getAddress() : new Address();
-        AddressDTO addressDTO = userDTO.address();
-        if (addressDTO != null) {
-            address.setStreet(addressDTO.street());
-            address.setCity(addressDTO.city());
-            address.setPostalCode(addressDTO.postalCode());
-            address.setCountry(addressDTO.country());
-            address = addressRepository.save(address); // Zapisz lub zaktualizuj adres
-            user.setAddress(address);
-        }
-
-        userRepository.save(user); // Zapisz zmiany użytkownika
-
-        return convertToUserDTO(user); // Konwersja na UserDTO i zwrócenie
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        updateUserDataAndAddress(user, userDTO);
+        user = userRepository.save(user);
+        return convertToUserDTO(user);
     }
 
     private UserDTO convertToUserDTO(User user) {
-        AddressDTO addressDTO = null;
-        if (user.getAddress() != null) {
-            Address address = user.getAddress();
-            addressDTO = AddressDTO.builder()
-                    .id(address.getId())
-                    .street(address.getStreet())
-                    .city(address.getCity())
-                    .postalCode(address.getPostalCode())
-                    .country(address.getCountry())
-                    .build();
-        }
-
-        return UserDTO.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .password(null) // Nie zwracaj hasła
-                .address(addressDTO)
-                .roles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getRoleType().name())).collect(Collectors.toSet()))
-                .build();
+        AddressDTO addressDTO = user.getAddress() != null ? addressService.convertToDTO(user.getAddress()) : null;
+        Set<RoleDTO> roleDTOs = user.getRoles().stream()
+                .map(role -> new RoleDTO(role.getId(), role.getRoleType().name()))
+                .collect(Collectors.toSet());
+        return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), null, addressDTO, roleDTOs);
     }
 
     public User convertToUser(UserDTO userDTO) {
@@ -168,38 +108,77 @@ public class UserService {
         user.setEmail(userDTO.email());
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-        user.setAddress(userDTO.address() != null ? addressService.convertToEntity(userDTO.address()) : null);
+
+        Address address = Optional.ofNullable(userDTO.address())
+                .map(addressDTO -> addressService.convertToEntity(addressDTO))
+                .orElse(null);
+        user.setAddress(address);
+
+        Set<Role> roles = userDTO.roles().stream()
+                .map(roleDTO -> roleRepository.findByRoleType(AdminOrUser.valueOf(roleDTO.roleType()))
+                        .orElseThrow(() -> new RuntimeException("Role not found with type: " + roleDTO.roleType())))
+                .collect(Collectors.toSet());
+        user.setRoles(roles);
+
         return user;
     }
 
-    private void updateUserFields(User user, UserDTO userDTO) {
-        user.setEmail(userDTO.email());
-        if (userDTO.password() != null) {
-            user.setPasswordHash(userDTO.password());
-        }
-        if (userDTO.address() != null) {
-            Address address = addressService.convertToEntity(userDTO.address());
-            user.setAddress(address);
-        }
+    public UserDTO createEmptyUserDTO() {
+        return new UserDTO(
+                null, // ID użytkownika jest null, ponieważ jest to nowy użytkownik
+                "",   // Puste imię
+                "",   // Puste nazwisko
+                "",   // Pusty email
+                "",   // Puste hasło
+                new AddressDTO(null, "", "", "", ""), // Pusty obiekt AddressDTO
+                new HashSet<>() // Pusty zestaw ról
+        );
     }
 
-    private void updateAdminFields(User user, UserDTO userDTO) {
-        user.setEmail(userDTO.email());
+    @Transactional
+    public UserDTO registerNewUser(UserDTO userDTO, AdminOrUser roleType) {
+        // Konwersja DTO do encji
+        User user = convertToUser(userDTO);
+
+        // Obsługa roli
+        Role role = roleRepository.findByRoleType(roleType)
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono roli: " + roleType));
+        user.setRoles(Set.of(role)); // Zakładając, że użytkownik ma tylko jedną rolę przy rejestracji
+
+        // Zapis użytkownika
+        User savedUser = userRepository.save(user);
+
+        // Konwersja zapisanego użytkownika do DTO i zwrot
+        return convertToUserDTO(savedUser);
+    }
+    private void updateUserFields(User user, UserDTO userDTO, boolean isAdmin, String password) {
+        if (isAdmin && password != null && !password.isBlank()) {
+            // Assuming password is hashed before saving
+            user.setPasswordHash(password);
+        }
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-        if (userDTO.address() != null) {
-            Address address = addressService.convertToEntity(userDTO.address());
-            user.setAddress(address);
-        }
+        // Email is not updated here based on the requirements
     }
 
-    public UserDTO createUserDTO(UserDTO userDTO, AddressDTO addressDTO) {
-        // Tutaj można dodać logikę weryfikacji lub transformacji danych, jeśli to konieczne
-        return UserDTO.builder()
-                .email(userDTO.email())
-                .firstName(userDTO.firstName())
-                .lastName(userDTO.lastName())
-                .address(addressDTO)
-                .build();
+    private void updateUserDataAndAddress(User user, UserDTO userDTO) {
+        user.setFirstName(userDTO.firstName());
+        user.setLastName(userDTO.lastName());
+        // Email is not updated here based on the requirements
+
+        Address address = Optional.ofNullable(userDTO.address())
+                .map(dto -> {
+                    Address existingAddress = user.getAddress() != null ? user.getAddress() : new Address();
+                    existingAddress.setStreet(dto.street());
+                    existingAddress.setCity(dto.city());
+                    existingAddress.setPostalCode(dto.postalCode());
+                    existingAddress.setCountry(dto.country());
+                    return existingAddress;
+                }).orElse(null);
+
+        if (address != null && address.getId() == null) {
+            address = addressRepository.save(address);
+        }
+        user.setAddress(address);
     }
 }
