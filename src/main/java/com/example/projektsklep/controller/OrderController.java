@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/orders")
@@ -32,9 +33,7 @@ public class OrderController {
 
     private final OrderService orderService;
     private final BasketService basketService;
-
     private final UserService userService;
-
 
     public OrderController(OrderService orderService, BasketService basketService, UserService userService) {
         this.orderService = orderService;
@@ -49,82 +48,60 @@ public class OrderController {
         Pageable pageable = PageRequest.of(page, size);
         Page<OrderDTO> orderPage = orderService.findAllOrders(pageable);
         model.addAttribute("orderPage", orderPage);
-
-        // Add pagination navigation elements to the model
-        model.addAttribute("hasPrevious", orderPage.hasPrevious());
-        model.addAttribute("firstPage", 0);
-        model.addAttribute("hasNext", orderPage.hasNext());
-        model.addAttribute("lastPage", orderPage.getTotalPages() - 1);
-        model.addAttribute("nextPage", Math.max(orderPage.getNumber() + 1, 0));
-        model.addAttribute("previousPage", Math.max(orderPage.getNumber() - 1, 0));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
 
         return "order_list";
     }
 
-    @ExceptionHandler(OrderNotFoundException.class)
     @GetMapping("/{orderId}")
     public String orderDetails(@PathVariable Long orderId, Model model) {
-        try {
-            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            model.addAttribute("order", orderDTO);
+        Optional<OrderDTO> orderDTO = orderService.findOrderDTOById(orderId);
+        if (orderDTO.isPresent()) {
+            model.addAttribute("order", orderDTO.get());
             return "order_details";
-        } catch (OrderNotFoundException e) {
-            // Obsłuż błąd "Zamówienie nie znalezione"
-            model.addAttribute("error", "Zamówienie nie znalezione");
-            return "error"; // Lub przekieruj do strony błędu
+        } else {
+            return "redirect:/error";
         }
     }
 
     @GetMapping("/edit/{orderId}")
     public String showEditOrderForm(@PathVariable Long orderId, Model model) {
-        try {
-            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            model.addAttribute("order", orderDTO);
+        Optional<OrderDTO> orderDTO = orderService.findOrderDTOById(orderId);
+        if (orderDTO.isPresent()) {
+            model.addAttribute("order", orderDTO.get());
             model.addAttribute("statuses", OrderStatus.values());
             return "order_edit_form";
-        } catch (OrderNotFoundException e) {
-            model.addAttribute("error", "Zamówienie nie znalezione");
-            return "error";
+        } else {
+            return "redirect:/error";
         }
     }
 
     @PostMapping("/edit/{orderId}")
-    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model, HttpServletRequest request) {
-        try {
-            orderService.updateOrderStatus(orderId, orderDTO.orderStatus());
-            String referer = request.getHeader("Referer");
-            return "redirect:" + (referer != null ? referer : "/user_orders");
-        } catch (OrderNotFoundException e) {
-            model.addAttribute("error", "Zamówienie nie znalezione");
-            return "error";
-        } catch (Exception e) {
-            model.addAttribute("error", "Błąd podczas aktualizacji statusu zamówienia");
-            return "order_edit_form"; // Tutaj możemy dodać ponownie atrybuty do modelu, jeśli potrzebujemy
+    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, RedirectAttributes redirectAttributes) {
+        boolean updated = orderService.updateOrderStatus(orderId, OrderStatus.valueOf(orderDTO.orderStatus()));
+        if (updated) {
+            redirectAttributes.addFlashAttribute("success", "Status zamówienia został zaktualizowany.");
+            return "redirect:/orders/" + orderId;
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Nie udało się zaktualizować statusu zamówienia.");
+            return "redirect:/orders/edit/" + orderId;
         }
     }
 
     @PostMapping("/create")
-    public String createOrderFromBasket(RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        // Zakładam, że używasz Spring Security do autentykacji
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Pobierz nazwę użytkownika (email lub login)
-
-        // Pobierz obiekt UserDTO na podstawie nazwy użytkownika
-        UserDTO userDTO = userService.findUserByEmail(username)
+    public String createOrderFromBasket(RedirectAttributes redirectAttributes, Authentication authentication) {
+        String email = authentication.getName(); // Pobierz nazwę użytkownika (email)
+        UserDTO userDTO = userService.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Utwórz OrderDTO na podstawie aktualnego stanu koszyka i userId
-        OrderDTO orderDTO = basketService.createOrderDTOFromBasket(userDTO.id()); // Tutaj przekazujesz userId
-
-        // Utwórz zamówienie i wyczyść koszyk
-        basketService.placeOrder(orderDTO);
+        OrderDTO orderDTO = basketService.createOrderDTOFromBasket(userDTO.id());
+        orderService.saveOrderDTO(orderDTO);
         basketService.clear();
 
-        redirectAttributes.addFlashAttribute("success", "Zamówienie zostało złożone.");
-        return "redirect:/orders/confirmation";
+        redirectAttributes.addFlashAttribute("success", "Zamówienie zostało złożone pomyślnie.");
+        return "redirect:/orders";
     }
-
-
 
 }
 

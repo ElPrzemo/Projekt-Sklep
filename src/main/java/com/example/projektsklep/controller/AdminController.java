@@ -164,30 +164,30 @@ public class AdminController {
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
     }
 
-    @PostMapping("/changeOrderStatus/{orderId}")
-    public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
-        try {
-            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            if (orderDTO == null) {
-                return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
-            } else {
-                // Założenie: Tworzymy pusty AddressDTO jako zaślepkę
-                AddressDTO defaultAddress = new AddressDTO(null, "defaultStreet", "defaultCity", "defaultPostalCode", "defaultCountry");
-
-                // Access dateCreated directly as a field
-                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders(), defaultAddress);
-
-                if (!orderService.updateOrderDTO(orderId, orderDTO)) {
-                    throw new AdminControllerException("Nie można zaktualizować statusu zamówienia");
-                }
-                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            if (e instanceof AdminControllerException) {
-                return new ResponseEntity<>(e.getMessage(), ((AdminControllerException) e).getStatus());
-            } else {
-                return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-    }
+//    @PostMapping("/changeOrderStatus/{orderId}")
+//    public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
+//        try {
+//            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
+//            if (orderDTO == null) {
+//                return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
+//            } else {
+//                // Założenie: Tworzymy pusty AddressDTO jako zaślepkę
+//                AddressDTO defaultAddress = new AddressDTO(null, "defaultStreet", "defaultCity", "defaultPostalCode", "defaultCountry");
+//
+//                // Access dateCreated directly as a field
+//                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders(), defaultAddress);
+//
+//                if (!orderService.updateOrderDTO(orderId, orderDTO)) {
+//                    throw new AdminControllerException("Nie można zaktualizować statusu zamówienia");
+//                }
+//                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
+//            }
+//        } catch (Exception e) {
+//            if (e instanceof AdminControllerException) {
+//                return new ResponseEntity<>(e.getMessage(), ((AdminControllerException) e).getStatus());
+//            } else {
+//                return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//        }
+//    }
 }

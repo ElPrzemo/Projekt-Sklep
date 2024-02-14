@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Optional;
 
 @Controller
-public class SimpleViewController {
+public class MainController {
 
     private final UserService userService;
 
-    public SimpleViewController(UserService userService) {
+    public MainController(UserService userService) {
         this.userService = userService;
     }
 
