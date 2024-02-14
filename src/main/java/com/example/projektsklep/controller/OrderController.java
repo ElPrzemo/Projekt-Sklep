@@ -79,7 +79,7 @@ public class OrderController {
 
     @PostMapping("/edit/{orderId}")
     public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, RedirectAttributes redirectAttributes) {
-        boolean updated = orderService.updateOrderStatus(orderId, OrderStatus.valueOf(orderDTO.orderStatus()));
+        boolean updated = orderService.updateOrderStatus(orderId, String.valueOf(OrderStatus.valueOf(orderDTO.orderStatus())));
         if (updated) {
             redirectAttributes.addFlashAttribute("success", "Status zamówienia został zaktualizowany.");
             return "redirect:/orders/" + orderId;
