@@ -87,19 +87,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/search")
-    public String searchUsersByLastName(@RequestParam String lastName, Model model) {
-        List<UserDTO> users = userService.findUsersByLastName(lastName);
-        model.addAttribute("users", users);
-        return "admin_user_list"; // Upewnij się, że "admin_user_list" to nazwa Twojego szablonu Thymeleaf
-    }
 
-    @PostMapping("/search")
-    public String searchUsersByName(@RequestParam String name, Model model) {
-        List<UserDTO> users = userService.findUsersByLastName(name);
-        model.addAttribute("users", users); // Dopasuj klucz do tego, co jest używane w Thymeleaf
-        return "admin_user_list"; // Nazwa widoku zawierającego listę użytkowników
-    }
 
     // Tutaj można dodać inne metody potrzebne dla kontrolera
 }

@@ -238,4 +238,27 @@ public class AdminController {
             return "order_edit_form"; // Tutaj możemy dodać ponownie atrybuty do modelu, jeśli potrzebujemy
         }
     }
+
+
+    // USER
+    // USER
+    // USER
+    // USER
+    // USER
+
+    @GetMapping("/searchUser")
+    public String searchUsersByLastName(@RequestParam String lastName, Model model) {
+        List<UserDTO> users = userService.findUsersByLastName(lastName);
+        model.addAttribute("users", users);
+        return "admin_user_list"; // Upewnij się, że "admin_user_list" to nazwa Twojego szablonu Thymeleaf
+    }
+
+    @PostMapping("/searchUser")
+    public String searchUsersByName(@RequestParam String name, Model model) {
+        List<UserDTO> users = userService.findUsersByLastName(name);
+        model.addAttribute("users", users); // Dopasuj klucz do tego, co jest używane w Thymeleaf
+        return "admin_user_list"; // Nazwa widoku zawierającego listę użytkowników
+    }
+
+
 }
