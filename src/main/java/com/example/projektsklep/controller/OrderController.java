@@ -75,33 +75,6 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/edit/{orderId}")
-    public String showEditOrderForm(@PathVariable Long orderId, Model model) {
-        try {
-            OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            model.addAttribute("order", orderDTO);
-            model.addAttribute("statuses", OrderStatus.values());
-            return "order_edit_form";
-        } catch (OrderNotFoundException e) {
-            model.addAttribute("error", "Zamówienie nie znalezione");
-            return "error";
-        }
-    }
-
-    @PostMapping("/edit/{orderId}")
-    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model, HttpServletRequest request) {
-        try {
-            orderService.updateOrderStatus(orderId, orderDTO.orderStatus());
-            String referer = request.getHeader("Referer");
-            return "redirect:" + (referer != null ? referer : "/user_orders");
-        } catch (OrderNotFoundException e) {
-            model.addAttribute("error", "Zamówienie nie znalezione");
-            return "error";
-        } catch (Exception e) {
-            model.addAttribute("error", "Błąd podczas aktualizacji statusu zamówienia");
-            return "order_edit_form"; // Tutaj możemy dodać ponownie atrybuty do modelu, jeśli potrzebujemy
-        }
-    }
 
     @PostMapping("/create")
     public String createOrderFromBasket(RedirectAttributes redirectAttributes, HttpServletRequest request) {

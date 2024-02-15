@@ -22,8 +22,8 @@
             <tr>
                 <td th:text="${category.name} + (category.parentCategoryName != null ? ' (' + category.parentCategoryName + ')' : '')"></td>
                 <td>
-                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-primary btn-sm">Edytuj</a>
-                    <form th:action="@{/categories/delete/{id}(id=${category.id})}" method="post" style="display: inline-block;">
+                    <a th:href="@{/admin/editCategory/{id}(id=${category.id})}" class="btn btn-primary btn-sm">Edytuj</a>
+                    <form th:action="@{/admin/deleteCategory/{id}(id=${category.id})}" method="post" style="display: inline-block;">
                         <input type="submit" class="btn btn-danger btn-sm" value="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć tę kategorię?');"/>
                     </form>
                 </td>
@@ -31,7 +31,7 @@
         </th:block>
         </tbody>
     </table>
-    <a href="/categories/add" class="btn btn-success">Dodaj nową kategorię</a>
+    <a href="/admin/addCategory" class="btn btn-success">Dodaj nową kategorię</a>
     <button class="btn btn-secondary mt-3" onclick="history.back()">Powrót</button>
 </div>
 </body>

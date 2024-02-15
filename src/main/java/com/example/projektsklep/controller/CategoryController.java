@@ -37,50 +37,12 @@ public class CategoryController {
     }
 
 
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        // Tworzenie nowego DTO dla formularza, jeśli jeszcze nie istnieje
-        if (!model.containsAttribute("categoryDTO")) {
-            model.addAttribute("categoryDTO", new CategoryDTO(null, "", null, null));
-        }
-        List<CategoryDTO> allCategories = categoryService.getAllCategoryDTOs(); // Załóżmy, że ta metoda istnieje i zwraca listę wszystkich kategorii
-        model.addAttribute("allCategories", allCategories); // Dodaj listę wszystkich kategorii do modelu
-        return "category_add"; // Nazwa Twojego pliku HTML formularza dodawania kategorii
-    }
 
-    @PostMapping("/add")
-    public String addCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        try {
-            categoryService.addCategoryWithParent(categoryDTO);
-            return "redirect:/categories";
-        } catch (Exception e) {
-            throw new CategoryException("Error adding category", e);
-        }
-    }
 
-    @GetMapping("/edit/{id}")
-    public String editCategoryForm(@PathVariable Long id, Model model) {
-        CategoryDTO categoryDTO = categoryService.getCategoryDTOById(id);
-        model.addAttribute("category", categoryDTO); // Zmieniłem nazwę atrybutu na "category" dla spójności z formularzem Thymeleaf
-        return "category_edit"; // Nazwa pliku widoku do edycji kategorii
-    }
-
-    @PostMapping("/edit/{id}")
-    public String editCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDTO categoryDTO) {
-        categoryService.updateCategoryDTO(id, categoryDTO);
-        return "redirect:/categories";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategoryById(id);
-        return "redirect:/categories";
-    }
-
-    @GetMapping("/tree")
-    public String showCategoriesTree(Model model) {
-        List<CategoryTree> categories = categoryService.getCategoriesTree();
-        model.addAttribute("categories", categories);
-        return "categories_tree";
-    }
+//    @GetMapping("/tree")
+//    public String showCategoriesTree(Model model) {
+//        List<CategoryTree> categories = categoryService.getCategoriesTree();
+//        model.addAttribute("categories", categories);
+//        return "categories_tree";
+//    }
 }

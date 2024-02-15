@@ -1,11 +1,15 @@
 package com.example.projektsklep.controller;
 
-import com.example.projektsklep.exception.AdminControllerException;
+
+import com.example.projektsklep.exception.CategoryException;
+import com.example.projektsklep.exception.OrderNotFoundException;
 import com.example.projektsklep.model.dto.*;
 import com.example.projektsklep.model.entities.order.Order;
+import com.example.projektsklep.model.entities.user.User;
 import com.example.projektsklep.model.enums.OrderStatus;
 import com.example.projektsklep.model.repository.UserRepository;
 import com.example.projektsklep.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +47,11 @@ public class AdminController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/panel")
+    public String showAdminPanel() {
+        return "adminPanel"; // Zwraca adminPanel.html
+    }
+
     @GetMapping("/user_search")
     public String showUserSearchForm() {
         return "admin_user_search"; // widok z formularzem wyszukiwania użytkowników
@@ -54,32 +63,22 @@ public class AdminController {
         model.addAttribute("users", users);
         return "admin_user_list"; // widok z listą użytkowników pasujących do kryteriów wyszukiwania
     }
+//
+//    @PostMapping("/user_search")
+//    public String searchUsersByLastNamePost(@RequestParam String lastName, Model model) {
+//        List<UserDTO> users = userService.findUsersByLastName(lastName);
+//        model.addAttribute("users", users);
+//        return "admin_user_list"; // Widok z listą użytkowników pasujących do kryteriów wyszukiwania
+//    }
 
-    @GetMapping("/edit_user/{userId}")
-    public String showEditUserForm(@PathVariable Long userId, Model model) {
-        UserDTO userDTO = userService.findUserById(userId)
-                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o id: " + userId));
-        AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() :
-                new AddressDTO(null, "", "", "", "");
-        model.addAttribute("userDTO", userDTO);
-        model.addAttribute("addressDTO", addressDTO);
-        return "admin_user_edit_form";
-    }
 
 
     @GetMapping("/user_details/{userId}")
-    public String userDetails(@PathVariable Long userId, Model model) {
-        userService.findUserById(userId).ifPresentOrElse(userDTO -> {
-            model.addAttribute("user", userDTO);
-            AddressDTO addressDTO = userDTO.address() != null ? userDTO.address() : new AddressDTO(null, "", "", "", "");
-            model.addAttribute("address", addressDTO);
-            // Dodajemy atrybut do modelu, który zawiera link do edycji użytkownika
-            model.addAttribute("editLink", "/admin/edit_user/" + userId);
-        }, () -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
-        });
-
-        return "user_details"; // Nazwa widoku szczegółów użytkownika
+    public String userDetails(@PathVariable("userId") Long userId, Model model) {
+        // Pobieranie szczegółów użytkownika na podstawie identyfikatora użytkownika
+        Optional<UserDTO> user = userService.findUserById(userId);
+        model.addAttribute("user", user);
+        return "admin/user_details"; // Zwraca widok szczegółów użytkownika
     }
 
     @GetMapping("/author")
@@ -121,7 +120,6 @@ public class AdminController {
     }
 
 
-
     // Metoda POST do przetwarzania dodawania produktu
     @PostMapping("/addProduct")
     public String addProduct(@ModelAttribute ProductDTO productDTO, Model model) {
@@ -143,13 +141,6 @@ public class AdminController {
         return "admin_user_orders"; // Nazwa pliku HTML z listą zamówień
     }
 
-    @GetMapping("/products")
-    public String listProducts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductDTO> productPage = productService.findAllProductDTOs(pageable);
-        model.addAttribute("productPage", productPage);
-        return "admin_product_list"; // Nazwa Twojego pliku HTML z listą produktów
-    }
 
     @GetMapping("/ordersByStatus")
     public String getOrdersByStatus(@RequestParam(required = false) OrderStatus orderStatus, Model model) {
@@ -164,30 +155,87 @@ public class AdminController {
         return "orders_by_status"; // Zwraca nazwę widoku Thymeleafa
     }
 
-    @PostMapping("/changeOrderStatus/{orderId}")
-    public ResponseEntity<?> changeOrderStatus(@PathVariable Long orderId, @RequestParam("newStatus") String newStatus) {
+
+    //CATEGORIES
+    // CATEGORIES
+    // CATEGORIES
+    // CATEGORIES
+    // CATEGORIES
+
+
+    @GetMapping("/addCategory")
+    public String showAddForm(Model model) {
+        // Tworzenie nowego DTO dla formularza, jeśli jeszcze nie istnieje
+        if (!model.containsAttribute("categoryDTO")) {
+            model.addAttribute("categoryDTO", new CategoryDTO(null, "", null, null));
+        }
+        List<CategoryDTO> allCategories = categoryService.getAllCategoryDTOs(); // Załóżmy, że ta metoda istnieje i zwraca listę wszystkich kategorii
+        model.addAttribute("allCategories", allCategories); // Dodaj listę wszystkich kategorii do modelu
+        return "category_add"; // Nazwa Twojego pliku HTML formularza dodawania kategorii
+    }
+
+    @PostMapping("/addCategory")
+    public String addCategory(@ModelAttribute CategoryDTO categoryDTO) {
+        try {
+            categoryService.addCategoryWithParent(categoryDTO);
+            return "redirect:/categories";
+        } catch (Exception e) {
+            throw new CategoryException("Error adding category", e);
+        }
+    }
+
+    @GetMapping("/editCategory/{id}")
+    public String editCategoryForm(@PathVariable Long id, Model model) {
+        CategoryDTO categoryDTO = categoryService.getCategoryDTOById(id);
+        model.addAttribute("category", categoryDTO); // Zmieniłem nazwę atrybutu na "category" dla spójności z formularzem Thymeleaf
+        return "category_edit"; // Nazwa pliku widoku do edycji kategorii
+    }
+
+    @PostMapping("/editCategory/{id}")
+    public String editCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDTO categoryDTO) {
+        categoryService.updateCategoryDTO(id, categoryDTO);
+        return "redirect:/categories";
+    }
+
+    @PostMapping("/deleteCategory/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategoryById(id);
+        return "redirect:/categories";
+    }
+
+
+    // ORDERS
+    // ORDERS
+    // ORDERS
+    // ORDERS
+    // ORDERS
+
+
+    @GetMapping("/editOrderStatus/{orderId}")
+    public String showEditOrderForm(@PathVariable Long orderId, Model model) {
         try {
             OrderDTO orderDTO = orderService.findOrderDTOById(orderId);
-            if (orderDTO == null) {
-                return new ResponseEntity<>("Zamówienie nie znalezione.", HttpStatus.NOT_FOUND);
-            } else {
-                // Założenie: Tworzymy pusty AddressDTO jako zaślepkę
-                AddressDTO defaultAddress = new AddressDTO(null, "defaultStreet", "defaultCity", "defaultPostalCode", "defaultCountry");
+            model.addAttribute("order", orderDTO);
+            model.addAttribute("statuses", OrderStatus.values());
+            return "order_edit_form";
+        } catch (OrderNotFoundException e) {
+            model.addAttribute("error", "Zamówienie nie znalezione");
+            return "error";
+        }
+    }
 
-                // Access dateCreated directly as a field
-                orderDTO = new OrderDTO(orderDTO.id(), orderDTO.userId(), newStatus, orderDTO.dateCreated(), orderDTO.sentAt(), orderDTO.totalPrice(), orderDTO.lineOfOrders(), defaultAddress);
-
-                if (!orderService.updateOrderDTO(orderId, orderDTO)) {
-                    throw new AdminControllerException("Nie można zaktualizować statusu zamówienia");
-                }
-                return new ResponseEntity<>("Status zamówienia zaktualizowany.", HttpStatus.OK);
-            }
+    @PostMapping("/editOrderStatus/{orderId}")
+    public String updateOrderStatus(@PathVariable Long orderId, @ModelAttribute("order") OrderDTO orderDTO, Model model, HttpServletRequest request) {
+        try {
+            orderService.updateOrderStatus(orderId, orderDTO.orderStatus());
+            String referer = request.getHeader("Referer");
+            return "redirect:" + (referer != null ? referer : "/user_orders");
+        } catch (OrderNotFoundException e) {
+            model.addAttribute("error", "Zamówienie nie znalezione");
+            return "error";
         } catch (Exception e) {
-            if (e instanceof AdminControllerException) {
-                return new ResponseEntity<>(e.getMessage(), ((AdminControllerException) e).getStatus());
-            } else {
-                return new ResponseEntity<>("Nieznany błąd podczas aktualizacji statusu zamówienia.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            model.addAttribute("error", "Błąd podczas aktualizacji statusu zamówienia");
+            return "order_edit_form"; // Tutaj możemy dodać ponownie atrybuty do modelu, jeśli potrzebujemy
         }
     }
 }

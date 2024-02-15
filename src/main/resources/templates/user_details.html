@@ -10,8 +10,7 @@
     <div>Email: <span th:text="${user.email}"></span></div>
     <div>Imię: <span th:text="${user.firstName}"></span></div>
     <div>Nazwisko: <span th:text="${user.lastName}"></span></div>
-    <!-- Przycisk do edycji profilu użytkownika -->
-    <a th:href="@{'/admin/edit_user/' + ${user.id}}" class="btn btn-primary">Edytuj profil</a>
+
     <!-- Przycisk do przeglądania zamówień użytkownika -->
     <a th:href="@{'/admin/user_orders/' + ${user.id}}" class="btn btn-warning">Zamówienia</a>
 </div>

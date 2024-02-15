@@ -41,13 +41,13 @@
         <td th:text="${order.totalPrice}"></td>
         <td>
             <a th:href="@{/orders/{orderId}(orderId=${order.id})}" class="btn btn-info btn-sm">Szczegóły</a>
-            <a th:href="@{/orders/edit/{orderId}(orderId=${order.id})}" class="btn btn-warning btn-sm">Edytuj</a>
+            <a th:href="@{/admin/editOrderStatus/{orderId}(orderId=${order.id})}" class="btn btn-warning btn-sm">Edytuj</a>
         </td>
     </tr>
     </tbody>
 </table>
 
-<button onclick="history.back()" class="btn btn-secondary">Powrót</button>
+<a href="/admin/panel" class="btn btn-secondary">Powrót</a>
 
 </body>
 </html>

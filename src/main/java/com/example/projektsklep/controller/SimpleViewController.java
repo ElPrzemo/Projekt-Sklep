@@ -40,10 +40,6 @@ public class SimpleViewController {
 
         return "home"; // Zwraca home.html
     }
-    @GetMapping("/adminPanel")
-    public String showAdminPanel() {
-        return "adminPanel"; // Zwraca adminPanel.html
-    }
 
     @GetMapping("/userPanel")
     public String showUserPanel(Model model, Authentication authentication) {

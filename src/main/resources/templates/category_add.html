@@ -6,7 +6,7 @@
 </head>
 <body class="container mt-4">
 <h1>Dodaj nową kategorię</h1>
-<form th:action="@{/categories/add}" th:object="${categoryDTO}" method="post" class="row g-3">
+<form th:action="@{/admin/addCategory}" th:object="${categoryDTO}" method="post" class="row g-3">
     <div class="col-12">
         <label for="name" class="form-label">Nazwa kategorii:</label>
         <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Nazwa kategorii" required>
