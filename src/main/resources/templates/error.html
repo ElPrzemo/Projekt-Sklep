@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <h1 th:text="${status} + ' - ' + ${error}">Error</h1>
     <p th:utext="${errorMessage}">Error message</p>
-    <a href="index.html" th:href="@{/}" class="btn btn-primary">Back to Home Page</a>
+    <a href="/home" th:href="@{/}" class="btn btn-primary">Back to Home Page</a>
 </div>
 </body>
 </html>

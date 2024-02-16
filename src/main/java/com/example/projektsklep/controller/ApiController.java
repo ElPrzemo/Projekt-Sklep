@@ -110,7 +110,7 @@ public class ApiController {
             return "weather";
         } else {
             model.addAttribute("error", "Nie można znaleźć danych o pogodzie.");
-            return "weather_error";
+            return "weather";
         }
     }
 }

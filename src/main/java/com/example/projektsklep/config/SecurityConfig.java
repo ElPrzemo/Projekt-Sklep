@@ -42,15 +42,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-
-                        .requestMatchers("/api/user/status").permitAll()
+                .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(new AntPathRequestMatcher("/home")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/orders")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/admin")).hasRole("ADMIN")
-                        .requestMatchers(new AntPathRequestMatcher("/account")).hasRole("USER")
+                        .requestMatchers(new AntPathRequestMatcher("/orders/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/account/**")).hasRole("USER")
+                        .requestMatchers(new AntPathRequestMatcher("/user/**")).hasRole("USER")
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/user/login")
@@ -61,6 +60,7 @@ public class SecurityConfig {
                         .permitAll())
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
+                        .logoutSuccessUrl("/homee")
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .csrf((csrf) -> csrf.disable())
