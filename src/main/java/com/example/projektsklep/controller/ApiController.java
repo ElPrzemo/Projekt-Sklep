@@ -4,6 +4,7 @@ import com.example.projektsklep.model.dto.ProductDTO;
 import com.example.projektsklep.service.AuthorService;
 import com.example.projektsklep.service.CategoryService;
 import com.example.projektsklep.service.ProductService;
+import com.example.projektsklep.service.WeatherService;
 import jdk.jfr.Registered;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/api")
 public class ApiController {
@@ -22,11 +26,13 @@ public class ApiController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final AuthorService authorService;
+    private final WeatherService weatherService;
 
-    public ApiController(ProductService productService, CategoryService categoryService, AuthorService authorService) {
+    public ApiController(ProductService productService, CategoryService categoryService, AuthorService authorService, WeatherService weatherService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.authorService = authorService;
+        this.weatherService = weatherService;
     }
 
     @GetMapping("/productList")
@@ -91,4 +97,20 @@ public class ApiController {
 
 
 
+
+    ///WEATHER
+    ///WEATHER
+    ///WEATHER
+
+    @GetMapping("/weather")
+    public String getWeather(@RequestParam(name = "city", required = false) String city, Model model, Principal principal) {
+        Optional<String> weatherData = weatherService.getWeatherData(city, principal);
+        if (weatherData.isPresent()) {
+            model.addAttribute("weatherData", weatherData.get());
+            return "weather";
+        } else {
+            model.addAttribute("error", "Nie można znaleźć danych o pogodzie.");
+            return "weather_error";
+        }
+    }
 }

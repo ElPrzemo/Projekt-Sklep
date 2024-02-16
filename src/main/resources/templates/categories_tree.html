@@ -12,13 +12,17 @@
             font-family: Arial, sans-serif;
         }
 
-        .content {
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            margin: auto;
+            min-height: 100vh;
         }
 
         .logo {
-            max-width: 200px; /* Adjust this value based on your logo size */
+            max-width: 150px; /* Zmniejszony rozmiar logo */
             margin-bottom: 30px;
         }
 
@@ -27,25 +31,21 @@
             margin-bottom: 25px;
             color: #333;
         }
+
+        .btn-home {
+            margin-top: 30px; /* Dodatkowy margines dla przycisku */
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12 content">
-            <img src="static/logo.jpg" alt="Logo" class="logo">
-            <h2>Gościu, jak na karku masz łep... .</h2>
-            <h2>To kupując sprzęt do kuchni Świński wybierzesz sklep! :) </h2>
-
-            <h2>(podstrona z drzewem kategorii w budowie)</h2>
-        </div>
-    </div>
+    <img src="static/js/logo.jpg" alt="Logo" class="logo">
+    <h2>Gościu, jak na karku masz łep...</h2>
+    <h2>To kupując sprzęt do kuchni Świński wybierzesz sklep! :)</h2>
+    <h2>(podstrona z drzewem kategorii w budowie)</h2>
+    <a href="/home" class="btn btn-primary btn-home">Powrót :)</a>
 </div>
-
-
-<a href="/home" class="btn btn-primary btn-home">Powrót :)</a>
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
