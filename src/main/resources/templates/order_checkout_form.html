@@ -26,7 +26,7 @@
 </head>
 <body>
 <h1>Finalizacja zamówienia</h1>
-<form th:action="@{/basket/checkout}" th:object="${order}" method="post">
+<form th:action="@{/account/checkoutBasket}" th:object="${order}" method="post">
     <!-- Przełącznik do wyboru adresu -->
     <div>
         <input type="checkbox" id="differentAddress" name="differentAddress" onchange="toggleAddressForm()">

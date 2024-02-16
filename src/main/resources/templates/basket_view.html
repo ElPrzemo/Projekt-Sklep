@@ -13,16 +13,16 @@
         <li th:each="item : ${basket.lineOfOrders}">
             <span th:text="${item.product.title}">Nazwa produktu</span> -
             <span th:text="${item.quantity}">Ilość</span>
-            <form th:action="@{/basket/update/{productId}(productId=${item.product.id})}" method="post" style="display:inline;">
+            <form th:action="@{/account/updateProductQuantity/{productId}(productId=${item.product.id})}" method="post" style="display:inline;">
                 <input type="number" name="quantity" th:value="${item.quantity}" min="1" />
 
             </form>
-            <form th:action="@{/basket/remove/{productId}(productId=${item.product.id})}" method="post" style="display:inline;">
+            <form th:action="@{/account/removeFromBasket/{productId}(productId=${item.product.id})}" method="post" style="display:inline;">
                 <input type="submit" value="Usuń" />
             </form>
         </li>
     </ul>
-    <a href="/basket/checkout" class="btn btn-primary">Przejdź do kasy</a>
+    <a href="/account/checkoutBasket" class="btn btn-primary">Przejdź do kasy</a>
 </div>
 <div th:if="${basket == null}">
     <p>Twój koszyk jest pusty.</p>

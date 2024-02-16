@@ -119,28 +119,6 @@ public class ProductController {
 
 
 
-//    @GetMapping("/search")
-//    public String showSearchForm(Model model) {
-//        model.addAttribute("categories", categoryService.findAll());
-//        model.addAttribute("authors", authorService.findAll());
-//        return "product_search_form";
-//    }
-//
-//    // Metoda do przetwarzania wyszukiwania i wyświetlania wyników
-//    @PostMapping("/search")
-//    public String handleSearch(
-//            @RequestParam(required = false) String title,
-//            @RequestParam(required = false) Long categoryId,
-//            @RequestParam(required = false) Long authorId,
-//            Model model) {
-//
-//        Pageable pageable = PageRequest.of(0, 10); // Domyślna paginacja, można dostosować
-//        Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
-//
-//        model.addAttribute("productsPage", products);
-//        return "product_search_results";
-//    }
-
 
 
     @ExceptionHandler(ProductNotFoundException.class)

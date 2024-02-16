@@ -37,19 +37,9 @@ public class BasketController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public String viewBasket(Model model) {
-        Basket basket = basketService.getCurrentBasket(); // Pobierz aktualny koszyk
-        model.addAttribute("basket", basket);
-        return "basket_view"; // nazwa pliku HTML Thymeleaf
-    }
 
-    @GetMapping("/checkout")
-    public String showCheckoutForm(Model model) {
-        OrderDTO orderDTO = basketService.createInitialOrderDTO(); // Załóżmy, że ta metoda istnieje i przygotowuje DTO.
-        model.addAttribute("order", orderDTO);
-        return "order_checkout_form";
-    }
+
+
 
     @PostMapping("/add/{productId}")
     public String addToBasket(@PathVariable Long productId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
@@ -62,66 +52,7 @@ public class BasketController {
         return "redirect:/basket";
     }
 
-    @PostMapping("/checkout")
-    public String processCheckout(@Valid @ModelAttribute("order") OrderDTO orderDTO, BindingResult result, Model model, HttpServletRequest request) {
-        if (result.hasErrors()) {
-            return "checkoutForm";
-        }
-
-        // Pobranie ID zalogowanego użytkownika (zakładam użycie Spring Security)
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserDTO userDTO = userService.findUserByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        AddressDTO shippingAddress = orderDTO.shippingAddress(); // Domyslny adres z OrderDTO
-
-        // Sprawdzenie, czy zaznaczono opcję nowego adresu dostawy
-        if (request.getParameter("differentAddress") != null) {
-            // Utworzenie nowego AddressDTO z danych formularza
-            shippingAddress = new AddressDTO(
-                    null,
-                    request.getParameter("street"),
-                    request.getParameter("city"),
-                    request.getParameter("postalCode"),
-                    request.getParameter("country")
-            );
-        }
-
-        // Utworzenie nowego OrderDTO z uwzględnieniem nowego adresu dostawy i ID użytkownika
-        OrderDTO finalOrderDTO = OrderDTO.builder()
-                .id(orderDTO.id()) // Można użyć null jeśli to nowe zamówienie
-                .userId(userDTO.id())
-                .orderStatus(orderDTO.orderStatus())
-                .dateCreated(orderDTO.dateCreated())
-                .sentAt(orderDTO.sentAt())
-                .totalPrice(orderDTO.totalPrice())
-                .lineOfOrders(orderDTO.lineOfOrders())
-                .shippingAddress(shippingAddress)
-                .build();
-
-        // Zapisanie zamówienia z nowo utworzonym OrderDTO
-        orderService.saveOrderDTO(finalOrderDTO);
-
-        return "redirect:/basket/orderSuccess";
-    }
 
 
 
-    @PostMapping("/update/{productId}")
-    public String updateProductQuantity(@PathVariable Long productId, @RequestParam("quantity") int quantity) {
-        basketService.updateProductQuantity(productId, quantity);
-        return "redirect:/basket";
-    }
-
-    @PostMapping("/remove/{productId}")
-    public String removeProductFromBasket(@PathVariable Long productId) {
-        basketService.removeProduct(productId);
-        return "redirect:/basket";
-    }
-
-    @GetMapping("/orderSuccess")
-    public String orderSuccess() {
-        return "order_success"; //
-    }
 }
