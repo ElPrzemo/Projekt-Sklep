@@ -46,7 +46,11 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/user/status").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/home")).permitAll()
-                        .requestMatchers("/admin").hasAnyRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/api")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/orders")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/admin")).hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/account")).hasRole("USER")
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/user/login")
@@ -56,7 +60,7 @@ public class SecurityConfig {
 //                        .failureForwardUrl("/error")
                         .permitAll())
                 .logout((logout) -> logout
-                        .logoutUrl("/")
+                        .logoutUrl("/logout")
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .csrf((csrf) -> csrf.disable())

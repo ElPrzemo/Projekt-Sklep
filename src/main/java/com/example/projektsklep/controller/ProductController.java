@@ -42,27 +42,27 @@ public class ProductController {
 
 
 
-
-
-
-    @GetMapping("/basket/add/{productId}")
-    public String addProductToBasket(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
-        Product product = productService.findProductById(productId); // Zmieniamy na wyszukiwanie Product
-        if (product != null) {
-            basketService.addProduct(product); // Dodajemy Product do koszyka
-            redirectAttributes.addFlashAttribute("success", "Produkt dodany do koszyka.");
-        } else {
-            throw new ProductNotFoundException("Produkt o podanym ID nie istnieje.");
-        }
-        return "redirect:/products_list";
-    }
-
-    @DeleteMapping("/basket/remove/{productId}")
-    public String removeProductFromBasket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        productService.deleteProduct(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Produkt został usunięty.");
-        return "redirect:/products";
-    }
+//
+//
+//
+//    @GetMapping("/basket/add/{productId}")
+//    public String addProductToBasket(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
+//        Product product = productService.findProductById(productId); // Zmieniamy na wyszukiwanie Product
+//        if (product != null) {
+//            basketService.addProduct(product); // Dodajemy Product do koszyka
+//            redirectAttributes.addFlashAttribute("success", "Produkt dodany do koszyka.");
+//        } else {
+//            throw new ProductNotFoundException("Produkt o podanym ID nie istnieje.");
+//        }
+//        return "redirect:/products_list";
+//    }
+//
+//    @DeleteMapping("/basket/remove/{productId}")
+//    public String removeProductFromBasket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+//        productService.deleteProduct(id);
+//        redirectAttributes.addFlashAttribute("successMessage", "Produkt został usunięty.");
+//        return "redirect:/products";
+//    }
 
 
 
