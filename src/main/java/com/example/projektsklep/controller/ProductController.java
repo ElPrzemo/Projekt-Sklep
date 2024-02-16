@@ -39,34 +39,10 @@ public class ProductController {
 // W ProductController
 
 
-    @GetMapping
-    public String listProducts(
-            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            Model model) {
-
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<ProductDTO> productsPage = productService.findAllProductDTOs(pageable);
-
-        model.addAttribute("productsPage", productsPage);
-        model.addAttribute("pageSize", pageSize);
-
-        // Usunięcie wszelkich odniesień do viewType i gridSize, ponieważ chcemy zawsze używać widoku listy
-        return "products_list"; // Zwróć nazwę pliku HTML dla widoku listy produktów
-    }
 
 
 
-    @GetMapping("/{productId}")
-    public String productDetails(@PathVariable Long productId, Model model) {
-        ProductDTO productDTO = productService.findProductDTOById(productId);
-        if (productDTO == null) {
-            // Można tu zwrócić stronę błędu lub przekierować na stronę z informacją, że produkt nie istnieje
-            return "error"; // Przykład nazwy widoku dla strony "Produkt nie znaleziony"
-        }
-        model.addAttribute("product", productDTO);
-        return "product_details";
-    }
+
 
 
     @GetMapping("/basket/add/{productId}")
@@ -89,33 +65,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/search/form")
-    public String showSearchForm(Model model) {
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("authors", authorService.findAll());
-        return "product_search_form";
-    }
 
-    @GetMapping("/search")
-    public String searchProducts(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long authorId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Model model) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductDTO> products = productService.searchProducts(title, categoryId, authorId, pageable);
-
-        model.addAttribute("productsPage", products);
-        model.addAttribute("selectedPageSize", size);
-        model.addAttribute("title", title);
-        model.addAttribute("categoryId", categoryId);
-        model.addAttribute("authorId", authorId);
-
-        return "product_search_results";
-    }
 
 
 

@@ -16,7 +16,7 @@
             <p><strong>Cena:</strong> <span th:text="${product.price}"></span></p>
             <p><strong>Typ:</strong> <span th:text="${product.productType}"></span></p>
             <div>
-                <a th:href="@{/products/{productId}(productId=${product.id})}" class="btn btn-primary">Szczegóły</a>
+                <a th:href="@{/api/productDetails{productId}(productId=${product.id})}" class="btn btn-primary">Szczegóły</a>
                 <!-- Przycisk "Dodaj do koszyka" wywołujący funkcję JS -->
                 <button onclick="addToBasket(${product.id})" class="btn btn-success">Dodaj do koszyka</button>
             </div>

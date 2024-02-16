@@ -27,7 +27,7 @@
         <tr th:each="product : ${productsPage.content}">
             <td th:text="${product.title}"></td>
             <td th:text="${product.price}"></td>
-            <td><a th:href="@{/products/{productId}(productId=${product.id})}" class="btn btn-info">Szczegóły</a></td>
+            <td><a th:href="@{/api/productDetails{productId}(productId=${product.id})}" class="btn btn-info">Szczegóły</a></td>
         </tr>
         </tbody>
     </table>
@@ -67,7 +67,7 @@
 <script>
     // Funkcja przekierowująca do formularza wyszukiwania z zachowanym stanem
     function redirectToSearch() {
-        window.location.href = '/products/search';
+        window.location.href = '/api/searchProduct';
     }
 </script>
 </body>

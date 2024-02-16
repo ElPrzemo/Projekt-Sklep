@@ -6,7 +6,7 @@
 </head>
 <body class="container mt-3">
 <h1>Formularz wyszukiwania produktów</h1>
-<form th:action="@{/products/search}" method="get">
+<form th:action="@{/api/searchProduct}" method="get">
     <div class="mb-3">
         <label for="title" class="form-label">Tytuł</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Wpisz tytuł produktu">
