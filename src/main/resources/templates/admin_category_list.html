@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Kategorie</title>
@@ -14,24 +14,26 @@
         <thead>
         <tr>
             <th>Nazwa</th>
-            <th>Akcje</th>
+            <div sec:authorize="hasAuthority('ADMIN')">  <th>Akcje</th></div>
         </tr>
         </thead>
         <tbody>
         <th:block th:each="category : ${categories}">
             <tr>
-                <td th:text="${category.name} + (category.parentCategoryName != null ? ' (' + category.parentCategoryName + ')' : '')"></td>
-                <td>
+                <td th:text="${category.name} "></td>
+                <div sec:authorize="hasAuthority('ADMIN')"> <td>
                     <a th:href="@{/admin/editCategory/{id}(id=${category.id})}" class="btn btn-primary btn-sm">Edytuj</a>
                     <form th:action="@{/admin/deleteCategory/{id}(id=${category.id})}" method="post" style="display: inline-block;">
                         <input type="submit" class="btn btn-danger btn-sm" value="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć tę kategorię?');"/>
                     </form>
-                </td>
+                </td></div>
             </tr>
         </th:block>
         </tbody>
     </table>
-    <a href="/admin/addCategory" class="btn btn-success">Dodaj nową kategorię</a>
+    <div sec:authorize="hasAuthority('ADMIN')">
+        <a href="/admin/addCategory" class="btn btn-success">Dodaj nową kategorię</a>
+        </div>
     <button class="btn btn-secondary mt-3" onclick="history.back()">Powrót</button>
 </div>
 </body>
