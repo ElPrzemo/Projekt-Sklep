@@ -30,7 +30,7 @@
         <span th:text="${productsPage.number + 1}">1</span> z <span th:text="${productsPage.totalPages}">N</span>
         <a th:if="${productsPage.hasNext()}" th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size})}" class="btn btn-secondary">Następna strona</a>
     </div>
-    <button onclick="history.back()" class="btn btn-outline-secondary mt-3">Powrót</button>
+ <a href="/home" class="btn btn-primary btn-home">  Powrót   </a>
 </div>
 </body>
 </html>
